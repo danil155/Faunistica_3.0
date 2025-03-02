@@ -1,0 +1,21 @@
+.footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer .social-media a,
+.footer .policies a {
+    color: white;
+    text-decoration: none;
+}
+
+.footer .social-media a:hover,
+.footer .policies a:hover {
+    text-decoration: underline;
+}
+
+.footer .social-media a {
+    margin-right: 10px;
+}
