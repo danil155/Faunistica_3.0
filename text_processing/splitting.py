@@ -84,15 +84,48 @@ def get_collectors(text: str) -> list:
 
 
 def get_numbers_species(text: str):
-    gender_pattern = r'(\d+)\s*([♂♀])'
-    gender_matches = re.findall(gender_pattern, text)
+    # Patterns
+    adult_pattern = r'(\d+)\s+(?<![♀♂])([♂♀]|male|female|m|f|M|F|самец|самка)(?![♀♂])'
+    subadult_pattern = r'(\d+)\s+(sub♀|sub♂|submale|subfemale|subm|subf|subM|subF|sM|sF|субсамец|субсамка)'
+    juvenile_pattern = r'(\d+)\s+(?:juv|juvenile|j|ювенил)'
+    double_sign_pattern = r'(\d+)?\s*([♀♂]{2,})'
 
-    species_count = {'male': 0, 'female': 0}
-    for count, gender in gender_matches:
-        if gender == "♂":
-            species_count['male'] += int(count)
-        elif gender == "♀":
-            species_count['female'] += int(count)
+    species_count = {
+        'male': 0, 'female': 0,
+        'sub_male': 0, 'sub_female': 0,
+        'juvenile': 0
+    }
+    double_female_count = 0
+    double_male_count = 0
+
+    # Adults
+    for count, gender in re.findall(adult_pattern, text):
+        count = int(count)
+        if gender in ["♂", "male", "m", "M", "самец"]:
+            species_count['male'] += count
+        elif gender in ["♀", "female", "f", "F", "самка"]:
+            species_count['female'] += count
+
+    # Subadults
+    for count, gender in re.findall(subadult_pattern, text):
+        count = int(count)
+        if gender in ["sub♂", "submale", "subm", "subM", "sM", "субсамец"]:
+            species_count['sub_male'] += count
+        elif gender in ["sub♀", "subfemale", "subf", "subF", "sF", "субсамка"]:
+            species_count['sub_female'] += count
+
+    # Juveniles
+    for match in re.findall(juvenile_pattern, text):
+        count = int(match[0])
+        species_count['juvenile'] += count
+
+    # Something weird
+    for match in re.findall(double_sign_pattern, text):
+        count = int(match[0]) if match[0] else 1
+        if "♀" in match[1]:
+            double_female_count += count
+        elif "♂" in match[1]:
+            double_male_count += count
 
     return species_count
 
