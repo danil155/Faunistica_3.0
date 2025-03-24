@@ -3,7 +3,7 @@ import sys
 
 from text_processing.data import Data
 from text_processing.geodecoder import get_location_info
-
+from text_processing.gbif_parser import find_species_in_text
 
 def get_coordinates(text: str) -> list:
     coords_pattern = r'(\d{1,3}[.,]\d+|\d{1,3})\s*[⁰°]?\s*([NS])[,;]?\s*(\d{1,3}[.,]\d+|\d{1,3})\s*[⁰°]?\s*([EW])'
@@ -177,6 +177,12 @@ def get_separated_parameters(text: str) -> Data:
         elif gender == 'female':
             data.count_females = count
 
+    found_name, taxon_data = find_species_in_text(text)
+    if found_name:
+        data.family = taxon_data.get('семейство', '')
+        data.genus = taxon_data.get('род', '')
+        data.species = taxon_data.get('вид', '')
+        
     check_full_location_data()
 
     return data
