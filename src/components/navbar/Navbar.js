@@ -1,8 +1,10 @@
 import "./styles.css";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from "react";
 
-const Navbar = () => {
+const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
   return (
       <nav className="nav">
         <div className="container">
@@ -28,7 +30,19 @@ const Navbar = () => {
                 </li>
               </ul>
             </nav>
-            <div id="user-container" className="user-container"></div>
+            <div id="user-container" className="user-container">
+            {isAuthenticated && (
+            <>
+              <Link to="/dashboard" className="nav-link">Личный кабинет</Link>
+              <Link to="/text/form" className="nav-link">Добавить особей</Link>
+            </>
+          )}
+          {isAuthenticated ? (
+            <button onClick={onLogoutClick} className="auth-button">Выйти</button>
+          ) : (
+            <button onClick={onLoginClick} className="auth-button">Войти / <b>Зарегистрироваться</b></button>
+          )}
+            </div>
           </div>
         </div>
       </nav>

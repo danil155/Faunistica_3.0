@@ -24,9 +24,29 @@ header {
 }
 
 section {
-    margin: 20px 0;
+    margin: 0 0 20px 0;
 }
 
+label {
+    display: flex;
+  flex-direction: column;
+  flex: 1 1 200px; /* flex-grow, flex-shrink, flex-basis */
+  max-width: 300px;
+  min-width: 0; 
+}
+
+legend {
+    display: block;
+    font-weight: 700;
+    font-size: larger;
+    padding: 1rem 0;
+    text-align: left;
+}
+
+formsection {
+    display: flex;
+    justify-content: space-between;
+}
 
 #root {
     min-height: 100vh;
@@ -42,7 +62,7 @@ section {
 /* Контейнер */
 .container {
     width: 100%;
-    max-width: 1300px; /* Максимальная ширина контейнера */
+    max-width: 1300px;
     margin: 0 auto; /* Центрирование */
     padding: 0 50px; /* Отступы по бокам */
 }
@@ -50,6 +70,7 @@ section {
 
 
 .logo {
+    font-weight: 700;
     font-size: 24px;
     color: white;
     text-decoration: none;
@@ -318,8 +339,9 @@ section {
 
 }
 
-#sec{
+.form-row{
     display: flex;
+    flex-wrap: wrap;
     justify-content: left;
     gap: 1rem;
 }

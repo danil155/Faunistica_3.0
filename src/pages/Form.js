@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import SpecimenForm from "../components/specimen-form/SpecimenForm";
 
 let data = {};
 
@@ -6,13 +7,62 @@ const TogglePage = () => {
   const [isTextMode, setIsTextMode] = useState(true);
   const [text, setText] = useState("");
   const [data, setData] = useState("");
+  const [formData, setFormData] = useState({
+    country: '',
+    region: '',
+    district: '',
+    place: '',
+    north: '',
+    east: '',
+    place_notes: '',
+    begin_year: null,
+    begin_month: null,
+    begin_day: null,
+    end_year: null,
+    end_month: null,
+    end_day: null,
+    biotope: '',
+    collector: '',
+    measurement_units: '',
+    selective_gain: '', // выборочное усиление
+    matherial_notes: '', //примечания к сбору материала
+    family: '',
+    genus: '',
+    species: '',
+    taxonomic_notes: '',
+    is_new_species: null,
+    is_defined_species: null,
+    is_in_wsc: null,
+    specimens: {}
+  });
 
   const toggleMode = () => {
     setIsTextMode(!isTextMode);
   };
 
-  const handleChange = (event) => {
+  const handleTextChange = (event) => {
     setText(event.target.value); // Обновляем состояние при вводе
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const transformSpecimensToObject = (specimensArray) => {
+    const result = {};
+    
+    specimensArray.forEach(specimen => {
+      const key = `${specimen.gender}_${specimen.maturity}`;
+      result[key] = specimen.count;
+    });
+    
+    return result;
+  };
+
+  const handleSpecimensChange = (newSpecimensArray) => {
+    const specimensObject = transformSpecimensToObject(newSpecimensArray);
+    setFormData(prev => ({ ...prev, specimens: specimensObject }));
   };
 
   async function handleSubmit() {
@@ -68,7 +118,7 @@ const TogglePage = () => {
               placeholder="Введите ваш текст здесь..."
               className="text-area"
               value={text}
-              onChange={handleChange}
+              onChange={handleTextChange}
             ></textarea>
             <button id="button_submit_text" onClick={handleSubmit}>
               Автозаполнение
@@ -89,136 +139,91 @@ const TogglePage = () => {
               </p>
             </section>
             <form action="" method="get" className="form">
-              <h3>Географическое положение</h3>
-              <div id="sec">
-                <div className="form">
-                  <label>Страна: </label>
-                  <input className="form-element" defaultValue={data.country} />
-                </div>
-                <div className="form">
-                  <label>Регион: </label>
-                  <input className="form-element" defaultValue={data.region} />
-                </div>
-                <div className="form">
-                  <label>Район: </label>
-                  <input
-                    className="form-element"
-                    defaultValue={data.district}
-                  />
-                </div>
-                <div className="form">
-                  <label>Место сбора: </label>
-                  <input className="form-element"
+              <div class="sec">
+                <legend>Административное положение</legend>
+                <div className="form-row">
+                <label for="counry">Страна: <input className="form-element" defaultValue={data.country} id="country" /></label>
+                <label for="region"> Регион: <input className="form-element" defaultValue={data.region} id="region" /></label>
+                <label for="district">Район: <input className="form-element" defaultValue={data.district} id="district"  /></label>
+                <label for="gathering-place">Место сбора: <input className="form-element"
                   defaultValue={data.gathering_place}
-                  />
+                  id="gathering-place" />
+                </label>
                 </div>
               </div>
-              <h3>Географическое положение</h3>
-              <div id="sec">
-                <div className="form">
-                  <input className="form-element"
-                         defaultValue={data.coordinate_north}
-                  />
-                  <label>⁰N</label>
-                </div>
-                <div className="form">
-                <input className="form-element"
-                       defaultValue={data.coordinate_east}
-                />
-                <label>⁰E</label>
+
+              <div class="sec">
+                <legend>Географическое положение</legend>
+                <div className="form-row">
+                <label for="coordinate_north">⁰N<input className="form-element" defaultValue={data.coordinate_north}
+                         id="coordinate_north" /></label>
+                <label for="coordinate_east">⁰E<input className="form-element" defaultValue={data.coordinate_east}
+                         id="coordinate_east" /></label>
                 </div>
               </div>
-              <h3>Сбор материала</h3>
-              <div id="sec">
-              <div className="form">
-                  <label>Дата:</label>
-                  <input
+
+              <div class="sec">
+                <legend>Сбор материала</legend>
+                <div className="form-row">
+                <label for="date">Дата: <input
                     type="date"
                     className="form-element"
                     defaultValue={data.date}
+                    id="date"
                   />
-                </div>
-                <div className="form">
-                  <label>Биотоп:</label>
-                  <input
+                </label>
+
+                <label for="biotope">Биотоп: <input
                     className="form-element"
-                  />
-                </div>
-                <div className="form">
-                  <label>Единицы измерения:</label>
-                  <input
+                    id="biotope"
+                    type="text"
+                  /></label>
+                
+                <label for="measurement-units">Единицы измерения: <input
                     className="form-element"
                     defaultValue={"Особи, шт."}
-                  />
-                </div>
-                <div className="form">
-                  <label>Коллектор: </label>
-                  <input
-                    className="form-element"
-                    defaultValue={data.collector}
-                  />
-                </div>
-                <div className="form">
-                  <label>Выборочное условие:</label>
-                  <input
-                    className="form-element"
-                  />
-                </div>
-              </div>
-              <h3>Сбор материала</h3>
-              <div id="sec">
-              <div className="form">
-                  <label>Семейство:</label>
-                  <div className="form-element">паук</div>
-                </div>
-                <div className="form">
-                  <label>Род:</label>
-                  <div className="form-element">паук</div>
-                </div>
-                <div className="form">
-                  <label>Видовое название:</label>
-                  <div className="form-element">паук</div>
-                </div>
-                <div className="form">
-                  <label>Таксономические примечания:</label>
-                  <input className="form-element"/>
-                </div>
-              </div>
-              <h3>Количество:</h3>
-              <div id="sec">
-                <div className="form">
-                  <label>Самцов:</label>
-                  <input className="form-element" type="number" min="0" max="20" defaultValue={data.count_males}/>
-                </div>
-                <div className="form">
-                  <label>Субвзрослых самцов:</label>
-                  <input className="form-element" type="number" min="0" max="20" defaultValue={0}/>
-                </div>
-                <div className="form">
-                  <label>Самок:</label>
-                  <input className="form-element" type="number" min="0" max="20" defaultValue={data.count_females}/>
-                </div>
-                <div className="form">
-                  <label>Субвзрослых самок:</label>
-                  <input className="form-element" type="number" min="0" max="20" defaultValue={0}/>
-                </div>
-                <div className="form">
-                  <label>Взрослых (пол не определен):</label>
-                  <input className="form-element" type="number" min="0" max="20" defaultValue={0}/>
-                </div>
-                <div className="form">
-                  <label>Ювенильных (пол не определен):</label>
-                  <input className="form-element" type="number" min="0" max="20" defaultValue={0}/>
-                </div>
-                <div className="form">
-                  <label>Примечания об экземпляре:</label>
-                  <input className="form-element"/>
-                </div>
+                    id="measurement-units"
+                  /></label>
+                  
+                <label for="collector">Коллектор: <input
+                  className="form-element"
+                  defaultValue={data.collector}
+                  id="collector"
+                /></label>
 
+                <label for="selective-gain">Выборочное усиление: <input
+                    className="form-element"
+                    id="selective-gain"
+                  /></label>
+                  </div>
               </div>
-              <div className="form">
-                <input type="submit" className="submit" value="Сохранить!" />
+
+              <div class="sec">
+                <legend>Таксономия</legend>
+                <div className="form-row">
+                <label for="family">Семейство: <input className="form-element" defaultValue={data.family} id="family" /></label>
+                <label for="genera">Род: <input className="form-element" defaultValue={data.genera} id="genera" /></label>
+                <label for="species">Видовое название: <input className="form-element" id="species" /></label>
+                <label for="taxonomic-notes">Таксономические примечания: <input className="form-element" id="taxonomic-notes" /></label>
+                </div>
               </div>
+
+              
+
+              <div class="sec">
+                <legend>Добавление особей</legend>
+
+                <SpecimenForm 
+              value={Object.keys(formData.specimens).length > 0 
+                ? Object.entries(formData.specimens).map(([key, count]) => {
+                    const [gender, maturity] = key.split('_');
+                    return { gender, maturity, count };
+                  })
+                : []}
+              onChange={handleSpecimensChange} 
+              />
+              </div>
+              <button type="submit">Отправить наблюдение</button>
             </form>
           </div>
         )}
