@@ -1,0 +1,235 @@
+:root {
+    --main-bg-color: #4CAF50;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+  }
+  
+  h3, h4 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    margin: 20px;
+    font-size: 16px;
+  }
+  
+  p {
+    color: #7f8c8d;
+    margin: 10px 0;
+  }
+  
+  /* Кнопки */
+  button {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  .toggle-button, .switch-mode-button {
+    background-color: var(--main-bg-color);
+    color: white;
+    margin: 10px 0;
+  }
+  
+  .toggle-button:hover, .switch-mode-button:hover {
+    background-color: #2980b9;
+  }
+  
+  .submit-button {
+    background-color: #27ae60;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .submit-button:hover {
+    background-color: #219653;
+  }
+  
+  .reset-button {
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+  }
+  
+  .reset-button.soft-reset {
+    color: #e74c3c;
+    border-color: #e74c3c;
+  }
+  
+  .reset-button.soft-reset:hover {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .reset-button.hard-reset {
+    color: #c0392b;
+    border-color: #c0392b;
+  }
+  
+  .reset-button.hard-reset:hover {
+    background-color: #c0392b;
+    color: white;
+  }
+  
+  /* Форма */
+  .specimen-form {
+    background-color: #f8f9fa;
+    padding: 0 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .section {
+    background-color: white;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .section.pinned {
+    border-left: 4px solid #27ae60;
+    background-color: #f1f8fe;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .pin-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+    color: #7f8c8d;
+  }
+  
+  .pin-toggle input {
+    margin: 0;
+  }
+  
+  /* Сетка формы */
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .form-group label {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+  }
+  
+  .form-group textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+  
+  /* Действия формы */
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+  
+  .reset-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .modal-actions button {
+    padding: 8px 16px;
+  }
+  
+  .confirm-button {
+    background-color: #e74c3c;
+    color: white;
+  }
+  
+  .cancel-button {
+    background-color: #bdc3c7;
+    color: #333;
+  }
+  
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .reset-buttons {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }

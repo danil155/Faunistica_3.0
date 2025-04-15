@@ -23,10 +23,6 @@ const Footer = () => {
           <a href="/">Instagram</a>
           <a href="/">ВКонтакте</a>
         </div>
-        <div className="policies">
-          <a href="/">Политика конфиденциальности</a>
-          <a href="/">Условия использования</a>
-        </div>
       </div>
     </footer>
   );

@@ -11,6 +11,7 @@
 }
 body {
     font-family: Onest;
+    font-size: 14px;
     background-color: #f9f9f9;
     color: #333;
 }
@@ -30,7 +31,6 @@ section {
 label {
     display: flex;
   flex-direction: column;
-  flex: 1 1 200px; /* flex-grow, flex-shrink, flex-basis */
   max-width: 300px;
   min-width: 0; 
 }
@@ -79,14 +79,12 @@ formsection {
 .nav {
     display: flex;
     justify-content: center;
-    flex-grow: 1;
 }
 
 .nav-list {
     display: flex;
     list-style: none;
     padding: 0;
-    margin: 20;
 }
 
 .nav-list li {
@@ -96,7 +94,7 @@ formsection {
 .nav-list a {
     color: white;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .nav-list a:hover {
@@ -333,7 +331,7 @@ formsection {
 
 .form-element {
     resize: none;
-    font-size: 16px;
+    font-size: 14px;
     padding: 7px;
     max-height: 36px;
 

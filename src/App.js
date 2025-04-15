@@ -3,11 +3,12 @@ import React from "react";
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import Home from "./pages/Home";
-import Form from "./pages/Form";
 import LoginModal from './components/login/LoginModal';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import FormModePage from "./pages/FormModePage";
+import TextModePage from "./pages/TextModePage";
 
 function App() {
   const location = useLocation();
@@ -65,7 +66,8 @@ function App() {
             />
             </>
             }/>
-          <Route path="/form/text" element={<Form/>}/>
+          <Route path="/form" element={<FormModePage/>}/>
+          <Route path="/text" element={<TextModePage/>}/>
         </Routes>
 
         <Footer />

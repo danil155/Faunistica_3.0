@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
   return (
       <nav className="nav">
-        <div className="container">
           <div className="nav-content">
             <NavLink to="/" className="logo" style={{color: "white", textDecoration: "none"}}>
               <div className="logo">
@@ -17,7 +16,7 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
             <nav className="nav">
               <ul className="nav-list">
                 <li>
-                  <NavLink to="/form/text" >Форма</NavLink>
+                  <NavLink to="/text" >Форма</NavLink>
                 </li>
                 <li>
                   <a href="/">Инструкция</a>
@@ -44,7 +43,6 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
           )}
             </div>
           </div>
-        </div>
       </nav>
   );
 };
