@@ -1,0 +1,5 @@
+/.idea
+/.env
+/learning
+/service_log.log
+/test.py
