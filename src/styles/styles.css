@@ -16,36 +16,8 @@ body {
     color: #333;
 }
 
-header {
-    display: flex;
-    justify-content: left;
-    padding: 10px 0 10px 0;
-    gap: 1rem;
-    height: max-content;
-}
-
-section {
-    margin: 0 0 20px 0;
-}
-
-label {
-    display: flex;
-  flex-direction: column;
-  max-width: 300px;
-  min-width: 0; 
-}
-
-legend {
-    display: block;
-    font-weight: 700;
-    font-size: larger;
-    padding: 1rem 0;
-    text-align: left;
-}
-
-formsection {
-    display: flex;
-    justify-content: space-between;
+h3 {
+    font-weight: 500;
 }
 
 #root {
@@ -60,71 +32,14 @@ formsection {
 
 
 /* Контейнер */
-.container {
+.main-container {
     width: 100%;
-    max-width: 1300px;
     margin: 0 auto; /* Центрирование */
-    padding: 0 50px; /* Отступы по бокам */
 }
-
-
-
-.logo {
-    font-weight: 700;
-    font-size: 24px;
-    color: white;
-    text-decoration: none;
-}
-
-.nav {
-    display: flex;
-    justify-content: center;
-}
-
-.nav-list {
-    display: flex;
-    list-style: none;
-    padding: 0;
-}
-
-.nav-list li {
-    margin-right: 20px;
-}
-
-.nav-list a {
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.nav-list a:hover {
-    text-decoration: underline;
-}
-
-.user-container {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 15px;
-}
-
-.auth-buttons a,
-.user-menu a {
-    color: white;
-    text-decoration: none;
-    margin-left: 15px;
-}
-
-.avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    margin-right: 10px;
-}
-
 
 /* Hero Section */
 .hero {
+    background-attachment: fixed;
     position: relative;
     width: 100%;
     height: 400px;
@@ -145,16 +60,22 @@ formsection {
 
 .hero-text {
     position: absolute;
-    top: 50%;
+    padding: 10px 20px;
+    top: 70%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     color: white;
+    background-color: rgba(207, 174, 165, 0.213);  
+    backdrop-filter: blur(8px);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .hero-text h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
+    font-size: 34px;
+    margin-bottom: 10px;
+    font-weight: 600;
 }
 
 .join-button {
@@ -165,55 +86,21 @@ formsection {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
+    display: inline-block;
+    width: fit-content;
+    text-decoration: none;
+}
+
+.hero .join-button {
+    margin-bottom: 10px;
 }
 
 .join-button:hover {
     background-color: #45a049;
 }
 
-/* Main content */
-/*main {
-    padding: 0;
-}*/
-
-.project-info-placeholder,
-.volunteer-guide-placeholder,
-.statistics-placeholder,
-.about-placeholder {
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-bottom: 30px;
-}
-
-.project-info-placeholder h2,
-.volunteer-guide-placeholder h2,
-.statistics-placeholder h2,
-.about-placeholder h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-}
-
-.project-info-placeholder p,
-.volunteer-guide-placeholder p,
-.statistics-placeholder p,
-.about-placeholder p {
-    font-size: 16px;
-    color: #555;
-}
-
 .add-data {
     text-align: center;
-}
-
-.join-button {
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
 }
 
 .add-button:hover {
@@ -246,6 +133,7 @@ formsection {
 .popup-content h2 {
     font-size: 24px;
     margin-bottom: 20px;
+    letter-spacing: 2px;
 }
 
 .popup-content label {
@@ -264,20 +152,6 @@ formsection {
     font-size: 14px;
 }
 
-.submit-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.submit-button:hover {
-    background-color: #45a049;
-}
 
 .close-button {
     font-size: 24px;
@@ -361,21 +235,48 @@ form {
     border: none;
 }
 
-button {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
+.what-we-do {
+    text-align: center;
+    padding: 20px;
 }
 
-button {
-    background-color: #4CAF50;
-    color: white;
-    cursor: pointer;
-    border: none;
+.about-project {
+    display:flex;
+    justify-content: space-around;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
 }
 
-button:hover {
-    background-color: #45a049;
+.proj-step {
+    text-align: center;
+    width: 350px;
+}
+
+#volunteer-spider {
+    width: 300px;
+}
+
+#volunteer-info {
+    display: flex;
+    justify-content:flex-start;
+    gap: 60px;
+    padding: 20px 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#volunteer-info-container {
+    background-color: #e8f5e9;
+}
+
+#volunteer-info-text {
+    max-width: 500px;
+    margin: auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 @media (max-width: 768px) {

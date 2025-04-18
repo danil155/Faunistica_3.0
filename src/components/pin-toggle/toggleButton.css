@@ -1,0 +1,28 @@
+.lock-toggle {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: relative;
+
+  }
+  
+  .lock-toggle-input {
+    display: none;
+  }
+  
+  .lock-toggle-icon {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-image: url('../../img/lock-open.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transition: background-image 0.2s ease;
+  }
+  
+  .lock-toggle-input:checked + .lock-toggle-icon {
+    background-image: url('../../img/lock-closed.svg');
+  }
+  

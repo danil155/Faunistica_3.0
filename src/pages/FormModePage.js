@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useFormContext} from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
 import "../styles/formMode.css"
+import PinToggle from "../components/pin-toggle/PinToggle";
 
 const fieldsMap = {
   'Административное положение': ['country', 'region', 'district', 'place'],
@@ -10,6 +11,7 @@ const fieldsMap = {
   'Сбор материала': ['begin_date', 'end_date', 'biotope', 'collector', 'measurement_units', 'selective_gain'],
   'Таксономия': ['family', 'genus', 'species', 'taxonomic_notes']
 };
+
 
 const FormModePage = () => {
   const navigate = useNavigate();
@@ -83,7 +85,6 @@ const FormModePage = () => {
     console.log("Отправка данных:", formState);
     // Здесь будет логика отправки на сервер
     resetForm(resetMode === 'soft');
-    console.log("uwu");
     alert("Форма отправлена! Незакреплённые поля очищены.");
   };
 
@@ -106,6 +107,7 @@ const FormModePage = () => {
         <button 
           onClick={() => navigate('/text')} 
           className="switch-mode-button"
+          type="button"
         >
           Перейти к текстовому вводу
         </button>
@@ -114,18 +116,22 @@ const FormModePage = () => {
       <form onSubmit={handleSubmit} className="specimen-form">
         {/* Секция: Административное положение */}
         <div className={getSectionClassName('Административное положение')}>
-          <div className="section-header">
+          <div className={`section-header ${collapsedSections['Административное положение'] ? 'collapsed' : ''}`}>
+          <div className="section-controls">
             <h4>Административное положение</h4>
-            <label className="pin-toggle">
-              Закрепить:
-              <input
-                type="checkbox"
-                checked={pinnedSections['Административное положение'] || false}
-                onChange={() => togglePinSection('Административное положение')}
-              />
-            </label>
+            <PinToggle isChecked={pinnedSections['Административное положение'] || false} 
+            onChange={() => togglePinSection('Административное положение')} />
+            </div>
+            <button
+              className="collapse-toggle"
+              type="button"
+              onClick={() => toggleCollapseSection('Административное положение')}
+            >
+              {collapsedSections['Административное положение'] ? 'Развернуть' : 'Свернуть'}
+            </button>
+            
           </div>
-          
+          {!collapsedSections['Административное положение'] && (
           <div className="form-grid">
             <div className="form-group">
               <label>Страна:</label>
@@ -167,22 +173,29 @@ const FormModePage = () => {
               />
             </div>
           </div>
+          )}
         </div>
-
+        
         {/* Секция: Географическое положение */}
         <div className={getSectionClassName('Географическое положение')}>
-          <div className="section-header">
+          <div className={`section-header ${collapsedSections['Географическое положение'] ? 'collapsed' : ''}`}>
+          <div className="section-controls">
             <h4>Географическое положение</h4>
-            <label className="pin-toggle">
-              Закрепить:
-              <input
-                type="checkbox"
-                checked={pinnedSections['Географическое положение'] || false}
-                onChange={() => togglePinSection('Географическое положение')}
-              />
-            </label>
+            
+            <PinToggle isChecked={pinnedSections['Географическое положение'] || false} 
+            onChange={() => togglePinSection('Географическое положение')} />
+            </div>
+            <button
+              className="collapse-toggle"
+              type="button"
+              onClick={() => toggleCollapseSection('Географическое положение')}
+            >
+              {collapsedSections['Географическое положение'] ? 'Развернуть' : 'Свернуть'}
+            </button>
+            
           </div>
 
+          {!collapsedSections['Географическое положение'] && (
           <div className="form-grid">
             <div className="form-group">
               <label>Широта (N):</label>
@@ -206,21 +219,28 @@ const FormModePage = () => {
               />
             </div>
           </div>
+          )}
         </div>
 
         {/* Секция: Сбор материала */}
         <div className={getSectionClassName('Сбор материала')}>
-          <div className="section-header">
+          <div className={`section-header ${collapsedSections['Сбор материала'] ? 'collapsed' : ''}`}>
+          <div className="section-controls">
             <h4>Сбор материала</h4>
-            <label className="pin-toggle">
-              Закрепить:
-              <input
-                type="checkbox"
-                checked={pinnedSections['Сбор материала'] || false}
-                onChange={() => togglePinSection('Сбор материала')}
-              />
-            </label>
+            <PinToggle isChecked={pinnedSections['Сбор материала'] || false} 
+            onChange={() => togglePinSection('Сбор материала')} />
+            </div>
+            <button
+              className="collapse-toggle"
+              type="button"
+              onClick={() => toggleCollapseSection('Сбор материала')}
+            >
+              {collapsedSections['Сбор материала'] ? 'Развернуть' : 'Свернуть'}
+            </button>
+            
           </div>
+
+          {!collapsedSections['Сбор материала'] && (
 
           <div className="form-grid">
             <div className="form-group">
@@ -283,21 +303,28 @@ const FormModePage = () => {
               />
             </div>
           </div>
+          )}
         </div>
 
         {/* Секция: Таксономия */}
         <div className={getSectionClassName('Таксономия')}>
-          <div className="section-header">
+          <div className={`section-header ${collapsedSections['Таксономия'] ? 'collapsed' : ''}`}>
+          <div className="section-controls">
             <h4>Таксономия</h4>
-            <label className="pin-toggle">
-              Закрепить:
-              <input
-                type="checkbox"
-                checked={pinnedSections['Таксономия'] || false}
-                onChange={() => togglePinSection('Таксономия')}
-              />
-            </label>
+            <PinToggle isChecked={pinnedSections['Таксономия'] || false} 
+            onChange={() => togglePinSection('Таксономия')} />
+            </div>
+            <button
+              className="collapse-toggle"
+              type="button"
+              onClick={() => toggleCollapseSection('Таксономия')}
+            >
+              {collapsedSections['Таксономия'] ? 'Развернуть' : 'Свернуть'}
+            </button>
+            
           </div>
+
+          {!collapsedSections['Таксономия'] && (
 
           <div className="form-grid">
             <div className="form-group">
@@ -340,6 +367,7 @@ const FormModePage = () => {
               />
             </div>
           </div>
+          )}
         </div>
 
         {/* Секция: Добавление особей (без возможности закрепления) */}

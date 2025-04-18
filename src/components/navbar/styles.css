@@ -9,3 +9,56 @@ nav {
     gap: 2em;
 }
 
+.logo {
+    font-weight: 650;
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+}
+
+.nav {
+    display: flex;
+    justify-content: center;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.nav-list li {
+    margin-right: 20px;
+}
+
+.nav-list a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-list a:hover {
+    text-decoration: underline;
+}
+
+.user-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+}
+
+.auth-buttons a,
+.user-menu a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+

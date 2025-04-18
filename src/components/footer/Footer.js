@@ -5,7 +5,7 @@ import "./style.css";
 const Footer = () => {
   return (
     <footer className="footer">
-      <div className="container">
+      
         <div className="project-info">
           <p>
             Паутина Данных — это проект, направленный на создание базы данных
@@ -23,7 +23,7 @@ const Footer = () => {
           <a href="/">Instagram</a>
           <a href="/">ВКонтакте</a>
         </div>
-      </div>
+
     </footer>
   );
 };

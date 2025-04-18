@@ -1,11 +1,16 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 
-import spider from "../img/main_spider.webp";
+import spider from "../img/main_spider3.png";
+import icon1 from "../img/about-proj-icon-1.svg";
+import icon2 from "../img/about-proj-icon-2.svg";
+import icon3 from "../img/about-proj-icon-3.svg";
+import spidey from "../img/spider.png";
 
 const Home = ({isAuthenticated, onLoginClick}) => {
     return ( 
         <main className="main">
-        <div className="container">
+        <div className="main-container">
           <section className="hero">
             <div className="hero-image">
               <img
@@ -17,44 +22,46 @@ const Home = ({isAuthenticated, onLoginClick}) => {
                 <h1>Станьте нашим волонтёром!</h1>
                 {isAuthenticated ? 
                   <p className="participant">Ура! Вы участник!</p> :
-                  <button className="join-button" onClick={onLoginClick}>Стать волонтером</button>
+                  <button className="join-button" onClick={onLoginClick}>Участвовать</button>
                 }
               </div>
             </div>
           </section>
 
-          <section className="project-info-placeholder">
-            <h2>Информация о проекте</h2>
+          <section className="what-we-do">
+            <h2>Помогите оцифровать научные исследование о фауне Пермского края</h2>
             <p>
-              Здесь будет описание нашего проекта.
+              Чем мы занимаемся?
             </p>
           </section>
 
-          <section className="volunteer-guide-placeholder">
-            <h2>Инструкция волонтера</h2>
-            <p>
-              Здесь будет инструкция для волонтеров.
-            </p>
+          <section className="about-project">
+            <div className="proj-step">
+              <img src={icon1} />
+              <h3>Разработка платформы оцифровки данных</h3>
+            </div>
+            <div className="proj-step">
+              <img src={icon2} />
+              <h3>Сбор базы ранных по обнаруженным видам</h3>
+            </div>
+            <div className="proj-step">
+              <img src={icon3} />
+              <h3>Обеспечение свободного доступа к полученным данным</h3>
+            </div>
           </section>
 
-          <section className="statistics-placeholder">
-            <h2>Статистика</h2>
-            <p>
-              Здесь будет отображена статистика по проекту (как вариант).
-            </p>
+          <section id="volunteer-info-container">
+            <div id="volunteer-info">
+            <img src={spidey} id="volunteer-spider" />
+            
+            <div id="volunteer-info-text">
+              <h2>Роль волонтеров</h2>
+              <p>Нам нужна помощь волонтеров в распознавании и структурировании 
+                сведений о находках пауков из предложенных научных статей: кого, где, когда и кто нашел. </p>
+              <Link className="join-button" to="/">Узнать больше</Link>
+            </div>
+            </div>
           </section>
-          <a
-              href="https://thenerdstash.com/deep-rock-galactic-the-origin-story-behind-rock-and-stone/"
-              target="_blanc"
-              rel="noopener noreferrer"
-              style={{color: "black"}}>
-            <section className="about-placeholder">
-              <h2>О нас</h2>
-              <p>
-                Rock & Stone!
-              </p>
-            </section>
-          </a>
         </div>
       </main>
      );

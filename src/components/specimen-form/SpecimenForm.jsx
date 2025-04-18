@@ -63,7 +63,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
   };
 
   return (
-    <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px', marginBottom: '20px' }}>
+    <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
         <div>
