@@ -48,10 +48,10 @@ class Messages:
                'Для того, чтобы начать его, напишите "Опрос" или нажмите на ссылку: /sociology'
 
     @staticmethod
-    def auth_complete(tmp: str, tm: str) -> str:
+    def auth_complete(tmp: str, time: str) -> str:
         return 'Для ресурса [Паутина данных](https://sozontov.cc/faunistica_2.0) код действует 36 часов. ' \
                'Для [арахнологической библиотеки](https://sozontov.cc/arachnolibrary) действует бессрочно. ' \
-               f'Код доступа сгенерирован {tm}: ' \
+               f'Код доступа сгенерирован {time}: ' \
                f'```{tmp}```'
 
     @ staticmethod

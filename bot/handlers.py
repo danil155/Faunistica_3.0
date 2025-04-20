@@ -6,6 +6,7 @@ from aiogram.fsm.context import FSMContext
 import random
 import string
 from datetime import datetime
+import hashlib
 
 from config import config_vars, config
 from messages import Messages
@@ -259,16 +260,17 @@ class Handlers:
                 )
 
             # Generate access code
-            tmp = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+            hashcode = hashlib.sha256(code.encode()).hexdigest()
             await self.db.update_user(
                 user_id=message.from_user.id,
                 reg_stat=1,
-                hash=tmp,
+                hash=hashcode,
                 hash_date=datetime.now()
             )
 
             await message.answer(
-                Messages.auth_complete(tmp, datetime.now().strftime("%Y-%m-%d")),
+                Messages.auth_complete(code, datetime.now().strftime("%Y-%m-%d")),
                 parse_mode="Markdown"
             )
             await self.db.log_action(
@@ -421,7 +423,9 @@ class Handlers:
 
         original_message = message.reply_to_message.text
         try:
-            user_id = int(original_message.split("ID: ")[1].split("\n")[0])
+            print(original_message)
+            user_id = int(original_message.split("ID: ")[1].split(" ")[0])
+            print(user_id)
         except (IndexError, ValueError):
             await message.answer("Не удалось извлечь ID пользователя из сообщения.")
             return
@@ -560,7 +564,7 @@ class Handlers:
 
         await self.bot.send_message(
             chat_id=config.ADMIN_CHAT_ID,
-            text=f"Пользователь @{message.from_user.username} (ID: {message.from_user.id}) "
+            text=f"Пользователь @{message.from_user.username}, ID: {message.from_user.id} "
                  f"обратился в поддержку:\n\n{message.text}"
         )
 
@@ -574,7 +578,7 @@ class Handlers:
             await message.answer(Messages.name_already_exists())
         elif len(name_msg) < 3:
             await message.answer(Messages.name_too_short())
-        elif len(name_msg) > 20:
+        elif len(name_msg) > 40:
             await message.answer(Messages.name_too_long())
         elif any(c in name_msg for c in ".,!?;:"):
             await message.answer(Messages.name_has_punctuation())
@@ -675,6 +679,7 @@ class Handlers:
 
     async def sociology_rating_handler(self, message: Message, state: FSMContext):
         answer = message.text.lower()
+        print(answer)
 
         if answer in config_vars.YES_WORDS:
             rating_value = 1
