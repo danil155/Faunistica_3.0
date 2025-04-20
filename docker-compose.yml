@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: "postgres_db"
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PORT=${DB_PORT}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/pgdata
+    ports:
+      - "${DB_PORT}:5432"
+    restart: always
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: "pgadmin"
+    env_file:
+      - .env
+    volumes:
+      - data_pgadmin:/var/lib/pgadmin
+    ports:
+      - "8080:80"
+  app:
+    build: .
+    container_name: "python_app"
+    depends_on:
+      - db
+    working_dir: /app
+    command: ["./wait-for-postgres.sh", "python3", "app.py"]
+
+volumes:
+  postgres_data:
+  data_pgadmin:
