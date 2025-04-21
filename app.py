@@ -1,7 +1,8 @@
 import logging
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
-
+import asyncio
+from database.database import init_db
 from back_api.info import get_parameters_dict
 
 
@@ -27,4 +28,5 @@ def find_pizzas_by_budget() -> tuple[Response, int]:
 
 
 if __name__ == '__main__':
+    asyncio.run(init_db())
     app.run(host='0.0.0.0', port=5001, debug=False)
