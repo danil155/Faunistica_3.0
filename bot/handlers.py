@@ -142,7 +142,7 @@ class Handlers:
     # ========== COMMAND HANDLERS ========== #
 
     async def start_command(self, message: Message):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
         await message.answer(
             Messages.start(message.from_user.first_name),
@@ -152,7 +152,7 @@ class Handlers:
         )
 
     async def register_command(self, message: Message, state: FSMContext):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
         async for session in self.db_session_factory():
             user = await get_user(session, message.from_user.id)
@@ -183,7 +183,7 @@ class Handlers:
                 await self.continue_registration(message, user, state)
 
     async def continue_registration(self, message: Message, user, state: FSMContext):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
         reg_stat = user.reg_stat
 
@@ -231,7 +231,7 @@ class Handlers:
             )
 
     async def auth_command(self, message: Message):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
 
         async for session in self.db_session_factory():
@@ -288,7 +288,7 @@ class Handlers:
                 )
 
     async def menu_command(self, message: Message):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
         await message.answer(
             "Вы вызвали меню",
@@ -296,7 +296,7 @@ class Handlers:
         )
 
     async def stats_command(self, message: Message):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
 
         async for session in self.db_session_factory():
@@ -318,7 +318,7 @@ class Handlers:
                 # Здесь можно реализовать отправку файла с данными
 
     async def rename_command(self, message: Message, state: FSMContext):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
 
         async for session in self.db_session_factory():
@@ -340,7 +340,7 @@ class Handlers:
                 await state.set_state(RenameStates.waiting_for_new_name)
 
     async def support_command(self, message: Message, state: FSMContext):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
         if message.chat.id < 0:
             await message.answer("Камон, люди из этого чата должны оказывать техподдержку, а не просить её")
@@ -359,7 +359,7 @@ class Handlers:
         await state.set_state(SupportStates.waiting_for_question)
 
     async def sociology_command(self, message: Message, state: FSMContext):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
 
         async for session in self.db_session_factory():
@@ -413,7 +413,7 @@ class Handlers:
                     await state.set_state(SociologyStates.waiting_for_email)
 
     async def cancel_command(self, message: Message, state: FSMContext):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
 
         await state.clear()
@@ -430,14 +430,15 @@ class Handlers:
         )
 
     async def reply_to_user_command(self, message: Message):
-        if message.chat.type == 'private':
+        if message.chat.id != config.ADMIN_CHAT_ID:
             await message.answer("Команда доступна только в чате разработчиков.")
             return
+
         if not message.reply_to_message:
             await message.answer("Используйте команду /reply в ответ на сообщение пользователя.")
             return
 
-        reply_text = message.text.replace("/reply", "").strip()
+        reply_text = message.text.replace("/reply@FaunisticaV3Bot", "").replace("/reply", "").strip()
         if not reply_text:
             await message.answer("А че пустой ответ отправить захотел? Используй /reply еще раз и ответь нормально.")
             return
@@ -451,7 +452,7 @@ class Handlers:
             await message.answer("Не удалось извлечь ID пользователя из сообщения.")
             return
 
-        await self.bot.send_message(user_id, f"Ответ от поддержки:\n{reply_text}")
+        await self.bot.send_message(user_id, f"Ответ от поддержки:\n\n{reply_text}")
         await message.answer("Ответ отправлен пользователю.")
 
     # ========== STATE HANDLERS ========== #
@@ -792,7 +793,7 @@ class Handlers:
     # ========== OTHER HANDLERS ========== #
 
     async def other_content_handler(self, message: Message):
-        if message.chat.type == 'supergroup':
+        if message.chat.id == config.ADMIN_CHAT_ID:
             return
 
         async for session in self.db_session_factory():
