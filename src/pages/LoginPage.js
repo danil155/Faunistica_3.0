@@ -1,10 +1,13 @@
 import React from "react";
 import LoginModal from "../components/login/LoginModal";
 
-const LoginPage = () => {
+const LoginPage = ({onLogin, onClose}) => {
     return (
         <div className="login-container">
-            <LoginModal />
+            <LoginModal 
+                onClose={onClose}
+                onLogin={onLogin}
+            />
         </div>
     );
 };

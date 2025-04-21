@@ -13,23 +13,33 @@ const LoginModal = ({ onClose, onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  function handleSubmit (e){
+  async function loginUser(credentials) {
+    return fetch('http://localhost:8080/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(credentials)
+    })
+      .then(data => data.json())
+   }
+
+  const handleSubmit = async e =>{
     e.preventDefault();
     
     if (!password) {
       setError('Введите пароль');
       return;
     }
-    
-    // Здесь должна быть проверка пароля через API
-    // Для демо просто имитируем успешный вход
-    onLogin({
-      id: 1,
-      name: 'Иван Волонтеров',
-      telegram: '@volunteer123',
-      joinedAt: new Date().toISOString()
+    const token = await loginUser({
+      password
     });
-    navigate('/text')
+    if (token) {
+      onLogin(token);
+      navigate('/form');
+    } else {
+      setError('Неверный пароль');
+    }
   };
 
   return (

@@ -10,29 +10,32 @@ import { useState, useEffect } from 'react';
 import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
 import LoginPage from "./pages/LoginPage";
+import  useToken  from "./components/useToken";
+
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { token, setToken, removeToken } = useToken();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [userData, setUserData] = useState(null);
-
-  const handleLogin = (data) => {
-    setIsAuthenticated(true);
-    setUserData(data);
-    setShowLoginModal(false);
-  }
+  
+  
   const handleLogout = () => {
-    setIsAuthenticated(false);
-    setUserData(null);
+    removeToken();
     navigate('/');
   }
+
+  const handleClose = () => {
+    setShowLoginModal(false);
+    navigate('/');
+  }
+
   return (
     <div className="App">
         <Navbar 
-          isAuthenticated={isAuthenticated} 
+          isAuthenticated={!!token} 
           onLoginClick={() => setShowLoginModal(true)}
           onLogoutClick={handleLogout}
         />
@@ -42,18 +45,19 @@ function App() {
             <>
             {showLoginModal && (
               <LoginModal 
-                onClose={() => setShowLoginModal(false)}
-                onLogin={handleLogin}
+                onClose={handleClose}
+                
+                onLogin={setToken}
               />
             )}
             <Home
-              isAuthenticated={isAuthenticated}
+              isAuthenticated={!!token}
               onLoginClick={() => setShowLoginModal(true)}
             />
             </>
             }/>
-          <Route path="/form" element={<FormModePage/>}/>
-          <Route path="/text" element={<TextModePage/>}/>
+          <Route path="/form" element={!!token?<FormModePage />:<LoginPage onLogin={setToken} onClose={handleClose}/>}/>
+          <Route path="/text" element={!!token?<TextModePage />:<LoginPage onLogin={setToken} onClose={handleClose}/>}/>
         </Routes>
 
         <Footer />
