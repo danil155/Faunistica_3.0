@@ -279,6 +279,46 @@ form {
     gap: 10px;
 }
 
+header {
+    display: flex;
+    padding: 15px;
+}
+
+.text-container {
+    width: 100%;
+    padding: 0 50px;
+    margin: 0 auto;
+}
+
+.text-container .toggle-button {
+    margin: 0 10px;
+    background-color: var(--main-bg-color);
+    color: white;
+}
+
+#button_submit_text:disabled {
+    background-color: #8eb98f;
+}
+
+#button_submit_text {
+    background-color: var(--main-bg-color);
+    color: white;
+}
+
+.content {
+    max-width: 1440px;
+}
+
+.article-card {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px
+}
+
+.article-card img {
+    border-radius: 8px;
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 0 20px;

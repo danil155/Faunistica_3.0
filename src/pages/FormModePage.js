@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Link } from "react-router-dom";
 import { useFormContext} from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
 import "../styles/formMode.css"
 import PinToggle from "../components/pin-toggle/PinToggle";
+import DropDown from "../components/cascading-dropdown/DropDown";
+import ArticleInfo from "../components/article-info/ArticleInfo";
 
 const fieldsMap = {
   'Административное положение': ['country', 'region', 'district', 'place'],
@@ -14,7 +16,6 @@ const fieldsMap = {
 
 
 const FormModePage = () => {
-  const navigate = useNavigate();
   const {
     formState,
     setFormState,
@@ -33,17 +34,6 @@ const FormModePage = () => {
   // Обработчик изменений для текстовых полей
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormState(prev => ({ ...prev, [name]: value }));
-  };
-
-  // Обработчик изменений для чекбоксов/радио
-  const handleCheckboxChange = (e) => {
-    const { name, checked } = e.target;
-    setFormState(prev => ({ ...prev, [name]: checked }));
-  };
-
-  // Обработчик для полей даты
-  const handleDateChange = (name, value) => {
     setFormState(prev => ({ ...prev, [name]: value }));
   };
 
@@ -104,17 +94,15 @@ const FormModePage = () => {
     <div className="form-mode-container">
       <header>
         <h3>Заполните форму вручную</h3>
-        <button 
-          onClick={() => navigate('/text')} 
-          className="switch-mode-button"
-          type="button"
-        >
-          Перейти к текстовому вводу
-        </button>
+        <Link to="/text" className="switch-mode-button">Ввести текст</Link>
       </header>
 
       <form onSubmit={handleSubmit} className="specimen-form">
         {/* Секция: Административное положение */}
+        <div className="section article">
+          <h4>Ваша статья:</h4>
+          <ArticleInfo />
+        </div>
         <div className={getSectionClassName('Административное положение')}>
           <div className={`section-header ${collapsedSections['Административное положение'] ? 'collapsed' : ''}`}>
           <div className="section-controls">
@@ -133,36 +121,12 @@ const FormModePage = () => {
           </div>
           {!collapsedSections['Административное положение'] && (
           <div className="form-grid">
-            <div className="form-group">
-              <label>Страна:</label>
-              <input
-                type="text"
-                name="country"
-                value={formState.country}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Регион:</label>
-              <input
-                type="text"
-                name="region"
-                value={formState.region}
-                onChange={handleInputChange}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Район:</label>
-              <input
-                type="text"
-                name="district"
-                value={formState.district}
-                onChange={handleInputChange}
-              />
-            </div>
-
+            <DropDown 
+  default_country={formState.country} 
+  default_region={formState.region} 
+  default_district={formState.district} 
+  handleInputChange={handleInputChange} 
+/>
             <div className="form-group">
               <label>Место сбора:</label>
               <input

@@ -16,14 +16,13 @@ export const defaultState = {
   end_year: null,
   end_month: null,
   end_day: null,
+  begin_date: '', // Добавлено для совместимости
+  end_date: '',   // Добавлено для совместимости
   biotope: '',
   collector: '',
   measurement_units: '',
-  selective_gain: '', // выборочное усиление
-  matherial_notes: '', //примечания к сбору материала
-  family: '',
-  genus: '',
-  species: '',
+  selective_gain: '',
+  matherial_notes: '',
   taxonomic_notes: '',
   is_new_species: null,
   is_defined_species: null,
@@ -34,8 +33,11 @@ export const defaultState = {
 export const FormProvider = ({ children }) => {
   const [formState, setFormState] = useState(() => {
     const saved = localStorage.getItem('formData');
-    return saved ? JSON.parse(saved) : {
-      defaultState
+    const parsed = saved ? JSON.parse(saved) : defaultState;
+    return {
+      ...defaultState,
+      ...parsed,
+      specimens: parsed.specimens || {}
     };
   });
 

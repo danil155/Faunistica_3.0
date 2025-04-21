@@ -32,8 +32,8 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
             <div id="user-container" className="user-container">
             {isAuthenticated && (
             <>
-              <Link to="/dashboard" className="nav-link">Личный кабинет</Link>
-              <Link to="/text/form" className="nav-link">Добавить особей</Link>
+              <Link to="/" className="nav-link">Личный кабинет</Link>
+              <Link to="/text" className="nav-link">Добавить особей</Link>
             </>
           )}
           {isAuthenticated ? (

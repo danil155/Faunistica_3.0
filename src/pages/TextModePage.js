@@ -1,24 +1,57 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormContext } from "./FormContext";
+import ArticleInfo from "../components/article-info/ArticleInfo";
 
 const TextModePage = () => {
   const [text, setText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setFormState, pinnedData } = useFormContext();
+  const { setFormState, pinnedData, resetForm } = useFormContext();
 
   const handleTextChange = (event) => {
     setText(event.target.value);
+    setError(null); // Сбрасываем ошибку при изменении текста
+  };
+
+  // Функция для валидации и преобразования данных с сервера
+  const transformServerData = (data) => {
+    const transformed = {};
+    
+    // Обработка дат (пример)
+    if (data.begin_date) {
+      const [year, month, day] = data.begin_date.split('-');
+      transformed.begin_year = year;
+      transformed.begin_month = month;
+      transformed.begin_day = day;
+    }
+    
+    // Обработка координат (пример)
+    if (data.coordinates) {
+      const [north, east] = data.coordinates.split(',');
+      transformed.north = north.trim();
+      transformed.east = east.trim();
+    }
+    
+    // Возвращаем объединенные данные
+    return {
+      ...data,
+      ...transformed
+    };
   };
 
   async function handleSubmit() {
     if (!text.trim()) {
-      alert("Введите текст!");
+      setError("Введите текст для обработки!");
       return;
     }
 
+    setIsLoading(true);
+    setError(null);
+
     try {
-      const res = await fetch("http://127.0.0.1:5001/api/get_info", {
+      const res = await fetch("http://127.0.0.1:5000/api/get_info", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,55 +60,91 @@ const TextModePage = () => {
       });
 
       if (!res.ok) {
-        throw new Error(`Error: ${res.status}`);
+        throw new Error(`Ошибка сервера: ${res.status}`);
       }
 
       const result = await res.json();
       
-      // Обновляем состояние формы перед переходом
+      // Валидация и преобразование данных
+      const validatedData = transformServerData(result);
+      
+      // Сброс формы с сохранением закрепленных данных
+      resetForm(true); // Мягкий сброс (сохраняет закрепленные данные)
+      
+      // Обновление состояния формы
       setFormState(prev => ({
         ...prev,
-        ...result,
-        // Сохраняем закрепленные данные
-        ...Object.values(pinnedData).reduce((acc, sectionData) => ({
-          ...acc,
-          ...sectionData
-        }), {})
+        ...validatedData,
+        // Сохраняем только те закрепленные данные, поля которых не пришли с сервера
+        ...Object.entries(pinnedData).reduce((acc, [section, sectionData]) => {
+          Object.entries(sectionData).forEach(([field, value]) => {
+            if (!(field in validatedData)) {
+              acc[field] = value;
+            }
+          });
+          return acc;
+        }, {})
       }));
-    
+      
+      navigate('/form');
     } catch (error) {
-      console.error("Error request: ", error);
-    };
-
-    navigate('/form');
+      console.error("Ошибка запроса:", error);
+      setError(error.message || "Произошла ошибка при обработке текста");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
-    <div className="container">
-      {<>
-         <header>
-         <h3>Введите текст для частичного автозаполнения</h3>
-         <p>или</p>
-         <button 
-           onClick={() => navigate('/form')} 
-           className="toggle-button"
-         >
-           Заполните форму вручную
-         </button>
-       </header>
-       <div className="content">
-         <textarea
-           placeholder="Введите ваш текст здесь..."
-           className="text-area"
-           value={text}
-           onChange={handleTextChange}
-         ></textarea>
-         <button id="button_submit_text" onClick={handleSubmit}>
-           Автозаполнение
-         </button>
-       </div>
-       </>
-      }
+    <div className="text-container">
+      <header>
+        <h3>Введите текст для частичного автозаполнения</h3>
+        <p>или</p>
+        <button 
+          onClick={() => navigate('/form')} 
+          className="toggle-button"
+          disabled={isLoading}
+        >
+          Заполните форму вручную
+        </button>
+      </header>
+
+      <div className="section article">
+          <h4>Ваша статья:</h4>
+          <ArticleInfo />
+      </div>
+      
+      <div className="content">
+        <textarea
+          placeholder="Введите ваш текст здесь..."
+          className="text-area"
+          value={text}
+          onChange={handleTextChange}
+          disabled={isLoading}
+          id="send_text"
+        ></textarea>
+        
+        {error && (
+          <div className="error-message">
+            {error}
+          </div>
+        )}
+        
+        <button 
+          id="button_submit_text" 
+          onClick={handleSubmit}
+          disabled={isLoading || !text.trim()}
+        >
+          {isLoading ? (
+            <>
+              <span className="spinner"></span>
+              Обработка...
+            </>
+          ) : (
+            "Автозаполнение"
+          )}
+        </button>
+      </div>
     </div>
   );
 };

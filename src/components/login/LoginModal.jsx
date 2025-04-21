@@ -13,7 +13,7 @@ const LoginModal = ({ onClose, onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  function handleSubmit (e){
     e.preventDefault();
     
     if (!password) {
@@ -29,7 +29,7 @@ const LoginModal = ({ onClose, onLogin }) => {
       telegram: '@volunteer123',
       joinedAt: new Date().toISOString()
     });
-    navigate('/form/text')
+    navigate('/text')
   };
 
   return (

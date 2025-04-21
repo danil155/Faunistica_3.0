@@ -9,40 +9,26 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Сохраняем текущий путь при изменении
-  useEffect(() => {
-    localStorage.setItem('lastPath', location.pathname);
-  }, [location]);
-
-  // При загрузке проверяем сохранённый путь
-  useEffect(() => {
-    const lastPath = localStorage.getItem('lastPath');
-    if (lastPath && lastPath !== location.pathname) {
-      navigate(lastPath);
-    }
-  }, []);
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
 
-  const handleLogin = (userData) => {
+  const handleLogin = (data) => {
     setIsAuthenticated(true);
-    setUser(userData);
+    setUserData(data);
     setShowLoginModal(false);
-  };
-
+  }
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setUser(null);
-    navigate('/')
-  };
-
+    setUserData(null);
+    navigate('/');
+  }
   return (
     <div className="App">
         <Navbar 
