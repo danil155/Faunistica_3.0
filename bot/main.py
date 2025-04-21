@@ -4,7 +4,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.methods import DeleteWebhook
 
 from config import config
-from test_database import Database
+from database.database import init_db, get_session
 from handlers import Handlers
 
 
@@ -13,11 +13,10 @@ async def main():
     dp = Dispatcher(storage=MemoryStorage())
 
     # Initialize database
-    db = Database()
-    await db.connect()
+    await init_db()
 
     # Initialize handlers
-    handlers = Handlers(bot, db)
+    handlers = Handlers(bot, get_session)
     dp.include_router(handlers.router)
 
     try:
@@ -26,7 +25,6 @@ async def main():
         await dp.start_polling(bot)
     finally:
         await bot.session.close()
-        await db.pool.close()
 
 
 if __name__ == '__main__':

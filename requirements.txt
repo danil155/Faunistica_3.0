@@ -1,6 +1,8 @@
-flask
+flask~=3.1.0
 flask_cors
-geopy
-pygbif
+geopy~=2.4.1
+pygbif~=0.6.5
 sqlalchemy
 dotenv
+aiogram~=3.20.0
+python-dotenv~=1.1.0
