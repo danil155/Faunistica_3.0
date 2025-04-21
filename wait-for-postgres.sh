@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -f .env ]; then
-  export $(cat .env | grep -v '#' | xargs)
+  export $(cat .env | grep -v '#' | sed 's/\r//g' | xargs)
 fi
 
 HOST="$DB_HOST"
