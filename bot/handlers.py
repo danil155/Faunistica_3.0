@@ -8,11 +8,11 @@ from datetime import datetime
 import hashlib
 
 from config import config_vars, config
-from messages import Messages
-from button_markups import Keyboards
+from bot.messages import Messages
+from bot.button_markups import Keyboards
 from database.crud import get_user, create_user, log_action, get_publication, update_user, get_user_stats,\
     get_general_stats, get_volunteers_achievements, count_users_with_name, get_publications_for_language
-from states import (
+from bot.states import (
     RegistrationStates,
     SupportStates,
     RenameStates,

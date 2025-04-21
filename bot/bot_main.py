@@ -5,10 +5,10 @@ from aiogram.methods import DeleteWebhook
 
 from config import config
 from database.database import init_db, get_session
-from handlers import Handlers
+from bot.handlers import Handlers
 
 
-async def main():
+async def bot_start():
     bot = Bot(token=config.BOT_TOKEN)
     dp = Dispatcher(storage=MemoryStorage())
 
@@ -20,7 +20,6 @@ async def main():
     dp.include_router(handlers.router)
 
     try:
-        print("Я родился")
         await bot(DeleteWebhook(drop_pending_updates=True))
         await dp.start_polling(bot)
     finally:
@@ -28,4 +27,4 @@ async def main():
 
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.run(bot_start())
