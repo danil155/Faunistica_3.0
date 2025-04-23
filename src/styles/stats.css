@@ -1,0 +1,29 @@
+.stats-container {
+    margin: 25px auto;
+    padding: 0 25px;
+}
+
+#stats {
+    display: flex;
+    justify-content:flex-start;
+}
+
+.info-container {
+    max-width: 400px;
+    min-width: 300px;
+    margin: 10px;
+    min-height: 100px;
+    background-color: white;
+    border-radius: 8px;
+    border: 15px solid white;
+}
+
+.info-container h3 {
+    font-size: 64px;
+}
+
+.progress-bar {
+    width: 100%;
+    border-radius: 0;
+    height: 20px;
+}

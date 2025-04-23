@@ -11,6 +11,7 @@ import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
 import LoginPage from "./pages/LoginPage";
 import  useToken  from "./components/useToken";
+import StatsPage from "./pages/Stats";
 
 
 function App() {
@@ -58,6 +59,7 @@ function App() {
             }/>
           <Route path="/form" element={!!token?<FormModePage />:<LoginPage onLogin={setToken} onClose={handleClose}/>}/>
           <Route path="/text" element={!!token?<TextModePage />:<LoginPage onLogin={setToken} onClose={handleClose}/>}/>
+          <Route path="/stats" element={<StatsPage/>} />
         </Routes>
 
         <Footer />

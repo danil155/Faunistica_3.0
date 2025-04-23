@@ -22,7 +22,7 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
                   <a href="/">Инструкция</a>
                 </li>
                 <li>
-                  <a href="/">Статистика</a>
+                  <Link to="/stats">Статистика</Link>
                 </li>
                 <li>
                   <a href="/">О нас</a>
