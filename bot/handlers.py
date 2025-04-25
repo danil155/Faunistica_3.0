@@ -172,13 +172,11 @@ class Handlers:
                 await state.set_state(RegistrationStates.waiting_for_agreement)
             elif user.reg_stat == 1:
                 await message.answer(
-                    f"Вы уже зарегистрированы под именем {user.name}",
+                    Messages.already_registered(user.name),
                     reply_markup=Keyboards.remove()
                 )
             elif user.reg_stat == 7:
-                await message.answer(
-                    f"Вы начали обращение в поддержку. Пожалуйста, завершите его или отмените командой /cancel",
-                )
+                await message.answer(Messages.support_call_not_finished())
             else:
                 await self.continue_registration(message, user, state)
 
@@ -198,19 +196,17 @@ class Handlers:
         elif reg_stat == 3:
             await state.set_state(RegistrationStates.waiting_for_name)
             await message.answer(
-                "Ввод имени. Напишите его, пожалуйста.",
+                Messages.ask_name(),
                 reply_markup=Keyboards.remove()
             )
         elif reg_stat == 4:
             await state.set_state(RegistrationStates.waiting_for_age)
             await message.answer(
-                "Укажите свой возраст, пожалуйста.",
+                Messages.ask_age(),
                 reply_markup=Keyboards.remove()
             )
             if getattr(user, 'age', 0) < 18:
-                await message.answer(
-                    "Напоминаю, что участие с 14 до 18 лет возможно только при регистрации с родителями!"
-                )
+                await message.answer(Messages.age_under_18_warning())
         elif reg_stat == 5:
             await state.set_state(RegistrationStates.waiting_for_preferences)
             await message.answer(
@@ -226,7 +222,7 @@ class Handlers:
         else:
             await state.clear()
             await message.answer(
-                "Непредвиденная ошибка. Сообщите разработчику: https://sozontov.cc/feedback",
+                Messages.unexpected_error(),
                 reply_markup=Keyboards.remove()
             )
 
@@ -254,6 +250,10 @@ class Handlers:
                     object="not_reg_end"
                 )
             else:
+                await message.answer(
+                    text=Messages.auth_success(),
+                    parse_mode="HTML")
+
                 if not user.items:
                     await message.answer(Messages.no_publications_left())
                 else:
@@ -291,7 +291,7 @@ class Handlers:
         if message.chat.id == config.ADMIN_CHAT_ID:
             return
         await message.answer(
-            "Вы вызвали меню",
+            Messages.called_menu(),
             reply_markup=Keyboards.main_menu()
         )
 
@@ -305,7 +305,7 @@ class Handlers:
 
             user = await get_user(session, message.from_user.id)
             if user:
-                user_stats = await get_user_stats(session, user['user_id'])
+                user_stats = await get_user_stats(session, user.user_id)
 
             await message.answer(
                 Messages.statistics(general_stats, user_stats),
@@ -327,11 +327,11 @@ class Handlers:
             if not user:
                 await message.answer(Messages.not_registered())
             elif 1 < user.reg_stat <= 6:
-                await message.answer("Невозможно: ваша регистрация не закончена")
+                await message.answer(Messages.started_registered())
             elif user.reg_stat == 7:
-                await message.answer("Невозможно: начато обращение в поддержку")
+                await message.answer(Messages.support_call_not_finished())
             elif user.reg_stat <= 20 and user.reg_stat != 1:
-                await message.answer("Невозможно: начато прохождение опроса")
+                await message.answer(Messages.sociology_not_finished())
             else:
                 await message.answer(
                     Messages.rename_prompt(),
@@ -341,9 +341,7 @@ class Handlers:
 
     async def support_command(self, message: Message, state: FSMContext):
         if message.chat.id == config.ADMIN_CHAT_ID:
-            return
-        if message.chat.id < 0:
-            await message.answer("Камон, люди из этого чата должны оказывать техподдержку, а не просить её")
+            await message.answer(Messages.support_for_admins())
             return
 
         async for session in self.db_session_factory():
@@ -370,11 +368,9 @@ class Handlers:
             elif not user:
                 await message.answer(Messages.not_registered())
             elif 1 < user.reg_stat <= 7:
-                await message.answer("Вы не закончили процесс регистрации. Вернитесь к нему, пожалуйста")
+                await message.answer(Messages.started_registered())
             elif user.reg_stat != 1:
-                await message.answer("""Вы начали и не закончили какое-то другое действие. 
-    Завершите это действие, пожалуйста, или прекратите его, 
-    например, получив новый пароль: /auth""")
+                await message.answer(Messages.started_unidentified_action())
             elif all([getattr(user, field) is not None for field in ['age', 'lng', 'comm', 'sex', 'rating', 'email',
                                                                      'region']]):
                 await message.answer(Messages.sociology_completed())
@@ -383,33 +379,32 @@ class Handlers:
                                   if getattr(user, field) is None]
 
                 await message.answer(
-                    f"Для вас имеется вопросов: <b>{len(missing_fields)}</b>\n"
-                    "Вернуться к ответам на них вы можете по команде /sociology",
+                    f'{Messages.any_question(missing_fields)}\n{Messages.go_back_to_sociology()}',
                     parse_mode="HTML"
                 )
 
                 next_question = missing_fields[0]
 
                 if next_question == 'age':
-                    await message.answer(Messages.sociology_question(1))
+                    await message.answer(Messages.ask_age())
                     await state.set_state(SociologyStates.waiting_for_age)
                 elif next_question == 'lng':
-                    await message.answer(Messages.sociology_question(2))
+                    await message.answer(Messages.ask_language())
                     await state.set_state(SociologyStates.waiting_for_language)
                 elif next_question == 'comm':
-                    await message.answer(Messages.sociology_question(3))
+                    await message.answer(Messages.ask_publication_preferences())
                     await state.set_state(SociologyStates.waiting_for_comments)
                 elif next_question == 'sex':
-                    await message.answer(Messages.sociology_question(4))
+                    await message.answer(Messages.sociology_question(1))
                     await state.set_state(SociologyStates.waiting_for_gender)
                 elif next_question == 'rating':
-                    await message.answer(Messages.sociology_question(5))
+                    await message.answer(Messages.sociology_question(2))
                     await state.set_state(SociologyStates.waiting_for_rating_agreement)
                 elif next_question == 'region':
-                    await message.answer(Messages.sociology_question(6))
+                    await message.answer(Messages.sociology_question(3))
                     await state.set_state(SociologyStates.waiting_for_region)
                 elif next_question == 'email':
-                    await message.answer(Messages.sociology_question(7))
+                    await message.answer(Messages.sociology_question(4))
                     await state.set_state(SociologyStates.waiting_for_email)
 
     async def cancel_command(self, message: Message, state: FSMContext):
@@ -425,22 +420,22 @@ class Handlers:
                 reg_stat=1
             )
         await message.answer(
-            "Текущее действие отменено.",
+            Messages.rollback_completed(),
             reply_markup=Keyboards.remove()
         )
 
     async def reply_to_user_command(self, message: Message):
         if message.chat.id != config.ADMIN_CHAT_ID:
-            await message.answer("Команда доступна только в чате разработчиков.")
+            await message.answer(Messages.no_access_to_command())
             return
 
         if not message.reply_to_message:
-            await message.answer("Используйте команду /reply в ответ на сообщение пользователя.")
+            await message.answer(Messages.using_command_reply())
             return
 
         reply_text = message.text.replace("/reply@FaunisticaV3Bot", "").replace("/reply", "").strip()
         if not reply_text:
-            await message.answer("А че пустой ответ отправить захотел? Используй /reply еще раз и ответь нормально.")
+            await message.answer(Messages.empty_response_to_user())
             return
 
         original_message = message.reply_to_message.text
@@ -449,11 +444,11 @@ class Handlers:
             user_id = int(original_message.split("ID: ")[1].split(" ")[0])
             print(user_id)
         except (IndexError, ValueError):
-            await message.answer("Не удалось извлечь ID пользователя из сообщения.")
+            await message.answer(Messages.could_not_extract_id())
             return
 
-        await self.bot.send_message(user_id, f"Ответ от поддержки:\n\n{reply_text}")
-        await message.answer("Ответ отправлен пользователю.")
+        await self.bot.send_message(user_id, Messages.response_from_support(reply_text))
+        await message.answer(Messages.response_sent())
 
     # ========== STATE HANDLERS ========== #
 
@@ -464,12 +459,12 @@ class Handlers:
                 user_id=message.from_user.id,
                 reg_stat=3
             )
-        await message.answer("Ваше согласие учтено👌")
+        await message.answer(Messages.consent_taken())
         await message.answer(Messages.ask_name())
         await state.set_state(RegistrationStates.waiting_for_name)
 
     async def reg_decline_handler(self, message: Message, state: FSMContext):
-        await message.answer("Ничего, может быть позже.. 🙄")
+        await message.answer(Messages.maybe_later())
         await state.clear()
 
     async def reg_name_handler(self, message: Message, state: FSMContext):
@@ -481,11 +476,11 @@ class Handlers:
             if other_users > 0:
                 await message.answer(Messages.name_already_exists())
             elif len(name_msg) < 3:
-                await message.answer(Messages.name_too_short())
+                await message.answer(Messages.message_too_short())
             elif len(name_msg) > 20:
-                await message.answer(Messages.name_too_long())
+                await message.answer(Messages.message_too_long())
             elif any(c in name_msg for c in ".,!?;:"):
-                await message.answer(Messages.name_has_punctuation())
+                await message.answer(Messages.message_has_punctuation())
             else:
                 await update_user(
                     session=session,
@@ -501,9 +496,9 @@ class Handlers:
         age_msg = message.text
 
         if len(age_msg) > 5:
-            await message.answer(Messages.age_too_long())
+            await message.answer(Messages.message_too_long())
         elif not age_msg.isdigit():
-            await message.answer(Messages.age_no_digits())
+            await message.answer(Messages.message_no_digits())
         elif int(age_msg) > 99:
             await message.answer(Messages.age_too_high())
         elif int(age_msg) < 14:
@@ -542,7 +537,7 @@ class Handlers:
         lang_msg = message.text.strip().replace(" ", "").replace(",", "").replace(".", "")
 
         if len(lang_msg) > 1 or lang_msg not in ["1", "2", "3"]:
-            await message.answer(Messages.language_selection_not_recognized())
+            await message.answer(Messages.selection_not_recognized())
             await message.answer(Messages.ask_language())
             return
 
@@ -554,7 +549,7 @@ class Handlers:
             items_str = "|".join(items[:5])  # Берем первые 5 публикаций
 
             if not items:
-                await message.answer("К сожалению, публикаций для выбранного языка пока нет.")
+                await message.answer(Messages.no_publication())
                 await update_user(
                     session=session,
                     user_id=message.from_user.id,
@@ -604,8 +599,7 @@ class Handlers:
 
         await self.bot.send_message(
             chat_id=config.ADMIN_CHAT_ID,
-            text=f"Пользователь @{message.from_user.username}, ID: {message.from_user.id} "
-                 f"обратился в поддержку:\n\n{message.text}"
+            text=Messages.request_for_support(message.from_user.username, message.from_user.id, message.text)
         )
 
         await state.clear()
@@ -619,11 +613,11 @@ class Handlers:
             if other_users > 0:
                 await message.answer(Messages.name_already_exists())
             elif len(name_msg) < 3:
-                await message.answer(Messages.name_too_short())
+                await message.answer(Messages.message_too_short())
             elif len(name_msg) > 40:
-                await message.answer(Messages.name_too_long())
+                await message.answer(Messages.message_too_long())
             elif any(c in name_msg for c in ".,!?;:"):
-                await message.answer(Messages.name_has_punctuation())
+                await message.answer(Messages.message_has_punctuation())
             else:
                 old_name = (await get_user(session, message.from_user.id)).name
 
@@ -649,9 +643,9 @@ class Handlers:
         age_msg = message.text
 
         if len(age_msg) > 5:
-            await message.answer(Messages.age_too_long())
+            await message.answer(Messages.message_too_long())
         elif not age_msg.isdigit():
-            await message.answer(Messages.age_no_digits())
+            await message.answer(Messages.message_no_digits())
         elif int(age_msg) > 99:
             await message.answer(Messages.age_too_high())
         elif int(age_msg) < 14:
@@ -669,14 +663,14 @@ class Handlers:
             if int(age_msg) < 18:
                 await message.answer(Messages.age_under_18_warning())
 
-            await message.answer("Вернуться к ответам на вопросы вы можете по команде /sociology")
+            await message.answer(Messages.go_back_to_sociology())
             await state.clear()
 
     async def sociology_lang_handler(self, message: Message, state: FSMContext):
         lang_msg = message.text.strip().replace(" ", "").replace(",", "").replace(".", "")
 
         if len(lang_msg) > 1 or lang_msg not in ["1", "2", "3"]:
-            await message.answer(Messages.language_selection_not_recognized())
+            await message.answer(Messages.selection_not_recognized())
             return
 
         lang_map = {"1": "all", "2": "eng", "3": "rus"}
@@ -691,7 +685,7 @@ class Handlers:
             )
 
         await message.answer(Messages.language_selection_accepted())
-        await message.answer("Вернуться к ответам на вопросы вы можете по команде /sociology")
+        await message.answer(Messages.go_back_to_sociology())
         await state.clear()
 
     async def sociology_comments_handler(self, message: Message, state: FSMContext):
@@ -704,7 +698,7 @@ class Handlers:
                 reg_stat=1
             )
         await message.answer(Messages.publication_preferences_accepted(comm_msg))
-        await message.answer("Вернуться к ответам на вопросы вы можете по команде /sociology")
+        await message.answer(Messages.go_back_to_sociology())
         await state.clear()
 
     async def sociology_gender_handler(self, message: Message, state: FSMContext):
@@ -725,8 +719,8 @@ class Handlers:
                 reg_stat=1
             )
 
-        await message.answer("Спасибо за ответ!")
-        await message.answer("Вернуться к ответам на вопросы вы можете по команде /sociology")
+        await message.answer(Messages.gratitude())
+        await message.answer(Messages.go_back_to_sociology())
         await state.clear()
 
     async def sociology_rating_handler(self, message: Message, state: FSMContext):
@@ -748,15 +742,15 @@ class Handlers:
                 reg_stat=1
             )
 
-        await message.answer("Спасибо за ответ!")
-        await message.answer("Вернуться к ответам на вопросы вы можете по команде /sociology")
+        await message.answer(Messages.gratitude())
+        await message.answer(Messages.go_back_to_sociology())
         await state.clear()
 
     async def sociology_region_handler(self, message: Message, state: FSMContext):
         region_msg = message.text.strip()
 
         if len(region_msg) < 3:
-            await message.answer("Слишком короткий ответ, попробуйте еще раз")
+            await message.answer(Messages.message_too_short())
             return
 
         async for session in self.db_session_factory():
@@ -767,15 +761,15 @@ class Handlers:
                 reg_stat=1
             )
 
-        await message.answer("Ваш регион учтен, спасибо!")
-        await message.answer("Вернуться к ответам на вопросы вы можете по команде /sociology")
+        await message.answer(Messages.region_accepted())
+        await message.answer(Messages.go_back_to_sociology())
         await state.clear()
 
     async def sociology_email_handler(self, message: Message, state: FSMContext):
         email_msg = message.text.strip().lower()
 
         if "@" not in email_msg or "." not in email_msg:
-            await message.answer("Это не похоже на email, попробуйте еще раз")
+            await message.answer(Messages.not_email())
             return
 
         async for session in self.db_session_factory():
@@ -786,8 +780,8 @@ class Handlers:
                 reg_stat=1
             )
 
-        await message.answer("Ваш email учтен, спасибо!")
-        await message.answer("Вы ответили на все вопросы опроса!")
+        await message.answer(Messages.email_accepted())
+        await message.answer(Messages.sociology_completed())
         await state.clear()
 
     # ========== OTHER HANDLERS ========== #
