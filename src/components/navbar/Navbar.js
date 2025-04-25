@@ -30,12 +30,6 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
               </ul>
             </nav>
             <div id="user-container" className="user-container">
-            {isAuthenticated && (
-            <>
-              <Link to="/" className="nav-link">Личный кабинет</Link>
-              <Link to="/text" className="nav-link">Добавить особей</Link>
-            </>
-          )}
           {isAuthenticated ? (
             <button onClick={onLogoutClick} className="auth-button">Выйти</button>
           ) : (

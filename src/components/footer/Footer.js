@@ -1,4 +1,5 @@
 import React from "react";
+import vkIcon from "../../img/Icon.svg"
 
 import "./style.css";
 
@@ -8,20 +9,14 @@ const Footer = () => {
       
         <div className="project-info">
           <p>
-            Паутина Данных — это проект, направленный на создание базы данных
-            пауков Пермского края.
-          </p>
-        </div>
-        <div className="contact">
-          <p>
-            Контактная информация:
-            <a href="mailto:info@spiderdata.ru">info@spiderdata.ru</a>
+            Паутина Данных 
           </p>
         </div>
         <div className="social-media">
-          <a href="/">Facebook</a>
-          <a href="/">Instagram</a>
-          <a href="/">ВКонтакте</a>
+          <a href="https://vk.com/data_web">
+          <img src={vkIcon} alt="лого вк" className="social-media-logo"/>
+          <p>Вконтакте</p>
+          </a>
         </div>
 
     </footer>

@@ -5,10 +5,16 @@
     text-align: center;
 }
 
-.footer .social-media a,
-.footer .policies a {
+.footer .social-media a {
     color: white;
+    display: flex;
     text-decoration: none;
+    gap: 3px;
+}
+
+.social-media {
+    display: flex;
+    justify-content: center;
 }
 
 .footer .social-media a:hover,
@@ -19,3 +25,8 @@
 .footer .social-media a {
     margin-right: 10px;
 }
+
+.social-media-logo {
+    width: 25px;
+}
+

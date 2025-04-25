@@ -2,29 +2,37 @@ import { useFormContext } from "../pages/FormContext";
 import { useState, useEffect } from "react";
 
 
-const DateSelect = () => {
-    const {formState, setFormState} = useFormContext()
-
+const DateSelect = (getSectionData) => {
+    const {formState, setFormState, pinnedSections, setPinnedData} = useFormContext()
     const [isInterval, setIsInterval] = useState(false)
     const [precision, setPrecision] = useState('exact')
-    const [beginMonth, setBeginMonth] = useState('')
-    const [endMonth, setEndMonth] = useState('')
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === "begin_month") {
-            setBeginMonth(value)
             let nums = value.split("-")
-            formState.begin_year = Number(nums[0])
-            formState.begin_month = Number(nums[1])
+            formState.begin_year = Number(nums[0]);
+            formState.begin_month = Number(nums[1]);
+            return;
         } else if (name === "end_month") {
-            setEndMonth(value)
-            let nums = value.split("-")
-            formState.end_year = Number(nums[0])
-            formState.end_month = Number(nums[1])
-        } else {
-        setFormState(prev => ({...prev, [name]: value}))
+            let nums = value.split("-");
+            formState.end_year = Number(nums[0]);
+            formState.end_month = Number(nums[1]);
+            return;
         }
+        setFormState(prev => ({...prev, [name]: value}))
+    };
+
+    const resetDates = (e) => {
+      setFormState(prev => ({
+          ...prev,
+          begin_date: '',
+          end_date: '',
+          begin_year: 0,
+          end_year: 0,
+          begin_month: 0,
+          end_month: 0
+      }));
     };
 
     useEffect(() => {
@@ -41,6 +49,7 @@ const DateSelect = () => {
         }
     }, [formState.end_month])
 
+
     return ( 
         <>
         <div className="form-row">
@@ -48,7 +57,7 @@ const DateSelect = () => {
           <label>Тип даты:</label>
           <select 
             value={isInterval} 
-            onChange={(e) => setIsInterval(e.target.value)}
+            onChange={(e) => {setIsInterval(e.target.value); resetDates(e)}}
             className="form-control"
           >
             <option value={false}>Одиночная дата</option>
@@ -60,7 +69,7 @@ const DateSelect = () => {
           <label>Точность:</label>
           <select 
             value={precision} 
-            onChange={(e) => setPrecision(e.target.value)}
+            onChange={(e) => {setPrecision(e.target.value); resetDates(e)}}
             className="form-control"
           >
             <option value="exact">Точная дата</option>

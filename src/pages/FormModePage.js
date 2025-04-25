@@ -4,16 +4,20 @@ import { useFormContext } from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
 import "../styles/formMode.css";
 import PinToggle from "../components/pin-toggle/PinToggle";
-import DropDown from "../components/cascading-dropdown/DropDown";
+import {DropDown} from "../components/cascading-dropdown/DropDown";
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import DateSelect from "../components/DateSelect";
 
 const fieldsMap = {
-    "Административное положение": ["country", "region", "district", "place"],
-    "Географическое положение": ["north", "east"],
+    "Административное положение": ["country", "region", "district", "gathering_place"],
+    "Географическое положение": ["coordinate_north", "coordinate_east"],
     "Сбор материала": [
         "begin_date",
         "end_date",
+        "begin_year",
+        "end_year",
+        "begin_month",
+        "end_month",
         "biotope",
         "collector",
         "measurement_units",
@@ -23,6 +27,8 @@ const fieldsMap = {
 };
 
 const FormModePage = () => {
+
+    // Получение контекста формы
     const {
         formState,
         setFormState,
@@ -53,7 +59,7 @@ const FormModePage = () => {
     };
 
     // Переключение закрепления секции
-    const togglePinSection = (sectionName) => {
+    const pinSection = (sectionName) => {
         setPinnedSections((prev) => {
             const newPinned = !prev[sectionName];
 
@@ -132,7 +138,7 @@ const FormModePage = () => {
                                     ] || false
                                 }
                                 onChange={() =>
-                                    togglePinSection(
+                                    pinSection(
                                         "Административное положение"
                                     )
                                 }
@@ -164,8 +170,8 @@ const FormModePage = () => {
                                 <label>Место сбора:</label>
                                 <input
                                     type="text"
-                                    name="place"
-                                    value={formState.place}
+                                    name="gathering_place"
+                                    value={formState.gathering_place}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -194,7 +200,7 @@ const FormModePage = () => {
                                     ] || false
                                 }
                                 onChange={() =>
-                                    togglePinSection("Географическое положение")
+                                    pinSection("Географическое положение")
                                 }
                             />
                         </div>
@@ -219,8 +225,8 @@ const FormModePage = () => {
                                 <label>Широта (N):</label>
                                 <input
                                     type="text"
-                                    name="north"
-                                    value={formState.north}
+                                    name="coordinate_north"
+                                    value={formState.coordinate_north}
                                     onChange={handleInputChange}
                                     placeholder="00.0000"
                                 />
@@ -230,8 +236,8 @@ const FormModePage = () => {
                                 <label>Долгота (E):</label>
                                 <input
                                     type="text"
-                                    name="east"
-                                    value={formState.east}
+                                    name="coordinate_east"
+                                    value={formState.coordinate_east}
                                     onChange={handleInputChange}
                                     placeholder="00.0000"
                                 />
@@ -256,7 +262,7 @@ const FormModePage = () => {
                                     pinnedSections["Сбор материала"] || false
                                 }
                                 onChange={() =>
-                                    togglePinSection("Сбор материала")
+                                    pinSection("Сбор материала")
                                 }
                             />
                         </div>
@@ -275,7 +281,7 @@ const FormModePage = () => {
 
                     {!collapsedSections["Сбор материала"] && (
                         <div className="form-grid">
-                            <DateSelect />
+                            <DateSelect getSectionData={getSectionData} />
                             <div className="form-group">
                                 <label>Коллектор:</label>
                                 <input
@@ -325,7 +331,7 @@ const FormModePage = () => {
                                 isChecked={
                                     pinnedSections["Таксономия"] || false
                                 }
-                                onChange={() => togglePinSection("Таксономия")}
+                                onChange={() => pinSection("Таксономия")}
                             />
                         </div>
                         <button

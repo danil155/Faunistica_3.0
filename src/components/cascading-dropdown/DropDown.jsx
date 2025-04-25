@@ -1,7 +1,7 @@
 import React, { useEffect, useState} from "react";
 import { useFormContext } from "../../pages/FormContext";
 
-function ThreeLevelDropdown() {
+export function DropDown() {
     const { formState, setFormState, pinnedData } = useFormContext();
     
     // Mock данные
@@ -146,5 +146,3 @@ function ThreeLevelDropdown() {
       </>
     );
   }
-  
-  export default ThreeLevelDropdown;
