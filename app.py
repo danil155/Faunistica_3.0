@@ -1,5 +1,5 @@
 import logging
-# import asyncio
+import asyncio
 from fastapi import FastAPI
 from back_api import users, info, records, gen_stats
 from bot.bot_main import bot_start
@@ -18,5 +18,5 @@ app.include_router(info.router, prefix="/api")
 app.include_router(records.router, prefix="/api")
 app.include_router(gen_stats.router, prefix="/api")
 
-# if __name__ == '__main__':
-#     asyncio.run(bot_start())
+if __name__ == '__main__':
+    asyncio.run(bot_start())
