@@ -7,6 +7,7 @@ class RegistrationStates(StatesGroup):
     waiting_for_age = State()
     waiting_for_preferences = State()
     waiting_for_language = State()
+    waiting_for_password = State()
 
 
 class SupportStates(StatesGroup):

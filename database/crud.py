@@ -11,10 +11,6 @@ from .models import User, Action, Publ, Record
 
 
 # === UTILS ===
-def hash_function(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
-
-
 def handle_db_errors(func):
     @functools.wraps(func)
     async def wrapper(session: AsyncSession, *args, **kwargs):

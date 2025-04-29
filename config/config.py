@@ -16,3 +16,13 @@ DB_PORT = os.getenv('DB_PORT')
 DB_USER = os.getenv('DB_USER')
 
 DB_PASSWORD = os.getenv('DB_PASSWORD')
+
+PRIVATE_KEY = os.getenv('PRIVATE_KEY')
+
+PUBLIC_KEY = os.getenv('PUBLIC_KEY')
+
+ALGORITHM = os.getenv('ALGORITHM')
+
+ACCESS_TOKEN_EXPIRE = os.getenv('ACCESS_TOKEN_EXPIRE')
+
+REFRESH_TOKEN_EXPIRE = os.getenv('REFRESH_TOKEN_EXPIRE')

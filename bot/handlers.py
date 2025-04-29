@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 import random
 import string
 from datetime import datetime
-import hashlib
+from database.hash import register_user
 
 from config import config_vars, config
 from bot.messages import Messages
@@ -93,6 +93,10 @@ class Handlers:
             self.reg_lang_handler,
             RegistrationStates.waiting_for_language
         )
+        self.router.message.register(
+            self.reg_password_handler,
+            RegistrationStates.waiting_for_password
+        )
 
         # Support state handler
         self.router.message.register(
@@ -154,6 +158,7 @@ class Handlers:
     async def register_command(self, message: Message, state: FSMContext):
         if message.chat.id == config.ADMIN_CHAT_ID:
             return
+
         async for session in self.db_session_factory():
             user = await get_user(session, message.from_user.id)
 
@@ -265,20 +270,10 @@ class Handlers:
                         disable_web_page_preview=True
                     )
 
-                # Generate access code
-                code = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-                hashcode = hashlib.sha256(code.encode()).hexdigest()
                 await update_user(
                     session=session,
                     user_id=message.from_user.id,
                     reg_stat=1,
-                    hash=hashcode,
-                    hash_date=datetime.now()
-                )
-
-                await message.answer(
-                    Messages.auth_complete(code, datetime.now().strftime("%Y-%m-%d")),
-                    parse_mode="Markdown"
                 )
                 await log_action(
                     session=session,
@@ -556,15 +551,43 @@ class Handlers:
                     reg_stat=1,
                     reg_end=datetime.now()
                 )
-                return
 
             await update_user(
                 session=session,
                 user_id=message.from_user.id,
                 lng=lang_value,
                 items=items_str,
-                reg_stat=1,
+                reg_stat=20,
                 reg_end=datetime.now()
+            )
+
+        await message.answer(Messages.ask_password())
+        await state.set_state(RegistrationStates.waiting_for_password)
+
+    async def reg_password_handler(self, message: Message, state: FSMContext):
+        password = message.text.strip()
+
+        if len(password) < 8:
+            await message.answer("❌ Пароль должен быть не менее 8 символов!")
+            return
+
+        if not any(c.isupper() for c in password):
+            await message.answer("❌ Пароль должен содержать хотя бы одну заглавную букву!")
+            return
+
+        if not any(c.isdigit() for c in password):
+            await message.answer("❌ Пароль должен содержать хотя бы одну цифру!")
+            return
+
+        hashed_password = register_user(password)
+
+        async for session in self.db_session_factory():
+            await update_user(
+                session=session,
+                user_id=message.from_user.id,
+                reg_stat=1,
+                hash=hashed_password,
+                hash_date=datetime.now()
             )
 
         await message.answer(Messages.registration_complete())

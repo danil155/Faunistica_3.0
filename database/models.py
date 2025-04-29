@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean, TIMESTAMP, Double
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean, TIMESTAMP, Double, BigInteger
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -6,7 +6,7 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
+    id = Column(BigInteger, primary_key=True)
     publ_id = Column(Integer, ForeignKey('publs.id', ondelete='CASCADE'))
     tlg_name = Column(String(255))
     tlg_username = Column(String(255))
