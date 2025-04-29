@@ -1,25 +1,35 @@
+from fastapi import APIRouter, HTTPException
+from .schemas import InfoRequest, InfoResponse
 from text_processing.splitting import get_separated_parameters
 
-
-def get_parameters_dict(text: str) -> dict:
-    data = get_separated_parameters(text)
-
-    return {
-        'country': data.country,
-        'region': data.region,
-        'district': data.district,
-        'gathering_place': data.gathering_place,
-        'coordinate_north': data.coordinate_north,
-        'coordinate_east': data.coordinate_east,
-        'date': data.date,
-        'family': data.family,
-        'genus': data.genus,
-        'species': data.species,
-        'collector': data.collector,
-        'count_males': data.count_males,
-        'count_females': data.count_females
-    }
+router = APIRouter()
 
 
-if __name__ == '__main__':
-    print(get_parameters_dict('Runcinia tarabayevi Marusik et Logunov, 1990 Материал. 1 ♂, Челябинская обл., Троицкий р-н, заказник Троицкий, березовый колок, укосы, 29.VI.2023, Устинова А.Л.'))
+def clean_value(value):
+    if value in ("", None, [], 0, 0.0):
+        return None
+    return value
+
+
+@router.post("/get_info", response_model=InfoResponse)
+def get_info(data: InfoRequest):
+    if not data.text.strip():
+        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    info = get_separated_parameters(data.text)
+    return InfoResponse(
+        country=clean_value(info.country),
+        region=clean_value(info.region),
+        district=clean_value(info.district),
+        gathering_place=clean_value(info.gathering_place),
+        coordinate_north=clean_value(info.coordinate_north),
+        coordinate_east=clean_value(info.coordinate_east),
+        date=clean_value(info.date),
+        family=clean_value(info.family),
+        genus=clean_value(info.genus),
+        species=clean_value(info.species),
+        collector=clean_value(info.collector),
+        count_males=clean_value(info.count_males),
+        count_females=clean_value(info.count_females),
+        count_juv_male=clean_value(info.count_sub_males),
+        count_juv_female=clean_value(info.count_sub_females)
+    )

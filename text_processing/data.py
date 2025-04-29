@@ -2,42 +2,37 @@ import datetime
 
 
 class Data:
-    country = str()
-    region = str()
-    district = str()
-    gathering_place = str()
-    coordinate_north = 0.0
-    coordinate_east = 0.0
-    date = str()
-    family = str()
-    genus = str()
-    species = str()
-    collector = list()
-    count_females = str()
-    count_males = str()
-
-    def clear(self):
-        self.country = str()
-        self.region = str()
-        self.district = str()
-        self.gathering_place = str()
+    def __init__(self):
+        self.country = ""
+        self.region = ""
+        self.district = ""
+        self.gathering_place = ""
         self.coordinate_north = 0.0
         self.coordinate_east = 0.0
-        self.date = str()
-        self.family = str()
-        self.genus = str()
-        self.species = str()
-        self.collector = list()
-        self.count_females = str()
-        self.count_males = str()
+        self.date = ""
+        self.family = ""
+        self.genus = ""
+        self.species = ""
+        self.collector = []
+        self.count_females = 0
+        self.count_males = 0
+        self.count_sub_females = 0
+        self.count_sub_males = 0
+        self.count_juveniles = 0
 
     def print(self):
-        print(f'Город - {self.city}\n'
-              f'Область - {self.region}\n'
-              f'Район - {self.district}\n'
-              f'Координаты - {self.coordinates}\n'
-              f'Дата - {self.date}\n'
-              f'Семейство - {self.family}\n'
-              f'Род - {self.genus}\n'
-              f'Вид - {self.species}\n'
-              f'Сборщик - {self.person}\n')
+        print(f'Country: {self.country}')
+        print(f'Region: {self.region}')
+        print(f'District: {self.district}')
+        print(f'Gathering Place: {self.gathering_place}')
+        print(f'Coordinates: {self.coordinate_north}, {self.coordinate_east}')
+        print(f'Date: {self.date}')
+        print(f'Family: {self.family}')
+        print(f'Genus: {self.genus}')
+        print(f'Species: {self.species}')
+        print(f'Collectors: {self.collector}')
+        print(f'Males: {self.count_males}')
+        print(f'Females: {self.count_females}')
+        print(f'Subadult Males: {self.count_sub_males}')
+        print(f'Subadult Females: {self.count_sub_females}')
+        print(f'Juveniles: {self.count_juveniles}')

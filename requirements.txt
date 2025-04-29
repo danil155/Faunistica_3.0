@@ -1,6 +1,7 @@
-flask
-flask_cors
+fastapi[standard]
 geopy
 pygbif
 sqlalchemy
 dotenv
+asyncpg
+aiogram

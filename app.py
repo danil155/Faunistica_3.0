@@ -1,9 +1,7 @@
 import logging
-from flask import Flask, jsonify, request, Response
-from flask_cors import CORS
-import asyncio
-
-from back_api.info import get_parameters_dict
+# import asyncio
+from fastapi import FastAPI
+from back_api import users, info, records, gen_stats
 from bot.bot_main import bot_start
 
 
@@ -14,20 +12,11 @@ logging.basicConfig(
     force=True
 )
 
-app = Flask(__name__)
-CORS(app)
+app = FastAPI()
+app.include_router(users.router, prefix="/api")
+app.include_router(info.router, prefix="/api")
+app.include_router(records.router, prefix="/api")
+app.include_router(gen_stats.router, prefix="/api")
 
-
-@app.route('/api/get_info', methods=['POST', 'GET'])
-def find_pizzas_by_budget() -> tuple[Response, int]:
-    data = request.get_json()
-    print(data['text'].replace('\n', ' '))
-    compilation = get_parameters_dict(data['text'].replace('\n', ' '))
-    print(compilation)
-
-    return jsonify(compilation), 200
-
-
-if __name__ == '__main__':
-    asyncio.run(bot_start())
-    app.run(host='0.0.0.0', port=5001, debug=False)
+# if __name__ == '__main__':
+#     asyncio.run(bot_start())

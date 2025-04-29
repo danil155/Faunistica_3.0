@@ -169,9 +169,6 @@ def get_numbers_species(text: str) -> dict:
     juvenile_pattern = r'(\d+)\s+(?:juv|juvenile|j|ювенил)'
     double_sign_pattern = r'(\d+)?\s*([♀♂]{2,})'
 
-    double_female_count = 0
-    double_male_count = 0
-
     try:
         # Adults
         for count, gender in re.findall(adult_pattern, text):
@@ -210,52 +207,38 @@ def get_numbers_species(text: str) -> dict:
                 logger.warning(f' Error parsing: {e}')
                 continue
 
-        # Something weird
+        # Multiple adults
         for match in re.findall(double_sign_pattern, text):
             try:
                 count = int(match[0]) if match[0] else 1
                 if "♀" in match[1]:
-                    double_female_count += count
+                    species_count['female'] += count
                 elif "♂" in match[1]:
-                    double_male_count += count
+                    species_count['male'] += count
             except (IndexError, ValueError) as e:
                 logger.warning(f' Error parsing: {e}')
                 continue
     except re.error as e:
         logger.warning(f' Error when searching for numbers species: {e}')
-
     return species_count
 
 
-data = Data()
-
-
-def check_full_location_data() -> None:
-    global data
-
+def check_full_location_data(data: Data) -> None:
     try:
-        if not data.coordinate_north and not data.coordinate_east:
-            return
-        info = get_location_info(data.coordinate_north, data.coordinate_east)
-        info_address = info['address']
+        if data.coordinate_north and data.coordinate_east:
+            location_info = get_location_info(data.coordinate_north, data.coordinate_east)
+            address = location_info.get('address', {})
 
-        if data.country == '' and 'country' in info_address.keys():
-            data.country = info_address['country']
-        if data.region == '' and 'region' in info_address.keys():
-            data.region = info_address['region']
-        if data.district == '' and 'district' in info_address.keys():
-            data.district = info_address['district']
-
-        if data.gathering_place == '' and 'display_name' in info.keys():
-            data.gathering_place = info['display_name']
+            data.country = data.country or address.get('country', "")
+            data.region = data.region or address.get('region', "")
+            data.district = data.district or address.get('district', "")
+            data.gathering_place = data.gathering_place or location_info.get('display_name', "")
     except Exception as e:
         logger.warning(f' Error when checking full location data: {e}')
 
 
 def get_separated_parameters(text: str) -> Data:
-    global data
-
-    data.clear()
+    data = Data()
 
     if not isinstance(text, str) or not text.strip():
         logger.warning(f' A parameter with the str type was expected, not {type(text)} or parameter is empty')
@@ -263,24 +246,20 @@ def get_separated_parameters(text: str) -> Data:
 
     try:
         coords = get_coordinates(text)
-        if coords:
+        if coords and len(coords) >= 2:
             data.coordinate_north, data.coordinate_east = coords
 
         data.region = get_region(text)
-
         data.district = get_district(text)
-
         data.date = get_date(text)
-
         data.collector = get_collectors(text)
 
-        species_count = get_numbers_species(text)
-
-        for gender, count in species_count.items():
-            if gender == 'male':
-                data.count_males = count
-            elif gender == 'female':
-                data.count_females = count
+        species = get_numbers_species(text)
+        data.count_males = species.get('male', 0)
+        data.count_females = species.get('female', 0)
+        data.count_sub_males = species.get('sub_male', 0)
+        data.count_sub_females = species.get('sub_female', 0)
+        data.count_juveniles = species.get('juvenile', 0)
 
         found_name, taxon_data = find_species_in_text(text)
         if found_name:
@@ -288,12 +267,8 @@ def get_separated_parameters(text: str) -> Data:
             data.genus = taxon_data.get('род', '')
             data.species = taxon_data.get('вид', '')
 
-        check_full_location_data()
+        check_full_location_data(data)
     except Exception as e:
         logger.critical(f' Critical error in text processing: {e}')
 
     return data
-
-
-if __name__ == '__main__':
-    print(get_date('0'))
