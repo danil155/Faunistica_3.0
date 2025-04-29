@@ -1,7 +1,9 @@
 fastapi[standard]
+slowapi
 geopy
 pygbif
 sqlalchemy
 dotenv
 asyncpg
 aiogram
+argon2-cffi

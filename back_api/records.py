@@ -5,6 +5,7 @@ import re
 from typing import Optional
 from database.database import get_session
 from database.crud import add_record_from_json
+from app import limiter
 
 router = APIRouter()
 
@@ -46,6 +47,7 @@ def safe_coord_parse(coord: Optional[str]) -> Optional[float]:
 
 
 @router.post("/insert_record")
+@limiter.limit("5/minute")
 async def insert_record(data: InsertRecordsRequest):
     async with get_session() as session:
         north = safe_coord_parse(data.north)

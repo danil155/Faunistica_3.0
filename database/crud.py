@@ -3,9 +3,9 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import datetime
-import hashlib
 import functools
 import asyncio
+from .hash import check_pass
 
 from .models import User, Action, Publ, Record
 
@@ -26,12 +26,18 @@ def handle_db_errors(func):
 
 
 # === USER ===
-async def get_user_id_by_password(session: AsyncSession, password: str) -> int:
-    hash_value = hash_function(password)
-    stmt = select(User.id).where(User.hash == hash_value)
+async def get_user_id_by_username(session: AsyncSession, username: str) -> int:
+    stmt = select(User.id).where(User.name == username)
     result = await session.execute(stmt)
     user_id = result.scalar_one_or_none()
     return user_id if user_id else -1
+
+
+async def is_pass_correct(session: AsyncSession, user_id: int, user_pass: str) -> bool:
+    stmt = select(User.hash).where(User.id == user_id)
+    result = await session.execute(stmt)
+    user_hash = result.scalar_one_or_none()
+    return check_pass(user_pass, user_hash)
 
 
 async def get_user(session: AsyncSession, user_id: int):

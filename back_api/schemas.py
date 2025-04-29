@@ -3,6 +3,7 @@ from typing import Optional, List
 
 
 class UserRequest(BaseModel):
+    username: str
     password: str
 
 

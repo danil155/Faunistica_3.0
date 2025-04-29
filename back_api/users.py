@@ -1,20 +1,25 @@
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from .schemas import UserRequest, UserResponse, Publication
-from database.crud import get_user_id_by_password, username_and_publication
+from database.crud import get_user_id_by_username, is_pass_correct, username_and_publication
 from database.database import get_session
+from app import limiter
 
 router = APIRouter()
 
 
 @router.post("/get_user", response_model=UserResponse)
+@limiter.limit("15/minute")
 async def handle_user_data(
         data: UserRequest,
         session: AsyncSession = Depends(get_session)
 ):
-    user_id = await get_user_id_by_password(session, data.password)
+    user_id = await get_user_id_by_username(session, data.username)
     if user_id == -1:
-        raise HTTPException(status_code=401, detail="No such user for this password")
+        raise HTTPException(status_code=404, detail="User not found for this username")
+
+    if not await is_pass_correct(session, user_id, data.password):
+        raise HTTPException(status_code=401, detail="Wrong password")
 
     user_data = await username_and_publication(session, user_id)
 
