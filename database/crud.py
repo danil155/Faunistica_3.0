@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from datetime import datetime
 import hashlib
-import json
 import functools
+import asyncio
 
 from .models import User, Action, Publ, Record
 
@@ -44,15 +44,15 @@ async def get_user(session: AsyncSession, user_id: int):
     return result.scalar_one_or_none()
 
 
-async def username_and_publication(session: AsyncSession, user_id: int) -> str:
+async def username_and_publication(session: AsyncSession, user_id: int) -> dict:
     user = await get_user(session, user_id)
     if not user:
-        return json.dumps({"error": "User not found"})
+        return {"error": "User not found"}
 
     data = {"user_name": user.name, "publication": None}
 
     if user.publ_id:
-        stmt = select(Publ).where(Publ.id == user.publ_id)
+        stmt = select(Publ).filter_by(id=user.publ_id)
         result = await session.execute(stmt)
         publication = result.scalar_one_or_none()
         if publication:
@@ -63,7 +63,7 @@ async def username_and_publication(session: AsyncSession, user_id: int) -> str:
                 "pdf_file": publication.pdf_file
             }
 
-    return json.dumps(data)
+    return data
 
 
 @handle_db_errors
@@ -236,3 +236,65 @@ async def add_record_from_json(session: AsyncSession, record_json: dict):
     record = Record(**record_json)
     session.add(record)
     await session.commit()
+
+
+async def get_statistics(session: AsyncSession):
+    stats = {}
+    # 1. Total publications
+    stmt = select(func.count()).select_from(Publ)
+    result = await session.execute(stmt)
+    stats['total_publications'] = result.scalar()
+
+    # 2. Amount of processed publications
+    stmt = select(func.count(func.distinct(Record.publ_id)))
+    result = await session.execute(stmt)
+    stats['processed_publications'] = result.scalar()
+
+    # 3. Total species count
+    stmt = select(func.count()).select_from(Record).where(Record.type == 'rec_ok')
+    result = await session.execute(stmt)
+    stats['total_species'] = result.scalar()
+
+    # 4. Unique species count
+    stmt = select(func.count(func.distinct(func.concat(Record.tax_gen, '_', Record.tax_sp)))).where(
+        Record.type == 'rec_ok')
+    result = await session.execute(stmt)
+    stats['unique_species'] = result.scalar()
+
+    # 5. Top 4 species with the most spiders
+    stmt = select(Record.tax_gen, Record.tax_sp, func.count(Record.id).label('spider_count')) \
+        .group_by(Record.tax_gen, Record.tax_sp) \
+        .order_by(func.count(Record.id).desc()) \
+        .limit(4)
+    result = await session.execute(stmt)
+    top_species = result.fetchall()
+    stats['top_species'] = [{"species": f"{row.tax_gen} {row.tax_sp}", "count": row.spider_count} for row in top_species]
+
+    # 6. Latest 4 records
+    stmt = select(
+        func.date(Record.datetime).label('formatted_date'),
+        Record.tax_gen,
+        Record.tax_sp,
+        Record.adm_district,
+        Record.adm_region,
+        Record.user_id
+    ).order_by(Record.datetime.desc()).limit(4)
+    result = await session.execute(stmt)
+    latest_records = result.fetchall()
+
+    user_ids = [record.user_id for record in latest_records]
+    user_name_data = await asyncio.gather(
+        *[username_and_publication(session, user_id) for user_id in user_ids]
+    )
+
+    stats['latest_records'] = [
+        {
+            "datetime": record.formatted_date,
+            "species": f"{record.tax_gen} {record.tax_sp}",
+            "location": f"{record.adm_district}, {record.adm_region}",
+            "username": user_data['user_name'] if user_data and 'user_name' in user_data else "Unknown"
+        }
+        for record, user_data in zip(latest_records, user_name_data)
+    ]
+
+    return stats
