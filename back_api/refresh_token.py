@@ -1,14 +1,16 @@
 from fastapi import APIRouter, Request, Response, HTTPException
 from .token import verify_token, create_access_token
 from config.config import ACCESS_TOKEN_EXPIRE
-from app import limiter
+from .rate_limiter import limiter
 
 router = APIRouter()
 
 
 @router.post("/refresh_token")
 @limiter.limit("3/minute")
-def refresh(request: Request, response: Response):
+def refresh(request: Request,
+            response: Response
+):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token missing")
