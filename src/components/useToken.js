@@ -1,27 +1,27 @@
 import { useState } from 'react';
+import { api } from '../api';
 
 export default function useToken() {
   const getToken = () => {
-    const tokenString = localStorage.getItem('token');
-    const userToken = JSON.parse(tokenString);
-    return userToken?.token
+    return localStorage.getItem('access_token');
   };
 
   const [token, setToken] = useState(getToken());
 
-  const saveToken = userToken => {
-    localStorage.setItem('token', JSON.stringify(userToken));
-    setToken(userToken.token);
+  const saveToken = (userToken) => {
+    localStorage.setItem('access_token', userToken);
+    setToken(userToken);
   };
 
   const removeToken = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem('access_token');
     setToken(null);
+    //api.post('/auth/logout', {}, { withCredentials: true });
   };
 
   return {
-    setToken: saveToken,
     token,
-    removeToken: removeToken
-  }
+    setToken: saveToken,
+    removeToken,
+  };
 }

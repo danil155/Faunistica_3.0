@@ -36,17 +36,17 @@ const DateSelect = (getSectionData) => {
     };
 
     useEffect(() => {
-        if (formState.begin_month === 0) {
-            setBeginMonth('')
-        };
+        // if (formState.begin_month === 0) {
+        //     setBeginMonth('');
+        // }
 
     },[formState.begin_month]);
 
     useEffect(() => {
-        if (formState.end_month === 0) {
-            setEndMonth('');
-
-        }
+        // if (formState.end_month === 0) {
+        //     setEndMonth('');
+        //
+        // }
     }, [formState.end_month])
 
 
@@ -101,7 +101,7 @@ const DateSelect = (getSectionData) => {
               <input
                 type="month"
                 name="begin_month"
-                value={beginMonth}
+                // value={beginMonth}
                 onChange={handleChange}
                 required
               />
@@ -145,7 +145,7 @@ const DateSelect = (getSectionData) => {
               <input
                 type="month"
                 name="end_month"
-                value={endMonth}
+                // value={endMonth}
                 onChange={handleChange}
                 required
               />

@@ -7,6 +7,7 @@ import PinToggle from "../components/pin-toggle/PinToggle";
 import {DropDown} from "../components/cascading-dropdown/DropDown";
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import DateSelect from "../components/DateSelect";
+import { apiService } from '../api'
 
 const fieldsMap = {
     "Административное положение": ["country", "region", "district", "gathering_place"],
@@ -23,11 +24,10 @@ const fieldsMap = {
         "measurement_units",
         "selective_gain",
     ],
-    Таксономия: ["family", "genus", "species", "taxonomic_notes"],
+    'Таксономия': ["family", "genus", "species", "taxonomic_notes"],
 };
 
 const FormModePage = () => {
-
     // Получение контекста формы
     const {
         formState,
@@ -83,10 +83,40 @@ const FormModePage = () => {
     };
 
     // Обработчик отправки формы
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
         console.log("Отправка данных:", formState);
-        // Здесь будет логика отправки на сервер
+
+        try {
+            const recordData = {
+                country: formState.country,
+                region: formState.region,
+                district: formState.district,
+                place: formState.gathering_place,
+                north: formState.coordinate_north,
+                east: formState.coordinate_east,
+                begin_year: formState.begin_year,
+                begin_month: formState.begin_month,
+                begin_day: formState.begin_day,
+                end_year: formState.end_year,
+                end_month: formState.end_month,
+                end_day: formState.end_day,
+                family: formState.family,
+                genus: formState.genus,
+                species: formState.species,
+                taxonomic_notes: formState.taxonomic_notes,
+                collector: formState.collector
+            };
+
+            await apiService.insertRecord(recordData);
+            resetForm(resetMode === "soft");
+            alert("Данные успешно отправлены!");
+        } catch (error) {
+            console.error("Ошибка при отправке данных:", error);
+            alert("Произошла ошибка при отправке данных");
+        }
+
         resetForm(resetMode === "soft");
         alert("Форма отправлена! Незакреплённые поля очищены.");
     };

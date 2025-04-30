@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import ArticleInfo from "../components/article-info/ArticleInfo";
+import { apiService } from "../api";
 
 const TextModePage = () => {
   const [text, setText] = useState("");
