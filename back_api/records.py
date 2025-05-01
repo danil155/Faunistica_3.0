@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Depends, Request
 from back_api.schemas import InsertRecordsRequest
 from datetime import datetime, UTC
 import re
@@ -6,6 +6,7 @@ from typing import Optional
 from database.database import get_session
 from database.crud import add_record_from_json
 from .rate_limiter import limiter
+from .token import get_current_user
 
 router = APIRouter()
 
@@ -50,7 +51,8 @@ def safe_coord_parse(coord: Optional[str]) -> Optional[float]:
 @limiter.limit("5/minute")
 async def insert_record(
         request: Request,
-        data: InsertRecordsRequest
+        data: InsertRecordsRequest,
+        user_data: dict = Depends(get_current_user)
 ):
     async with get_session() as session:
         north = safe_coord_parse(data.north)

@@ -33,7 +33,7 @@ async def handle_user_data(
         key="access_token",
         value=access_token,
         httponly=True,
-        secure=False,
+        secure=False,   # Set to True for https
         samesite="strict",
         max_age=ACCESS_TOKEN_EXPIRE * 60,
         path="/",
@@ -43,7 +43,7 @@ async def handle_user_data(
         key="refresh_token",
         value=refresh_token,
         httponly=True,
-        secure=False,
+        secure=False,   # Set to True for https
         samesite="strict",
         max_age=REFRESH_TOKEN_EXPIRE * 60,
         path="/",

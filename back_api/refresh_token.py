@@ -27,7 +27,7 @@ def refresh(request: Request, response: Response):
         key="access_token",
         value=new_access_token,
         httponly=True,
-        secure=True,
+        secure=False,   # Set to True for https
         samesite="strict",
         max_age=ACCESS_TOKEN_EXPIRE,
         path="/"
