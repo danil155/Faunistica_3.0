@@ -8,15 +8,15 @@ class UserRequest(BaseModel):
 
 
 class Publication(BaseModel):
-    author: str
-    year: str
-    name: str
-    pdf_file: str
+    author: Optional[str]
+    year: Optional[str]
+    name: Optional[str]
+    pdf_file: Optional[str]
 
 
 class UserResponse(BaseModel):
     user_name: str
-    publication: Publication
+    publication: Optional[Publication]
 
 
 class InfoRequest(BaseModel):

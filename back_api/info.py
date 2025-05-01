@@ -1,7 +1,8 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Depends, Request
 from .schemas import InfoRequest, InfoResponse
 from text_processing.splitting import get_separated_parameters
 from .rate_limiter import limiter
+from .token import get_current_user
 
 router = APIRouter()
 
@@ -16,7 +17,8 @@ def clean_value(value):
 @limiter.limit("10/minute")
 def get_info(
         request: Request,
-        data: InfoRequest
+        data: InfoRequest,
+        _user_data: dict = Depends(get_current_user)
 ):
     if not data.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")

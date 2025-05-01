@@ -2,8 +2,6 @@ from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-import random
-import string
 from datetime import datetime
 from database.hash import register_user
 
@@ -568,15 +566,19 @@ class Handlers:
         password = message.text.strip()
 
         if len(password) < 8:
-            await message.answer("❌ Пароль должен быть не менее 8 символов!")
+            await message.answer(Messages.incorrect_password(1))
             return
 
         if not any(c.isupper() for c in password):
-            await message.answer("❌ Пароль должен содержать хотя бы одну заглавную букву!")
+            await message.answer(Messages.incorrect_password(2))
             return
 
         if not any(c.isdigit() for c in password):
-            await message.answer("❌ Пароль должен содержать хотя бы одну цифру!")
+            await message.answer(Messages.incorrect_password(3))
+            return
+
+        if 'sql' in password.lower():
+            await message.answer(Messages.incorrect_password(4))
             return
 
         hashed_password = register_user(password)

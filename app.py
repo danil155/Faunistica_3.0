@@ -1,14 +1,14 @@
-import asyncio
 import logging
+import asyncio
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.middleware import SlowAPIMiddleware
 
-from back_api import users, info, records, gen_stats, refresh_token
-from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
+from back_api import users, info, records, gen_stats, refresh_token, check_auth
 from bot.bot_main import bot_start
+from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
+
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,10 +36,11 @@ origins = [
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=['http://localhost:3000'],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=['GET', 'POST', 'PUT', 'DELETE'],
     allow_headers=["*"],
+    expose_headers=["set-cookie"]
 )
 
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
@@ -49,3 +50,7 @@ app.include_router(info.router, prefix="/api")
 app.include_router(records.router, prefix="/api")
 app.include_router(gen_stats.router, prefix="/api")
 app.include_router(refresh_token.router, prefix="/api")
+app.include_router(check_auth.router, prefix="/api")
+
+if __name__ == '__main__':
+    asyncio.run(bot_start())

@@ -8,9 +8,7 @@ router = APIRouter()
 
 @router.post("/refresh_token")
 @limiter.limit("3/minute")
-def refresh(request: Request,
-            response: Response
-):
+def refresh(request: Request, response: Response):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token missing")
@@ -21,8 +19,9 @@ def refresh(request: Request,
         raise HTTPException(status_code=401, detail="Invalid refresh token")
 
     user_id = payload.get("sub")
+    username = payload.get("username")
 
-    new_access_token = create_access_token({"sub": user_id})
+    new_access_token = create_access_token({"sub": user_id, "username": username})
 
     response.set_cookie(
         key="access_token",
@@ -30,7 +29,8 @@ def refresh(request: Request,
         httponly=True,
         secure=True,
         samesite="strict",
-        max_age=ACCESS_TOKEN_EXPIRE
+        max_age=ACCESS_TOKEN_EXPIRE,
+        path="/"
     )
 
     return {"message": "Access token refreshed"}

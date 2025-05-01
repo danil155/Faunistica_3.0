@@ -9,8 +9,8 @@ router = APIRouter()
 
 
 @router.get("/get_gen_stats", response_model=StatisticsResponse)
-@limiter.limit("1/second")
-async def get__gen_stats(
+@limiter.limit("60/minute")
+async def get_gen_stats(
         request: Request,
         session: AsyncSession = Depends(get_session)
 ):
