@@ -22,12 +22,12 @@ def verify_token(token: str) -> dict:
         return payload
     except ExpiredSignatureError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail='Token expired'
         )
     except JWTError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
+            status_code=status.HTTP_403_FORBIDDEN,
             detail='Invalid token'
         )
 
@@ -35,8 +35,8 @@ def verify_token(token: str) -> dict:
 def get_current_user(request: Request) -> dict:
     token = request.cookies.get("access_token")
     if not token:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Missing access token")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Missing access token")
     payload = verify_token(token)
     if payload.get("type") != "access":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token type")
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token type")
     return payload

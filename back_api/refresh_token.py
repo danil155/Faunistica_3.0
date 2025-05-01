@@ -9,12 +9,12 @@ router = APIRouter()
 def refresh(request: Request, response: Response):
     refresh_token = request.cookies.get("refresh_token")
     if not refresh_token:
-        raise HTTPException(status_code=401, detail="Refresh token missing")
+        raise HTTPException(status_code=403, detail="Refresh token missing")
 
     payload = verify_token(refresh_token)
 
     if payload.get("type") != "refresh":
-        raise HTTPException(status_code=401, detail="Invalid refresh token")
+        raise HTTPException(status_code=403, detail="Invalid refresh token")
 
     user_id = payload.get("sub")
     username = payload.get("username")
