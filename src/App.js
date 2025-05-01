@@ -12,16 +12,26 @@ import LoginPage from "./pages/LoginPage";
 import useToken  from "./components/useToken";
 import StatsPage from "./pages/Stats";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { api, apiService } from "./api";
+import { apiService } from "./api";
 
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { token, setToken, removeToken } = useToken();
-
+  const { isAuth, checkAuth, login, logout } = useToken();
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    const verifyAuth = async () => {
+      const authStatus = await checkAuth();
+      if (!authStatus && (location.pathname === '/form' || location.pathname === '/text')) {
+        navigate('/');
+      }
+    };
+
+    verifyAuth();
+  }, [navigate]);
 
 
   useEffect(() => {
@@ -33,33 +43,36 @@ function App() {
         console.error('Error loading stats:', error);
       }
     };
-    fetchStats();
-  }, []);
+    if (isAuth) {
+      fetchStats();
+    }
+  }, [isAuth]);
+
+  const handleLogin = async (username, password) => {
+    try {
+      const success = await login(username, password);
+      if (success) {
+        setShowLoginModal(false);
+        navigate("/text");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
 
   const handleLogout = async () => {
-    try {
-      await api.post('/auth/logout');
-    } finally {
-      removeToken();
-      navigate('/');
-    }
+    await logout();
+    navigate("/");
   };
 
   const handleClose = () => {
     setShowLoginModal(false);
-    navigate('/');
-  };
-
-  const handleLoginSuccess = () => {
-    setShowLoginModal(false);
-    setToken()
-    navigate('/text')
   };
 
   return (
     <div className="App">
       <Navbar
-        isAuthenticated={!!token}
+        isAuthenticated={isAuth}
         onLoginClick={() => setShowLoginModal(true)}
         onLogoutClick={handleLogout}
       />
@@ -71,25 +84,23 @@ function App() {
                 <LoginModal
                     onClose={handleClose}
 
-                    onLoginSuccess={handleLoginSuccess}
-
-                    onLogin={setToken}
+                    onLogin={handleLogin}
                 />
             )}
             <Home
-                isAuthenticated={!!token}
+                isAuthenticated={isAuth}
                 onLoginClick={() => setShowLoginModal(true)}
             />
           </>
         }/>
-        <Route path="/form" element={!!token?<FormModePage />:<LoginPage onLogin={setToken} onClose={handleClose}/>}/>
-        <Route path="/text" element={!!token?<TextModePage />:<LoginPage onLogin={setToken} onClose={handleClose}/>}/>
+        <Route path="/form" element={isAuth?<FormModePage />:<LoginPage onLogin={handleLogin} onClose={handleClose}/>}/>
+        <Route path="/text" element={isAuth?<TextModePage />:<LoginPage onLogin={handleLogin} onClose={handleClose}/>}/>
         <Route path="/stats" element={<StatsPage/>} />
       </Routes>
 
       <Footer />
 
-      {stats && (
+      {isAuth && stats && (
           <div className="stats-preview">
             <p>Всего записей: {stats.total_records}</p>
             <p>Последняя запись: {stats.latest_record?.date}</p>

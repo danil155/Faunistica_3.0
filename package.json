@@ -2,7 +2,6 @@
   "name": "data-web",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://0.0.0.0:5001",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -13,6 +12,7 @@
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.9.0",
+    "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "cors": "^2.8.5",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "webpack-dev-server": "^5.2.1"
   }
 }

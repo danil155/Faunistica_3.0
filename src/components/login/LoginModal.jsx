@@ -7,28 +7,31 @@ import React, { useState } from 'react';
 import { ReactComponent as QrCode } from '../../img/qr-code.svg';
 import { useNavigate } from 'react-router-dom';
 import "./LoginModal.css"
-import {api, apiService} from '../../api'
+import { apiService } from '../../api'
 
 const LoginModal = ({ onClose, onLogin }) => {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async e =>{
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
 
     try {
-      const response = await apiService.login(username, password);
-      console.log(response)
+      await onLogin(username, password);
 
-      if (response.access_token) {
-        localStorage.setItem('access_token', response.access_token);
-      }
+      onClose();
 
-      onLogin();
+      navigate('/form');
     } catch (err) {
+      console.error('Ошибка авторизации: ', err);
       setError('Ошибка входа. Проверьте данные.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -76,8 +79,14 @@ const LoginModal = ({ onClose, onLogin }) => {
             />
             {error && <div className="error-message">{error}</div>}
           </div>
-          
-          <button type="submit" className="submit-button">Войти</button>
+
+          <button
+              type="submit"
+              className="submit-button"
+              disabled={isLoading}
+          >
+            {isLoading ? 'Вход...' : 'Войти'}
+          </button>
         </form>
 
         <div className="help-text">

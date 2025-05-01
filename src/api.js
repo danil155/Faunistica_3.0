@@ -21,6 +21,15 @@ const apiService = {
         return response.data;
     },
 
+    checkAuth: async () => {
+        try {
+            await api.post('/api/check_auth');
+            return true;
+        } catch {
+            return false;
+        }
+    },
+
 
     // Получение информации из текста
     getInfoFromText: async (text) => {
@@ -48,24 +57,6 @@ const apiService = {
 };
 
 api.interceptors.request.use(async (config) => {
-    const token = localStorage.getItem('access_token');
-
-    if (token) {
-        const { exp } = jwtDecode(token);
-        if (Date.now() >= exp * 1000) {
-            try {
-                const { data } = await apiService.refreshToken();
-                localStorage.setItem('access_token', data.access_token);
-                config.headers.Authorization = `Bearer ${data.access_token}`;
-            } catch (error) {
-                localStorage.removeItem('access_token');
-                window.location.href = '/login';
-                return Promise.reject(error);
-            }
-        } else {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-    }
 
     return config;
 });
@@ -73,10 +64,22 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
     response => response,
     async error => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('access_token');
-            window.location.href = '/login';
+        const originalRequest = error.config;
+
+        if (error.response?.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                // Пытаемся обновить токен
+                await apiService.refreshToken();
+                return api(originalRequest);
+            } catch (refreshError) {
+                // Если refresh не удался - разлогиниваем
+                window.location.href = '/login';
+                return Promise.reject(refreshError);
+            }
         }
+
         return Promise.reject(error);
     }
 );
