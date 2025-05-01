@@ -23,15 +23,10 @@ function App() {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    const verifyAuth = async () => {
-      const authStatus = await checkAuth();
-      if (!authStatus && (location.pathname === '/form' || location.pathname === '/text')) {
-        navigate('/');
-      }
-    };
-
-    verifyAuth();
-  }, [navigate]);
+    if (isAuth === false && (location.pathname === '/form' || location.pathname === '/text')) {
+      navigate('/');
+    }
+  }, [isAuth, location.pathname, navigate]);
 
 
   useEffect(() => {
@@ -43,6 +38,7 @@ function App() {
         console.error('Error loading stats:', error);
       }
     };
+
     if (isAuth) {
       fetchStats();
     }
@@ -50,13 +46,11 @@ function App() {
 
   const handleLogin = async (username, password) => {
     try {
-      const success = await login(username, password);
-      if (success) {
-        setShowLoginModal(false);
-        navigate("/text");
-      }
+      await login(username, password);
+      return true;
     } catch (error) {
       console.error("Login error:", error);
+      throw error;
     }
   };
 

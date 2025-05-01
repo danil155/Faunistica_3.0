@@ -22,14 +22,24 @@ const LoginModal = ({ onClose, onLogin }) => {
     setError('');
 
     try {
-      await onLogin(username, password);
+      const loginSuccess = await onLogin(username, password);
+      console.log(loginSuccess);
 
-      onClose();
-
-      navigate('/form');
+      if (loginSuccess) {
+        onClose();
+        navigate('/form');
+      }
     } catch (err) {
       console.error('Ошибка авторизации: ', err);
-      setError('Ошибка входа. Проверьте данные.');
+
+      if (err.message === 'Неверный пароль') {
+        setError('Неверный пароль. Попробуйте снова.');
+      } else if (err.response?.status === 404) {
+        setError('Неверные данные. Попробуйте еще раз.')
+      } else {
+        setError('Ошибка входа. Попробуйте позже.')
+      }
+
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +95,11 @@ const LoginModal = ({ onClose, onLogin }) => {
               className="submit-button"
               disabled={isLoading}
           >
-            {isLoading ? 'Вход...' : 'Войти'}
+            {isLoading ? (
+                <>
+                  <span className="spinner"></span> Вход...
+                </>
+            ) : 'Войти'}
           </button>
         </form>
 

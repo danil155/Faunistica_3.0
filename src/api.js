@@ -8,11 +8,24 @@ const api = axios.create({
     withCredentials: true,
 });
 
+let refreshTokenPromise = null;
+
 const apiService = {
     // Аутентификация
     login: async (username, password) => {
-        const response = await api.post('/api/get_user', { username, password });
-        return response.data;
+        console.log('login');
+        try {
+            const response = await api.post('/api/get_user', { username, password });
+            console.log('response');
+            return response.data;
+        } catch (error) {
+            console.log('401 error');
+            // Обрабатываем 401 ошибку
+            if (error.response?.status === 401) {
+                throw new Error('Неверный пароль');
+            }
+            throw error;
+        }
     },
 
     // Выход из системы
@@ -29,7 +42,6 @@ const apiService = {
             return false;
         }
     },
-
 
     // Получение информации из текста
     getInfoFromText: async (text) => {
@@ -51,14 +63,24 @@ const apiService = {
 
     // Обновление токена
     refreshToken: async () => {
-        const response = await api.post('/api/refresh_token');
-        return response.data;
+        try {
+            if (!refreshTokenPromise) {
+                refreshTokenPromise = api.post('/api/refresh_token')
+                    .finally(() => {
+                        refreshTokenPromise = null;
+                    });
+            }
+            return await refreshTokenPromise;
+        } catch (error) {
+            throw error;
+        }
     }
 };
 
-api.interceptors.request.use(async (config) => {
-
+api.interceptors.request.use((config) => {
     return config;
+}, (error) => {
+    return Promise.reject(error);
 });
 
 api.interceptors.response.use(
@@ -66,17 +88,15 @@ api.interceptors.response.use(
     async error => {
         const originalRequest = error.config;
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        if (error.response?.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
 
             try {
-                // Пытаемся обновить токен
                 await apiService.refreshToken();
                 return api(originalRequest);
             } catch (refreshError) {
-                // Если refresh не удался - разлогиниваем
-                window.location.href = '/login';
-                return Promise.reject(refreshError);
+                console.error('Refresh token failed:', refreshError);
+                throw refreshError;
             }
         }
 

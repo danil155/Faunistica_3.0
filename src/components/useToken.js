@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import { apiService } from '../api';
 
 export default function useToken() {
-  const [isAuth, setIsAuth] = useState(false);
+  const [isAuth, setIsAuth] = useState(null);
 
   const checkAuth = async () => {
     try {
@@ -18,9 +18,7 @@ export default function useToken() {
   const login = async (username, password) => {
     try {
       await apiService.login(username, password);
-      const authStatus = await checkAuth();
-      setIsAuth(authStatus);
-      return authStatus;
+      return await checkAuth();
     } catch (error) {
       setIsAuth(false);
       throw error;
@@ -29,12 +27,16 @@ export default function useToken() {
 
   const logout = async () => {
     try {
-      await apiService.refreshToken(); // Инвалидация refresh токена
+      await apiService.logout();
     } finally {
       setIsAuth(false);
-      window.location.href = '/login';
+      window.location.href = '/';
     }
   };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
 
   return {
     isAuth,
