@@ -113,6 +113,34 @@ async def get_publications_for_language(session: AsyncSession, language: str):
     return result.scalars().all()
 
 
+async def is_publ_filled(session: AsyncSession, user_id: int, publ_id: int) -> bool:
+    stmt = select(Record).where(Record.user_id == user_id, Record.publ_id == publ_id) \
+        .order_by(Record.datetime.desc()) \
+        .limit(1)
+    result = await session.execute(stmt)
+    record = result.scalar_one_or_none()
+
+    if not record:
+        return False
+
+    return record.type == 'rec_ok'
+
+
+@handle_db_errors
+async def replace_publication(session: AsyncSession, user_id: int, publ_id: int):
+    user = await get_user(session, user_id)
+    if not user:
+        print(f"User with id {user_id} not found.")
+        return
+    publication = await get_publication(session, publ_id)
+    if not publication:
+        print(f"Publication with id {publ_id} not found.")
+        return
+    stmt = update(User).where(User.id == user_id).values(publ_id=publ_id)
+    await session.execute(stmt)
+    await session.commit()
+
+
 @handle_db_errors
 async def add_publication_from_json(session: AsyncSession, publ_json: dict):
     publ = Publ(**publ_json)
