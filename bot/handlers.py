@@ -244,7 +244,7 @@ class Handlers:
                     action="bot_auth",
                     object="not_reg_start"
                 )
-            elif 1 < user.reg_stat <= 7:
+            elif 1 < user.reg_stat <= 20:
                 await message.answer(Messages.registration_not_finished())
                 await log_action(
                     session=session,
@@ -539,7 +539,7 @@ class Handlers:
 
         async for session in self.db_session_factory():
             items = await get_publications_for_language(session, lang_value)
-            items_str = "|".join(items[:5])  # Берем первые 5 публикаций
+            items_str = "|".join(list(str(item) for item in items[:5]))  # Берем первые 5 публикаций
 
             if not items:
                 await message.answer(Messages.no_publication())
