@@ -291,7 +291,7 @@ async def get_statistics(session: AsyncSession):
 
     stats['latest_records'] = [
         {
-            "datetime": record.formatted_date,
+            "datetime": record.formatted_date.isoformat(),
             "species": f"{record.tax_gen} {record.tax_sp}",
             "location": f"{record.adm_district}, {record.adm_region}",
             "username": user_data['user_name'] if user_data and 'user_name' in user_data else "Unknown"
