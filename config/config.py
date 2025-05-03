@@ -5,6 +5,8 @@ load_dotenv(find_dotenv())
 
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 
+TEST_BOT_TOKEN = os.getenv('TEST_BOT_TOKEN')
+
 ADMIN_CHAT_ID = int(os.getenv('ADMIN_CHAT_ID'))
 
 DB_NAME = os.getenv('DB_NAME')

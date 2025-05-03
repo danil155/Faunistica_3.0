@@ -127,21 +127,6 @@ async def is_publ_filled(session: AsyncSession, user_id: int, publ_id: int) -> b
 
 
 @handle_db_errors
-async def replace_publication(session: AsyncSession, user_id: int, publ_id: int):
-    user = await get_user(session, user_id)
-    if not user:
-        print(f"User with id {user_id} not found.")
-        return
-    publication = await get_publication(session, publ_id)
-    if not publication:
-        print(f"Publication with id {publ_id} not found.")
-        return
-    stmt = update(User).where(User.id == user_id).values(publ_id=publ_id)
-    await session.execute(stmt)
-    await session.commit()
-
-
-@handle_db_errors
 async def add_publication_from_json(session: AsyncSession, publ_json: dict):
     publ = Publ(**publ_json)
     session.add(publ)

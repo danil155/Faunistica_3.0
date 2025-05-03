@@ -8,8 +8,10 @@ from database.hash import register_user
 from config import config_vars, config
 from bot.messages import Messages
 from bot.button_markups import Keyboards
-from database.crud import get_user, create_user, log_action, get_publication, update_user, get_user_stats,\
-    get_general_stats, get_volunteers_achievements, count_users_with_name, get_publications_for_language
+from bot.generate_pass import generate_secure_password
+from database.crud import get_user, create_user, log_action, get_publication, update_user, get_user_stats, \
+    get_general_stats, get_volunteers_achievements, count_users_with_name, get_publications_for_language, \
+    is_publ_filled
 from bot.states import (
     RegistrationStates,
     SupportStates,
@@ -30,6 +32,7 @@ class Handlers:
         self.router.message.register(self.start_command, Command("start"))
         self.router.message.register(self.register_command, Command("register"))
         self.router.message.register(self.auth_command, Command("auth"))
+        self.router.message.register(self.next_publ_command, Command("next_publ"))
         self.router.message.register(self.menu_command, Command("menu"))
         self.router.message.register(self.stats_command, Command("stats"))
         self.router.message.register(self.rename_command, Command("rename"))
@@ -39,22 +42,6 @@ class Handlers:
         self.router.message.register(self.reply_to_user_command, Command("reply"))
 
         # Text message handlers
-        self.router.message.register(
-            self.register_command,
-            lambda msg: msg.text.lower() == "регистрация в проекте"
-        )
-        self.router.message.register(
-            self.auth_command,
-            lambda msg: msg.text.lower() == "вход в веб-приложение"
-        )
-        self.router.message.register(
-            self.support_command,
-            lambda msg: msg.text.lower() == "обратиться в поддержку"
-        )
-        self.router.message.register(
-            self.stats_command,
-            lambda msg: msg.text.lower() == "статистика проекта"
-        )
         self.router.message.register(
             self.menu_command,
             lambda msg: "меню" in msg.text.lower()
@@ -90,10 +77,6 @@ class Handlers:
         self.router.message.register(
             self.reg_lang_handler,
             RegistrationStates.waiting_for_language
-        )
-        self.router.message.register(
-            self.reg_password_handler,
-            RegistrationStates.waiting_for_password
         )
 
         # Support state handler
@@ -173,6 +156,22 @@ class Handlers:
                     disable_web_page_preview=True
                 )
                 await state.set_state(RegistrationStates.waiting_for_agreement)
+            elif user.reg_stat is None:
+                await update_user(
+                    session=session,
+                    user_id=message.from_user.id,
+                    reg_stat=2
+                )
+
+                await message.answer(Messages.old_user(user.name))
+
+                await message.answer(
+                    Messages.registration_start(),
+                    reply_markup=Keyboards.yes_no(),
+                    parse_mode="HTML",
+                    disable_web_page_preview=True
+                )
+                await state.set_state(RegistrationStates.waiting_for_agreement)
             elif user.reg_stat == 1:
                 await message.answer(
                     Messages.already_registered(user.name),
@@ -182,6 +181,293 @@ class Handlers:
                 await message.answer(Messages.support_call_not_finished())
             else:
                 await self.continue_registration(message, user, state)
+
+    async def auth_command(self, message: Message):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            return
+
+        async for session in self.db_session_factory():
+            user = await get_user(session, message.from_user.id)
+
+            if not user:
+                await message.answer(Messages.not_registered())
+                await log_action(
+                    session=session,
+                    user_id=message.from_user.id,
+                    action="bot_auth",
+                    object="not_reg_start"
+                )
+            elif user.reg_stat is None:
+                await message.answer(Messages.register_for_old())
+            elif 1 < user.reg_stat <= 6:
+                await message.answer(Messages.registration_not_finished())
+                await log_action(
+                    session=session,
+                    user_id=message.from_user.id,
+                    action="bot_auth",
+                    object="not_reg_end"
+                )
+            elif user.reg_stat == 7:
+                await message.answer(Messages.support_call_not_finished())
+            else:
+                await message.answer(
+                    text=Messages.auth_success(),
+                    parse_mode="HTML")
+
+                if not user.items:
+                    await message.answer(Messages.no_publications_left())
+                else:
+                    if user.publ_id is None:
+                        publ_id = int(user.items.split('|')[0])
+                    else:
+                        publ_id = user.publ_id
+
+                    publ = await get_publication(session, publ_id)
+                    await message.answer(
+                        text=Messages.current_publication(publ),
+                        parse_mode="HTML",
+                        disable_web_page_preview=True
+                    )
+
+                    password = generate_secure_password()
+                    hashed_password = register_user(password)
+
+                    await update_user(
+                        session=session,
+                        user_id=message.from_user.id,
+                        hash=hashed_password,
+                        hash_date=datetime.now(),
+                        publ_id=publ_id
+                    )
+
+                    await message.answer(
+                        Messages.new_password(password),
+                        parse_mode="Markdown",
+                        disable_web_page_preview=True
+                    )
+
+                await update_user(
+                    session=session,
+                    user_id=message.from_user.id,
+                    reg_stat=1
+                )
+                await log_action(
+                    session=session,
+                    user_id=message.from_user.id,
+                    action="bot_auth",
+                    object="success"
+                )
+
+    async def next_publ_command(self, message: Message):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            return
+
+        async for session in self.db_session_factory():
+            user = await get_user(session, message.from_user.id)
+
+            if not user:
+                await message.answer(Messages.not_registered())
+                await log_action(
+                    session=session,
+                    user_id=message.from_user.id,
+                    action="bot_auth",
+                    object="not_reg_start"
+                )
+            elif user.reg_stat is None:
+                await message.answer(Messages.register_for_old())
+            elif 1 < user.reg_stat <= 6:
+                await message.answer(Messages.registration_not_finished())
+                await log_action(
+                    session=session,
+                    user_id=message.from_user.id,
+                    action="bot_auth",
+                    object="not_reg_end"
+                )
+            elif user.reg_stat == 7:
+                await message.answer(Messages.support_call_not_finished())
+            else:
+                if not is_publ_filled(session, message.from_user.id, int(user.items.split('|')[0])):
+                    await message.answer(Messages.not_finished_publ(user.name))
+                    return
+
+                items = user.items.split('|')
+
+                num_publ = items.index(str(user.publ_id)) if str(user.publ_id) in items else -1
+
+                if (num_publ != -1) and (num_publ != len(items) - 1):
+                    await update_user(
+                        session=session,
+                        user_id=message.from_user.id,
+                        publ_id=int(items[num_publ + 1])
+                    )
+                    await message.answer(Messages.accept_next_publ())
+                else:
+                    await message.answer(Messages.no_publications_left())
+
+    async def menu_command(self, message: Message):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            return
+
+        await message.answer(
+            Messages.called_menu(),
+            parse_mode="HTML"
+        )
+
+    async def stats_command(self, message: Message):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            return
+
+        async for session in self.db_session_factory():
+            general_stats = await get_general_stats(session)
+            user_stats = None
+
+            user = await get_user(session, message.from_user.id)
+            if user is not None:
+                user_stats = await get_user_stats(session, message.from_user.id)
+                print(user_stats)
+
+            await message.answer(
+                Messages.statistics(general_stats, user_stats),
+                parse_mode="HTML",
+                reply_markup=Keyboards.remove()
+            )
+
+            if message.chat.id == config.ADMIN_CHAT_ID:
+                volunteers_data = await get_volunteers_achievements(session)
+                # IN DEVELOPMENT
+
+    async def rename_command(self, message: Message, state: FSMContext):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            return
+
+        async for session in self.db_session_factory():
+            user = await get_user(session, message.from_user.id)
+
+            if not user:
+                await message.answer(Messages.not_registered())
+            elif user.reg_stat is None:
+                await message.answer(Messages.register_for_old())
+            elif 1 < user.reg_stat <= 6:
+                await message.answer(Messages.started_registered())
+            elif user.reg_stat == 7:
+                await message.answer(Messages.support_call_not_finished())
+            elif user.reg_stat <= 20 and user.reg_stat != 1:
+                await message.answer(Messages.sociology_not_finished())
+            else:
+                await message.answer(
+                    Messages.rename_prompt(),
+                    reply_markup=Keyboards.remove()
+                )
+                await state.set_state(RenameStates.waiting_for_new_name)
+
+    async def support_command(self, message: Message, state: FSMContext):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            await message.answer(Messages.support_for_admins())
+            return
+
+        async for session in self.db_session_factory():
+            await update_user(
+                session=session,
+                user_id=message.from_user.id,
+                reg_stat=7
+            )
+        await message.answer(
+            Messages.support_request(),
+            reply_markup=Keyboards.remove()
+        )
+        await state.set_state(SupportStates.waiting_for_question)
+
+    async def sociology_command(self, message: Message, state: FSMContext):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            return
+
+        async for session in self.db_session_factory():
+            user = await get_user(session, message.from_user.id)
+
+            if message.chat.id < 0:
+                return
+            elif not user:
+                await message.answer(Messages.not_registered())
+            elif user.reg_stat is None:
+                await message.answer(Messages.register_for_old())
+            elif 1 < user.reg_stat <= 7:
+                await message.answer(Messages.started_registered())
+            elif user.reg_stat != 1:
+                await message.answer(Messages.started_unidentified_action())
+            elif all([getattr(user, field) is not None for field in ['age', 'lng', 'comm', 'sex', 'rating', 'email',
+                                                                     'region']]):
+                await message.answer(Messages.sociology_completed())
+            else:
+                missing_fields = [field for field in ['age', 'lng', 'comm', 'sex', 'rating', 'email', 'region']
+                                  if getattr(user, field) is None]
+
+                await message.answer(
+                    f'{Messages.any_question(missing_fields)}\n{Messages.go_back_to_sociology()}',
+                    parse_mode="HTML"
+                )
+
+                next_question = missing_fields[0]
+
+                if next_question == 'age':
+                    await message.answer(Messages.ask_age())
+                    await state.set_state(SociologyStates.waiting_for_age)
+                elif next_question == 'lng':
+                    await message.answer(Messages.ask_language())
+                    await state.set_state(SociologyStates.waiting_for_language)
+                elif next_question == 'comm':
+                    await message.answer(Messages.ask_publication_preferences())
+                    await state.set_state(SociologyStates.waiting_for_comments)
+                elif next_question == 'sex':
+                    await message.answer(Messages.sociology_question(1))
+                    await state.set_state(SociologyStates.waiting_for_gender)
+                elif next_question == 'rating':
+                    await message.answer(Messages.sociology_question(2))
+                    await state.set_state(SociologyStates.waiting_for_rating_agreement)
+
+    async def cancel_command(self, message: Message, state: FSMContext):
+        if message.chat.id == config.ADMIN_CHAT_ID:
+            return
+
+        await state.clear()
+
+        async for session in self.db_session_factory():
+            await update_user(
+                session=session,
+                user_id=message.from_user.id,
+                reg_stat=1
+            )
+        await message.answer(
+            Messages.rollback_completed(),
+            reply_markup=Keyboards.remove()
+        )
+
+    async def reply_to_user_command(self, message: Message):
+        if message.chat.id != config.ADMIN_CHAT_ID:
+            await message.answer(Messages.no_access_to_command())
+            return
+
+        if not message.reply_to_message:
+            await message.answer(Messages.using_command_reply())
+            return
+
+        reply_text = message.text.replace("/reply@FaunisticaV3Bot", "").replace("/reply", "").strip()
+        if not reply_text:
+            await message.answer(Messages.empty_response_to_user())
+            return
+
+        original_message = message.reply_to_message.text
+        try:
+            print(original_message)
+            user_id = int(original_message.split("ID: ")[1].split(" ")[0])
+            print(user_id)
+        except (IndexError, ValueError):
+            await message.answer(Messages.could_not_extract_id())
+            return
+
+        await self.bot.send_message(user_id, Messages.response_from_support(reply_text))
+        await message.answer(Messages.response_sent())
+
+    # ========== STATE HANDLERS ========== #
 
     async def continue_registration(self, message: Message, user, state: FSMContext):
         if message.chat.id == config.ADMIN_CHAT_ID:
@@ -228,222 +514,6 @@ class Handlers:
                 Messages.unexpected_error(),
                 reply_markup=Keyboards.remove()
             )
-
-    async def auth_command(self, message: Message):
-        if message.chat.id == config.ADMIN_CHAT_ID:
-            return
-
-        async for session in self.db_session_factory():
-            user = await get_user(session, message.from_user.id)
-
-            if not user:
-                await message.answer(Messages.not_registered())
-                await log_action(
-                    session=session,
-                    user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="not_reg_start"
-                )
-            elif 1 < user.reg_stat <= 20:
-                await message.answer(Messages.registration_not_finished())
-                await log_action(
-                    session=session,
-                    user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="not_reg_end"
-                )
-            else:
-                await message.answer(
-                    text=Messages.auth_success(),
-                    parse_mode="HTML")
-
-                if not user.items:
-                    await message.answer(Messages.no_publications_left())
-                else:
-                    publ = await get_publication(session, user.items.split('|')[0])
-                    publ_text = self.format_publication(publ)
-                    await message.answer(
-                        Messages.current_publication(publ_text),
-                        parse_mode="HTML",
-                        disable_web_page_preview=True
-                    )
-
-                await update_user(
-                    session=session,
-                    user_id=message.from_user.id,
-                    reg_stat=1,
-                )
-                await log_action(
-                    session=session,
-                    user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="success"
-                )
-
-    async def menu_command(self, message: Message):
-        if message.chat.id == config.ADMIN_CHAT_ID:
-            return
-        await message.answer(
-            Messages.called_menu(),
-            reply_markup=Keyboards.main_menu()
-        )
-
-    async def stats_command(self, message: Message):
-        if message.chat.id == config.ADMIN_CHAT_ID:
-            return
-
-        async for session in self.db_session_factory():
-            general_stats = await get_general_stats(session)
-            user_stats = None
-
-            user = await get_user(session, message.from_user.id)
-            if user:
-                user_stats = await get_user_stats(session, user.user_id)
-
-            await message.answer(
-                Messages.statistics(general_stats, user_stats),
-                parse_mode="HTML",
-                reply_markup=Keyboards.remove()
-            )
-
-            if message.chat.id == config.ADMIN_CHAT_ID:
-                volunteers_data = await get_volunteers_achievements(session)
-                # Здесь можно реализовать отправку файла с данными
-
-    async def rename_command(self, message: Message, state: FSMContext):
-        if message.chat.id == config.ADMIN_CHAT_ID:
-            return
-
-        async for session in self.db_session_factory():
-            user = await get_user(session, message.from_user.id)
-
-            if not user:
-                await message.answer(Messages.not_registered())
-            elif 1 < user.reg_stat <= 6:
-                await message.answer(Messages.started_registered())
-            elif user.reg_stat == 7:
-                await message.answer(Messages.support_call_not_finished())
-            elif user.reg_stat <= 20 and user.reg_stat != 1:
-                await message.answer(Messages.sociology_not_finished())
-            else:
-                await message.answer(
-                    Messages.rename_prompt(),
-                    reply_markup=Keyboards.remove()
-                )
-                await state.set_state(RenameStates.waiting_for_new_name)
-
-    async def support_command(self, message: Message, state: FSMContext):
-        if message.chat.id == config.ADMIN_CHAT_ID:
-            await message.answer(Messages.support_for_admins())
-            return
-
-        async for session in self.db_session_factory():
-            await update_user(
-                session=session,
-                user_id=message.from_user.id,
-                reg_stat=7
-            )
-        await message.answer(
-            Messages.support_request(),
-            reply_markup=Keyboards.remove()
-        )
-        await state.set_state(SupportStates.waiting_for_question)
-
-    async def sociology_command(self, message: Message, state: FSMContext):
-        if message.chat.id == config.ADMIN_CHAT_ID:
-            return
-
-        async for session in self.db_session_factory():
-            user = await get_user(session, message.from_user.id)
-
-            if message.chat.id < 0:
-                return
-            elif not user:
-                await message.answer(Messages.not_registered())
-            elif 1 < user.reg_stat <= 7:
-                await message.answer(Messages.started_registered())
-            elif user.reg_stat != 1:
-                await message.answer(Messages.started_unidentified_action())
-            elif all([getattr(user, field) is not None for field in ['age', 'lng', 'comm', 'sex', 'rating', 'email',
-                                                                     'region']]):
-                await message.answer(Messages.sociology_completed())
-            else:
-                missing_fields = [field for field in ['age', 'lng', 'comm', 'sex', 'rating', 'email', 'region']
-                                  if getattr(user, field) is None]
-
-                await message.answer(
-                    f'{Messages.any_question(missing_fields)}\n{Messages.go_back_to_sociology()}',
-                    parse_mode="HTML"
-                )
-
-                next_question = missing_fields[0]
-
-                if next_question == 'age':
-                    await message.answer(Messages.ask_age())
-                    await state.set_state(SociologyStates.waiting_for_age)
-                elif next_question == 'lng':
-                    await message.answer(Messages.ask_language())
-                    await state.set_state(SociologyStates.waiting_for_language)
-                elif next_question == 'comm':
-                    await message.answer(Messages.ask_publication_preferences())
-                    await state.set_state(SociologyStates.waiting_for_comments)
-                elif next_question == 'sex':
-                    await message.answer(Messages.sociology_question(1))
-                    await state.set_state(SociologyStates.waiting_for_gender)
-                elif next_question == 'rating':
-                    await message.answer(Messages.sociology_question(2))
-                    await state.set_state(SociologyStates.waiting_for_rating_agreement)
-                elif next_question == 'region':
-                    await message.answer(Messages.sociology_question(3))
-                    await state.set_state(SociologyStates.waiting_for_region)
-                elif next_question == 'email':
-                    await message.answer(Messages.sociology_question(4))
-                    await state.set_state(SociologyStates.waiting_for_email)
-
-    async def cancel_command(self, message: Message, state: FSMContext):
-        if message.chat.id == config.ADMIN_CHAT_ID:
-            return
-
-        await state.clear()
-
-        async for session in self.db_session_factory():
-            await update_user(
-                session=session,
-                user_id=message.from_user.id,
-                reg_stat=1
-            )
-        await message.answer(
-            Messages.rollback_completed(),
-            reply_markup=Keyboards.remove()
-        )
-
-    async def reply_to_user_command(self, message: Message):
-        if message.chat.id != config.ADMIN_CHAT_ID:
-            await message.answer(Messages.no_access_to_command())
-            return
-
-        if not message.reply_to_message:
-            await message.answer(Messages.using_command_reply())
-            return
-
-        reply_text = message.text.replace("/reply@FaunisticaV3Bot", "").replace("/reply", "").strip()
-        if not reply_text:
-            await message.answer(Messages.empty_response_to_user())
-            return
-
-        original_message = message.reply_to_message.text
-        try:
-            print(original_message)
-            user_id = int(original_message.split("ID: ")[1].split(" ")[0])
-            print(user_id)
-        except (IndexError, ValueError):
-            await message.answer(Messages.could_not_extract_id())
-            return
-
-        await self.bot.send_message(user_id, Messages.response_from_support(reply_text))
-        await message.answer(Messages.response_sent())
-
-    # ========== STATE HANDLERS ========== #
 
     async def reg_accept_handler(self, message: Message, state: FSMContext):
         async for session in self.db_session_factory():
@@ -539,7 +609,7 @@ class Handlers:
 
         async for session in self.db_session_factory():
             items = await get_publications_for_language(session, lang_value)
-            items_str = "|".join(list(str(item) for item in items[:5]))  # Берем первые 5 публикаций
+            items_str = "|".join(list(str(item) for item in items))
 
             if not items:
                 await message.answer(Messages.no_publication())
@@ -555,41 +625,8 @@ class Handlers:
                 user_id=message.from_user.id,
                 lng=lang_value,
                 items=items_str,
-                reg_stat=20,
-                reg_end=datetime.now()
-            )
-
-        await message.answer(Messages.ask_password())
-        await state.set_state(RegistrationStates.waiting_for_password)
-
-    async def reg_password_handler(self, message: Message, state: FSMContext):
-        password = message.text.strip()
-
-        if len(password) < 8:
-            await message.answer(Messages.incorrect_password(1))
-            return
-
-        if not any(c.isupper() for c in password):
-            await message.answer(Messages.incorrect_password(2))
-            return
-
-        if not any(c.isdigit() for c in password):
-            await message.answer(Messages.incorrect_password(3))
-            return
-
-        if 'sql' in password.lower():
-            await message.answer(Messages.incorrect_password(4))
-            return
-
-        hashed_password = register_user(password)
-
-        async for session in self.db_session_factory():
-            await update_user(
-                session=session,
-                user_id=message.from_user.id,
                 reg_stat=1,
-                hash=hashed_password,
-                hash_date=datetime.now()
+                reg_end=datetime.now()
             )
 
         await message.answer(Messages.registration_complete())
