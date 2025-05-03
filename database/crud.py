@@ -60,7 +60,7 @@ async def username_and_publication(session: AsyncSession, user_id: int) -> dict:
         if publication:
             data["publication"] = {
                 "author": publication.author,
-                "year": publication.year,
+                "year": str(publication.year),
                 "name": publication.name,
                 "pdf_file": publication.pdf_file
             }
