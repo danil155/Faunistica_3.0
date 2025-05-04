@@ -99,4 +99,4 @@ class PublResponse(BaseModel):
     author: Optional[str]
     year: Optional[str]
     name: Optional[str]
-    pdf_file = Optional[str]
+    pdf_file: Optional[str]
