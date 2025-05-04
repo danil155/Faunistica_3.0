@@ -394,11 +394,10 @@ class Handlers:
                 await message.answer(Messages.started_registered())
             elif user.reg_stat != 1:
                 await message.answer(Messages.started_unidentified_action())
-            elif all([getattr(user, field) is not None for field in ['age', 'lng', 'comm', 'sex', 'rating', 'email',
-                                                                     'region']]):
+            elif all([getattr(user, field) is not None for field in ['age', 'lng', 'comm', 'sex', 'rating']]):
                 await message.answer(Messages.sociology_completed())
             else:
-                missing_fields = [field for field in ['age', 'lng', 'comm', 'sex', 'rating', 'email', 'region']
+                missing_fields = [field for field in ['age', 'lng', 'comm', 'sex', 'rating']
                                   if getattr(user, field) is None]
 
                 await message.answer(
@@ -428,14 +427,27 @@ class Handlers:
         if message.chat.id == config.ADMIN_CHAT_ID:
             return
 
-        await state.clear()
-
         async for session in self.db_session_factory():
+            user = await get_user(session, message.from_user.id)
+
+            if not user:
+                await message.answer(Messages.not_registered())
+                return
+            elif user.reg_stat is None:
+                await message.answer(Messages.register_for_old())
+                return
+            elif 1 < user.reg_stat <= 6:
+                await message.answer(Messages.started_registered())
+                return
+
+            await state.clear()
+
             await update_user(
                 session=session,
                 user_id=message.from_user.id,
                 reg_stat=1
             )
+
         await message.answer(
             Messages.rollback_completed(),
             reply_markup=Keyboards.remove()
@@ -672,7 +684,9 @@ class Handlers:
         async for session in self.db_session_factory():
             other_users = await count_users_with_name(session, name_msg)
 
-            if other_users > 0:
+            if name_msg == (await get_user(session, message.from_user.id)).name:
+                await message.answer(Messages.same_name(name_msg))
+            elif other_users > 0:
                 await message.answer(Messages.name_already_exists())
             elif len(name_msg) < 3:
                 await message.answer(Messages.message_too_short())
@@ -771,7 +785,8 @@ class Handlers:
         elif "муж" in gender_msg or "male" in gender_msg:
             gender_value = "mm"
         else:
-            gender_value = "xx"
+            await message.answer(Messages.selection_not_recognized())
+            return
 
         async for session in self.db_session_factory():
             await update_user(
@@ -794,7 +809,8 @@ class Handlers:
         elif answer in config_vars.NO_WORDS:
             rating_value = 0
         else:
-            rating_value = 0  # По умолчанию считаем как отказ
+            await message.answer(Messages.selection_not_recognized())
+            return
 
         async for session in self.db_session_factory():
             await update_user(

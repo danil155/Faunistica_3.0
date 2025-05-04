@@ -4,7 +4,7 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemo
 class Keyboards:
     @staticmethod
     def remove() -> ReplyKeyboardRemove:
-        return ReplyKeyboardRemove()
+        return ReplyKeyboardRemove(remove_keyboard=True)
 
     @staticmethod
     def language_selection() -> ReplyKeyboardMarkup:

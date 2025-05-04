@@ -130,6 +130,10 @@ class Messages:
     def rename_success(name: str) -> str:
         return f'Классный выбор! Приятно познакомиться, {name}! 🤗'
 
+    @staticmethod
+    def same_name(name: str) -> str:
+        return f'Извините, но у вас уже установлено имя {name}'
+
     # ========== SUPPORT MESSAGE ========== #
 
     @staticmethod
