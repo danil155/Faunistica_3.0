@@ -96,7 +96,7 @@ class SuggestTaxonResponse(BaseModel):
 
 
 class PublResponse(BaseModel):
-    author = Optional[str]
-    year = Optional[str]
-    name = Optional[str]
+    author: Optional[str]
+    year: Optional[str]
+    name: Optional[str]
     pdf_file = Optional[str]
