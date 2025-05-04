@@ -1,0 +1,51 @@
+from fastapi import APIRouter, HTTPException, Depends, Request
+from back_api.schemas import SuggestTaxonRequest, SuggestTaxonResponse
+import pandas as pd
+from typing import Optional, Dict, List
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+from back_api.token import get_current_user
+
+router = APIRouter()
+
+df = pd.read_csv("species_export_20250503.csv", usecols=["family", "genus", "species"])
+executor = ThreadPoolExecutor()
+
+
+def suggestion(field: str, text: str, filters: Dict[str, Optional[str]]) -> List[str]:
+    if field not in ["species", "genus", "family"]:
+        raise ValueError("Invalid field. Must be 'species', 'genus', or 'family'.")
+
+    query_df = df.copy()
+
+    if filters.get("family"):
+        query_df = query_df[query_df["family"].str.contains(filters["family"], case=False, na=False)]
+
+    if filters.get("genus"):
+        query_df = query_df[query_df["genus"].str.contains(filters["genus"], case=False, na=False)]
+
+    suggestions = query_df[field]
+
+    filtered = suggestions[
+        suggestions.str.contains(text, case=False, na=False)
+    ].dropna().drop_duplicates().sort_values()
+
+    return filtered.tolist()
+
+
+async def async_suggestion(field: str, text: str, filters: Dict[str, Optional[str]]) -> List[str]:
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(executor, suggestion, field, text, filters)
+
+
+@router.post("/suggest_taxon", response_model=SuggestTaxonResponse)
+async def suggest_taxon(
+        request: Request,
+        data: SuggestTaxonRequest,
+        user_data: dict = Depends(get_current_user)
+):
+    try:
+        suggestions = await async_suggestion(data.field, data.text, data.filters)
+        return {"suggestions": suggestions}
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))

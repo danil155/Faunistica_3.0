@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.middleware import SlowAPIMiddleware
 
-from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout
+from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout, suggest_taxon, get_publ
 from bot.bot_main import bot_start
 from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
 
@@ -52,6 +52,8 @@ app.include_router(gen_stats.router, prefix="/api")
 app.include_router(refresh_token.router, prefix="/api")
 app.include_router(check_auth.router, prefix="/api")
 app.include_router(logout.router, prefix="/api")
+app.include_router(suggest_taxon.router, prefix="/api")
+app.include_router(get_publ.router, prefix="/api")
 
 if __name__ == '__main__':
     asyncio.run(bot_start())

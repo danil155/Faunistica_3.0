@@ -4,7 +4,7 @@ from datetime import datetime, UTC
 import re
 from typing import Optional
 from database.database import get_session
-from database.crud import add_record_from_json
+from database.crud import add_record_from_json, get_user
 from .rate_limiter import limiter
 from .token import get_current_user
 
@@ -57,10 +57,10 @@ async def insert_record(
     async with get_session() as session:
         north = safe_coord_parse(data.north)
         east = safe_coord_parse(data.east)
-
+        user_info = await get_user(session, user_data["sub"])
         record_json = {
-            "publ_id": "WARNING",
-            "user_id": "WARNING",
+            "publ_id": user_info.publ_id,
+            "user_id": user_info.id,
             "datetime": datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S'),
             "ip": "WARNING",
             "errors": "WARNING",

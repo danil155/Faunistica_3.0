@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict
 
 
 class UserRequest(BaseModel):
@@ -7,16 +7,8 @@ class UserRequest(BaseModel):
     password: str
 
 
-class Publication(BaseModel):
-    author: Optional[str]
-    year: Optional[str]
-    name: Optional[str]
-    pdf_file: Optional[str]
-
-
 class UserResponse(BaseModel):
     user_name: str
-    publication: Optional[Publication]
 
 
 class InfoRequest(BaseModel):
@@ -91,3 +83,20 @@ class StatisticsResponse(BaseModel):
     unique_species: int
     top_species: List[SpeciesStats]
     latest_records: List[LatestRecord]
+
+
+class SuggestTaxonRequest(BaseModel):
+    field: str
+    text: str
+    filters: Dict[str, Optional[str]]
+
+
+class SuggestTaxonResponse(BaseModel):
+    suggestions: Optional[List[str]]
+
+
+class PublResponse(BaseModel):
+    author = Optional[str]
+    year = Optional[str]
+    name = Optional[str]
+    pdf_file = Optional[str]

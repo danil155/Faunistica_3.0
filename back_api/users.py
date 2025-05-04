@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from .schemas import UserRequest, UserResponse, Publication
+from .schemas import UserRequest, UserResponse
 from database.crud import get_user_id_by_username, is_pass_correct, username_and_publication
 from database.database import get_session
 from .rate_limiter import limiter
@@ -49,19 +49,4 @@ async def handle_user_data(
         path="/",
     )
 
-    user_data = await username_and_publication(session, user_id)
-
-    if user_data["publication"]:
-        publ = Publication(
-            author=user_data["publication"]["author"],
-            year=user_data["publication"]["year"],
-            name=user_data["publication"]["name"],
-            pdf_file=user_data["publication"]["pdf_file"]
-        )
-    else:
-        publ = None
-
-    return UserResponse(
-        user_name=user_data["user_name"],
-        publication=publ
-    )
+    return {"message": "OK"}
