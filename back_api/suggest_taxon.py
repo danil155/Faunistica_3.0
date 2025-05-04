@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from back_api.schemas import SuggestTaxonRequest, SuggestTaxonResponse
 import pandas as pd
+from pathlib import Path
 from typing import Optional, Dict, List
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
@@ -8,7 +9,8 @@ from back_api.token import get_current_user
 
 router = APIRouter()
 
-df = pd.read_csv("species_export_20250503.csv", usecols=["family", "genus", "species"])
+csv_path = Path(__file__).resolve().parent.parent / "species_export_20250503.csv"
+df = pd.read_csv(csv_path, usecols=["family", "genus", "species"])
 executor = ThreadPoolExecutor()
 
 
