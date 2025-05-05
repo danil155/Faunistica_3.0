@@ -186,8 +186,8 @@ async def get_user_stats(session: AsyncSession, user_id: int):
 
     # Publications processed
     publ_ids = set()
-    recs_stmt = select(Record.publ_id).where(cast(Record.user_id, BigInteger) == user_id)
-    actions_stmt = select(Action.object).where(cast(Action.user_id, BigInteger) == user_id, Action.action.ilike('%end_publ%'))
+    recs_stmt = select(Record.publ_id).where(Record.user_id == BigInteger(user_id))
+    actions_stmt = select(Action.object).where(Action.user_id == BigInteger(user_id), Action.action.ilike('%end_publ%'))
 
     for stmt in (recs_stmt, actions_stmt):
         result = await session.execute(stmt)
@@ -196,7 +196,7 @@ async def get_user_stats(session: AsyncSession, user_id: int):
     stats['processed_publs'] = max(len(publ_ids) - 1, 0)
 
     # Record stats
-    result = await session.execute(select(Record.type).where(cast(Record.user_id, BigInteger) == user_id))
+    result = await session.execute(select(Record.type).where(Record.user_id == BigInteger(user_id)))
     records = result.scalars().all()
 
     rec_ok = records.count('rec_ok')
@@ -209,7 +209,7 @@ async def get_user_stats(session: AsyncSession, user_id: int):
 
     # Species count
     species_stmt = select(func.count(func.distinct(func.concat(Record.tax_gen, '_', Record.tax_sp)))).where(
-        Record.type == 'rec_ok', cast(Record.user_id, BigInteger) == user_id
+        Record.type == 'rec_ok', Record.user_id == BigInteger(user_id)
     )
     result = await session.execute(species_stmt)
     stats['species_count'] = result.scalar()
@@ -219,7 +219,7 @@ async def get_user_stats(session: AsyncSession, user_id: int):
         SELECT mode() WITHIN GROUP (ORDER BY CONCAT(tax_gen, ' ', tax_sp)) 
         FROM records 
         WHERE type = 'rec_ok' AND user_id = :user_id
-    """), {"user_id": user_id})
+    """), {"user_id": str(user_id)})
     stats['most_common_species'] = result.scalar()
 
     return stats
