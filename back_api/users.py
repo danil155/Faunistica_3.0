@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends, Request, Response
 from sqlalchemy.ext.asyncio import AsyncSession
-from .schemas import UserRequest, UserResponse
-from database.crud import get_user_id_by_username, is_pass_correct, username_and_publication
+from .schemas import UserRequest
+from database.crud import get_user_id_by_username, is_pass_correct
 from database.database import get_session
 from .rate_limiter import limiter
 from .token import create_access_token, create_refresh_token
@@ -10,7 +10,7 @@ from config.config import ACCESS_TOKEN_EXPIRE, REFRESH_TOKEN_EXPIRE
 router = APIRouter()
 
 
-@router.post("/get_user", response_model=UserResponse)
+@router.post("/get_user")
 @limiter.limit("15/minute")
 async def handle_user_data(
         request: Request,
