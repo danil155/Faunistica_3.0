@@ -46,7 +46,7 @@ class Publ(Base):
 class Action(Base):
     __tablename__ = 'actions'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    user_id = Column(BigInteger, ForeignKey('users.id', ondelete='CASCADE'))
     action = Column(Text)
     object = Column(Text)
     datetime = Column(TIMESTAMP)
