@@ -34,8 +34,8 @@ const LoginModal = ({ onClose, onLogin }) => {
 
       if (err.message === 'Неверный пароль') {
         setError('Неверный пароль. Попробуйте снова.');
-      } else if (err.response?.status === 404) {
-        setError('Неверные данные. Попробуйте еще раз.')
+      } else if (err.response.message === 'Пользователь не найден') {
+        setError('Пользователь не найден')
       } else {
         setError('Ошибка входа. Попробуйте позже.')
       }
