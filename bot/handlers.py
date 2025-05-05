@@ -1,10 +1,13 @@
+import re
+
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from datetime import datetime
-from database.hash import register_user
+from re import fullmatch
 
+from database.hash import register_user
 from config import config_vars, config
 from bot.messages import Messages
 from bot.button_markups import Keyboards
@@ -285,6 +288,8 @@ class Handlers:
                 )
             elif user.reg_stat == 7:
                 await message.answer(Messages.support_call_not_finished())
+            elif user.publ_id is None:
+                await message.answer(Messages.not_authorization())
             else:
                 if not await is_publ_filled(session, message.from_user.id, int(user.items.split('|')[0])):
                     await message.answer(Messages.not_finished_publ(user.name))
@@ -301,6 +306,13 @@ class Handlers:
                         publ_id=int(items[num_publ + 1])
                     )
                     await message.answer(Messages.accept_next_publ())
+
+                    publ = await get_publication(session, user.publ_id)
+                    await message.answer(
+                        text=Messages.current_publication(publ),
+                        parse_mode="HTML",
+                        disable_web_page_preview=True
+                    )
                 else:
                     await message.answer(Messages.no_publications_left())
 
@@ -559,8 +571,8 @@ class Handlers:
                 await message.answer(Messages.message_too_short())
             elif len(name_msg) > 20:
                 await message.answer(Messages.message_too_long())
-            elif any(c in name_msg for c in ".,!?;:"):
-                await message.answer(Messages.message_has_punctuation())
+            elif not fullmatch(r'^[а-яА-ЯёЁa-zA-Z0-9]+$', name_msg):
+                await message.answer(Messages.invalid_characters())
             else:
                 await update_user(
                     session=session,
@@ -651,16 +663,14 @@ class Handlers:
         await state.clear()
 
     async def support_question_handler(self, message: Message, state: FSMContext):
-        if len(message.text) < 10:
+        if message.text.lower().strip() in ['cancel', 'отмена']:
+            await message.answer(Messages.cancellation_support_request())
+            return
+        elif len(message.text) < 10:
             await message.answer(Messages.support_request_too_short())
-
-            async for session in self.db_session_factory():
-                await update_user(
-                    session=session,
-                    user_id=message.from_user.id,
-                    reg_stat=1
-                )
-            await state.clear()
+            return
+        elif len(message.text) > 256:
+            await message.answer(Messages.message_too_long())
             return
 
         async for session in self.db_session_factory():
@@ -697,8 +707,8 @@ class Handlers:
                 await message.answer(Messages.message_too_short())
             elif len(name_msg) > 40:
                 await message.answer(Messages.message_too_long())
-            elif any(c in name_msg for c in ".,!?;:"):
-                await message.answer(Messages.message_has_punctuation())
+            elif not fullmatch(r'^[а-яА-ЯёЁa-zA-Z0-9]+$', name_msg):
+                await message.answer(Messages.invalid_characters())
             else:
                 old_name = (await get_user(session, message.from_user.id)).name
 
