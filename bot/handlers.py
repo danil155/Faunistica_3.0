@@ -1,5 +1,3 @@
-import re
-
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
@@ -378,6 +376,19 @@ class Handlers:
             return
 
         async for session in self.db_session_factory():
+            user = await get_user(session, message.from_user.id)
+
+            if not user:
+                await message.answer(Messages.not_registered())
+                return
+            elif user.reg_stat is None:
+                await message.answer(Messages.register_for_old())
+                return
+            elif 1 < user.reg_stat <= 6:
+                await message.answer(Messages.unavailable_during_registration())
+                return
+
+        async for session in self.db_session_factory():
             await update_user(
                 session=session,
                 user_id=message.from_user.id,
@@ -452,7 +463,7 @@ class Handlers:
                 await message.answer(Messages.register_for_old())
                 return
             elif 1 < user.reg_stat <= 6:
-                await message.answer(Messages.started_registered())
+                await message.answer(Messages.unavailable_during_registration())
                 return
 
             await state.clear()
@@ -665,6 +676,14 @@ class Handlers:
     async def support_question_handler(self, message: Message, state: FSMContext):
         if message.text.lower().strip() in ['cancel', 'отмена']:
             await message.answer(Messages.cancellation_support_request())
+            async for session in self.db_session_factory():
+                await update_user(
+                    session=session,
+                    user_id=message.from_user.id,
+                    reg_stat=1
+                )
+
+            await state.clear()
             return
         elif len(message.text) < 10:
             await message.answer(Messages.support_request_too_short())

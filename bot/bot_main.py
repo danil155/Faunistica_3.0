@@ -9,7 +9,7 @@ from bot.handlers import Handlers
 
 
 async def bot_start():
-    bot = Bot(token=config.BOT_TOKEN)
+    bot = Bot(token=config.TEST_BOT_TOKEN)
     dp = Dispatcher(storage=MemoryStorage())
 
     # Initialize database
