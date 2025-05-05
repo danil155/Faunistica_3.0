@@ -180,6 +180,7 @@ async def get_general_stats(session: AsyncSession):
 
 
 # === USER STATS ===
+@handle_db_errors
 async def get_user_stats(session: AsyncSession, user_id: int):
     stats = {}
 
