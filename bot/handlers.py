@@ -286,7 +286,7 @@ class Handlers:
             elif user.reg_stat == 7:
                 await message.answer(Messages.support_call_not_finished())
             else:
-                if not is_publ_filled(session, message.from_user.id, int(user.items.split('|')[0])):
+                if not await is_publ_filled(session, message.from_user.id, int(user.items.split('|')[0])):
                     await message.answer(Messages.not_finished_publ(user.name))
                     return
 
@@ -390,7 +390,10 @@ class Handlers:
                 await message.answer(Messages.not_registered())
             elif user.reg_stat is None:
                 await message.answer(Messages.register_for_old())
-            elif 1 < user.reg_stat <= 7:
+            elif 1 < user.reg_stat <= 6:
+                await message.answer(Messages.started_registered())
+            elif user.reg_stat == 7:
+                await message.answer(Messages.support_call_not_finished())
                 await message.answer(Messages.started_registered())
             elif user.reg_stat != 1:
                 await message.answer(Messages.started_unidentified_action())
@@ -486,7 +489,9 @@ class Handlers:
             return
         reg_stat = user.reg_stat
 
-        if reg_stat == 2:
+        if reg_stat == 7:
+            await message.answer(Messages.support_call_not_finished())
+        elif reg_stat == 2:
             await state.set_state(RegistrationStates.waiting_for_agreement)
             await message.answer(
                 Messages.registration_start(),
