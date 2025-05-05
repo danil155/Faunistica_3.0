@@ -1,148 +1,148 @@
-import React, { useEffect, useState} from "react";
+import React, { useState, useCallback} from "react";
 import { useFormContext } from "../../pages/FormContext";
+import {apiService} from "../../api";
 
-export function DropDown() {
-    const { formState, setFormState, pinnedData } = useFormContext();
-    
-    // Mock данные
-    const countriesRegionsMock = [
-      {
-        name: "Россия",
-        regions: ["Центральный федеральный округ", "Северо-Западный федеральный округ", "Южный федеральный округ"]
-      }
+export function DropDown({debounceTime = 300}) {
+    const {setFormState} = useFormContext();
+    const updateField = (fieldName, value) => {
+        setFormState(prev => ({
+            ...prev,
+            [fieldName]: value
+        }));
+    };
+
+    const levels = [
+        { name: 'family', placeholder: 'Start typing family...' },
+        { name: 'genus', placeholder: 'Start typing genus...' },
+        { name: 'species', placeholder: 'Start typing species...' }
     ];
-  
-    const regionsDistrictsMock = [
-      {
-        name: "Центральный федеральный округ",
-        districts: ["Москва", "Московская область", "Воронежская область", "Ярославская область"]
-      }
-    ];
-  
-    const [availableRegions, setAvailableRegions] = useState([]);
-    const [availableDistricts, setAvailableDistricts] = useState([]);
-  
-    // Получаем текущие значения, учитывая закрепленные данные
-    const getFieldValue = (fieldName) => {
-      for (const section of Object.values(pinnedData)) {
-        if (section[fieldName] !== undefined) {
-          return section[fieldName];
+
+    // Состояния
+    const [selected, setSelected] = useState({
+        family: null,
+        genus: null,
+        species: null
+    });
+
+    const [inputValues, setInputValues] = useState({
+        family: '',
+        genus: '',
+        species: ''
+    });
+
+    const [options, setOptions] = useState({
+        family: [],
+        genus: [],
+        species: []
+    });
+
+    const [activeDropdown, setActiveDropdown] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    // Debounce функция
+    const debounce = (func, delay) => {
+        let timeoutId;
+        return (...args) => {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => func(...args), delay);
+        };
+    };
+
+    // Запрос данных
+    const fetchWithFilters = useCallback(
+        debounce(async (fieldName, searchText) => {
+            if (searchText.length < 2) {
+                setOptions(prev => ({ ...prev, [fieldName]: [] }));
+                return;
+            }
+
+            setLoading(true);
+            try {
+                // Формируем фильтры на основе предыдущих выборов
+                const filters = {};
+                if (fieldName === 'genus' && selected.family) {
+                    filters.family = selected.family.id;
+                }
+                if (fieldName === 'species' && selected.genus) {
+                    filters.genus = selected.genus.id;
+                }
+
+                const data = await apiService.suggestTaxon({
+                    field: fieldName,
+                    text: searchText,
+                    filters: filters
+                });
+                setOptions(prev => ({ ...prev, [fieldName]: data }));
+            } finally {
+                setLoading(false);
+            }
+        }, debounceTime),
+        [selected.family, selected.genus]
+    );
+
+    // Обработчики событий
+    const handleInputChange = (fieldName, value) => {
+        setInputValues(prev => ({ ...prev, [fieldName]: value }));
+        fetchWithFilters(fieldName, value);
+    };
+
+    const handleSelect = (fieldName, option) => {
+        updateField(fieldName, option);
+
+        // Обновляем локальное состояние
+        setInputValues(prev => ({
+            ...prev,
+            [fieldName]: option.name,
+            // Сбрасываем последующие поля
+            ...(fieldName === 'family' && { genus: '', species: '' }),
+            ...(fieldName === 'genus' && { species: '' })
+        }));
+
+        // Сбрасываем выбранные значения для зависимых полей
+        if (fieldName === 'family') {
+            updateField('genus', '');
+            updateField('species', '');
+        } else if (fieldName === 'genus') {
+            updateField('species', '');
         }
-      }
-      // Затем проверяем основное состояние формы
-      return formState[fieldName] || "";
+
+        setActiveDropdown(null);
     };
-  
-    const selectedCountry = getFieldValue(`country`);
-    const selectedRegion = getFieldValue(`region`);
-    const selectedDistrict = getFieldValue(`district`);
-  
-    // Обработчики изменений
-    const handleCountryChange = (e) => {
-      const value = e.target.value;
-      setFormState(prev => ({
-        ...prev,
-        [`country`]: value,
-        ...(!pinnedData[`region`] && { [`region`]: "" }),
-        ...(!pinnedData[`district`] && { [`district`]: "" })
-      }));
+
+    const isFieldDisabled = (fieldName) => {
+        if (fieldName === 'genus') return !selected.family;
+        if (fieldName === 'species') return !selected.genus;
+        return false;
     };
-  
-    const handleRegionChange = (e) => {
-      const value = e.target.value;
-      setFormState(prev => ({
-        ...prev,
-        [`region`]: value,
-        ...(!pinnedData[`district`] && { [`district`]: "" })
-      }));
-    };
-  
-    const handleDistrictChange = (e) => {
-      const value = e.target.value;
-      setFormState(prev => ({
-        ...prev,
-        [`district`]: value
-      }));
-    };
-  
-    // Эффекты для обновления доступных регионов и районов
-    useEffect(() => {
-      if (selectedCountry) {
-        const country = countriesRegionsMock.find(c => c.name === selectedCountry);
-        setAvailableRegions(country ? country.regions : []);
-      } else {
-        setAvailableRegions([]);
-      }
-    }, [selectedCountry]);
-  
-    useEffect(() => {
-      if (selectedRegion) {
-        const region = regionsDistrictsMock.find(r => r.name === selectedRegion);
-        setAvailableDistricts(region ? region.districts : []);
-      } else {
-        setAvailableDistricts([]);
-      }
-    }, [selectedRegion]);
-  
-    // Проверяем, закреплено ли поле
-    const isFieldPinned = (fieldName) => {
-      return Object.values(pinnedData).some(
-        section => section[fieldName] !== undefined
-      );
-    };
-  
+
     return (
-      <>
-        <div className="form-group">
-          <label >Страна</label>
-          <select 
-            name={`country`}
-            value={selectedCountry} 
-            onChange={handleCountryChange}
-            disabled={isFieldPinned(`country`)}
-          >
-            <option value="">Выберите страну</option>
-            {countriesRegionsMock.map(country => (
-              <option value={country.name}>
-                {country.name}
-              </option>
+        <div className="taxonomic-dropdown">
+            {levels.map(level => (
+                <div key={level.name} className="taxonomic-level">
+                    <input
+                        value={inputValues[level.name]}
+                        onChange={(e) => handleInputChange(level.name, e.target.value)}
+                        placeholder={level.placeholder}
+                        disabled={isFieldDisabled(level.name)}
+                        onClick={() => setActiveDropdown(level.name)}
+                    />
+
+                    {activeDropdown === level.name && options[level.name].length > 0 && (
+                        <div className="dropdown-list">
+                            {options[level.name].map(option => (
+                                <div
+                                    key={option.id}
+                                    onClick={() => handleSelect(level.name, option)}
+                                >
+                                    {option.name}
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                </div>
             ))}
-          </select>
+
+            {loading && <div className="loading">Loading...</div>}
         </div>
-  
-        <div className="form-group">
-          <label>Регион</label>
-          <select 
-            name={`region`}
-            value={selectedRegion} 
-            onChange={handleRegionChange}
-            disabled={!selectedCountry || isFieldPinned(`region`)}
-          >
-            <option value="">Выберите регион</option>
-            {availableRegions.map(region => (
-              <option key={region} value={region}>
-                {region}
-              </option>
-            ))}
-          </select>
-        </div>
-  
-        <div className="form-group">
-          <label>Район</label>
-          <select 
-            name={`district`}
-            value={selectedDistrict} 
-            onChange={handleDistrictChange}
-            disabled={!selectedRegion || isFieldPinned(`district`)}
-          >
-            <option value="">Выберите район</option>
-            {availableDistricts.map(district => (
-              <option key={district} value={district}>
-                {district}
-              </option>
-            ))}
-          </select>
-        </div>
-      </>
     );
   }

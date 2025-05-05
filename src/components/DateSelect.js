@@ -2,175 +2,179 @@ import { useFormContext } from "../pages/FormContext";
 import { useState, useEffect } from "react";
 
 
-const DateSelect = (getSectionData) => {
-    const {formState, setFormState, pinnedSections, setPinnedData} = useFormContext()
+const DateSelect = () => {
+    const {formState, setFormState} = useFormContext()
+
     const [isInterval, setIsInterval] = useState(false)
     const [precision, setPrecision] = useState('exact')
+    const [beginMonth, setBeginMonth] = useState('')
+    const [endMonth, setEndMonth] = useState('')
+
+    function resetForm() {
+        setFormState(prev => ({
+            ...prev,
+            begin_date: '',
+            end_date: '',
+            begin_year: 0,
+            end_year: 0,
+            begin_month: 0,
+            end_month: 0,
+            eve_day_def: null
+        }));
+    };
+
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === "begin_month") {
+            setBeginMonth(value)
             let nums = value.split("-")
-            formState.begin_year = Number(nums[0]);
-            formState.begin_month = Number(nums[1]);
-            return;
+            formState.begin_year = Number(nums[0])
+            formState.begin_month = Number(nums[1])
         } else if (name === "end_month") {
-            let nums = value.split("-");
-            formState.end_year = Number(nums[0]);
-            formState.end_month = Number(nums[1]);
-            return;
+            setEndMonth(value)
+            let nums = value.split("-")
+            formState.end_year = Number(nums[0])
+            formState.end_month = Number(nums[1])
+        } else {
+            setFormState(prev => ({...prev, [name]: value}))
         }
-        setFormState(prev => ({...prev, [name]: value}))
-    };
-
-    const resetDates = (e) => {
-      setFormState(prev => ({
-          ...prev,
-          begin_date: '',
-          end_date: '',
-          begin_year: 0,
-          end_year: 0,
-          begin_month: 0,
-          end_month: 0
-      }));
     };
 
     useEffect(() => {
-        // if (formState.begin_month === 0) {
-        //     setBeginMonth('');
-        // }
+        if (formState.begin_month === 0) {
+            setBeginMonth('')
+        };
 
     },[formState.begin_month]);
 
     useEffect(() => {
-        // if (formState.end_month === 0) {
-        //     setEndMonth('');
-        //
-        // }
+        if (formState.end_month === 0) {
+            setEndMonth('');
+
+        }
     }, [formState.end_month])
 
-
-    return ( 
+    return (
         <>
-        <div className="form-row">
-        <div className="form-group">
-          <label>Тип даты:</label>
-          <select 
-            value={isInterval} 
-            onChange={(e) => {setIsInterval(e.target.value); resetDates(e)}}
-            className="form-control"
-          >
-            <option value={false}>Одиночная дата</option>
-            <option value={true}>Интервал дат</option>
-          </select>
-        </div>
+            <div className="form-group">
+                <label>Тип даты:</label>
+                <select
+                    value={isInterval}
+                    onChange={(e) => {setIsInterval(e.target.value);resetForm()}}
+                    className="form-control"
+                >
+                    <option value={false}>Одиночная дата</option>
+                    <option value={true}>Интервал дат</option>
+                </select>
 
-        <div className="form-group">
-          <label>Точность:</label>
-          <select 
-            value={precision} 
-            onChange={(e) => {setPrecision(e.target.value); resetDates(e)}}
-            className="form-control"
-          >
-            <option value="exact">Точная дата</option>
-            <option value="month">С точностью до месяца</option>
-            <option value="year">С точностью до года</option>
-          </select>
-        </div>
-      </div>
-      
-      <div className="form-row">
-        <div className="form-group">
-          {precision === 'exact' && (
-            <>
-              <label>Дата:</label>
-              <input
-                type="date"
-                name="begin_date"
-                value={formState.begin_date}
-                onChange={handleChange}
-                className="form-control"
-                required
-              />
-            </>
-          )}
-          
-          {precision === 'month' && (
-            <>
-              <label>Месяц и год:</label>
-              <input
-                type="month"
-                name="begin_month"
-                // value={beginMonth}
-                onChange={handleChange}
-                required
-              />
-            </>
-          )}
-          
-          {(precision === 'year') && (
-            <>
-              <label>Год:</label>
-              <input
-                type="number"
-                name="begin_year"
-                min="1900"
-                max="2100"
-                value={formState.begin_year}
-                onChange={handleChange}
-                required
-              />
-            </>
-          )}
-        </div>
+                <label>Точность:</label>
+                <select
+                    value={precision}
+                    onChange={(e) => {setPrecision(e.target.value);resetForm();formState.eve_day_def = e.target.value === "exact";}}
+                    className="form-control"
+                >
+                    <option value="exact">Точная дата</option>
+                    <option value="month">С точностью до месяца</option>
+                    <option value="year">С точностью до года</option>
+                </select>
+            </div>
 
-      {isInterval && (
-        <div className="form-group">
-          {precision === 'exact' && (
-            <>
-              <label>Конечная дата:</label>
-              <input
-                type="date"
-                name="end_Date"
-                value={formState.end_date}
-                onChange={handleChange}
-                required
-              />
-            </>
-          )}
-          
-          {precision === 'month' && (
-            <>
-              <label>Конечный месяц и год:</label>
-              <input
-                type="month"
-                name="end_month"
-                // value={endMonth}
-                onChange={handleChange}
-                required
-              />
-            </>
-          )}
-          
-          {precision === 'year' && (
-            <>
-              <label>Конечный год:</label>
-              <input
-                type="number"
-                name="end_year"
-                min="1800"
-                max="2100"
-                value={formState.end_year}
-                onChange={handleChange}
-                required
-              />
-            </>
-          )}
-        </div>
-      )}
-      </div>
-      </>
-     );
+            <div className="form-group">
+                {precision === 'exact' && (
+                    <>
+                        <label>Дата:</label>
+                        <input
+                            type="date"
+                            name="begin_date"
+                            value={formState.begin_date}
+                            onChange={handleChange}
+                            className="text-input"
+                            required
+                        />
+                    </>
+                )}
+
+                {precision === 'month' && (
+                    <>
+                        <label>Месяц и год:</label>
+                        <input
+                            type="month"
+                            name="begin_month"
+                            value={beginMonth}
+                            onChange={handleChange}
+                            required
+                        />
+                    </>
+                )}
+
+                {(precision === 'year') && (
+                    <>
+                        <label>Год:</label>
+                        <input
+                            className="text-input"
+                            type="number"
+                            name="begin_year"
+                            min="1900"
+                            max="2100"
+                            value={formState.begin_year}
+                            onChange={handleChange}
+                            required
+                        />
+                    </>
+                )}
+
+
+                {isInterval && (
+                    <>
+                        {precision === 'exact' && (
+                            <>
+                                <label>Конечная дата:</label>
+                                <input
+                                    className="text-input"
+                                    type="date"
+                                    name="end_Date"
+                                    value={formState.end_date}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </>
+                        )}
+
+                        {precision === 'month' && (
+                            <>
+                                <label>Конечный месяц и год:</label>
+                                <input
+                                    className="text-input"
+                                    type="month"
+                                    name="end_month"
+                                    value={endMonth}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </>
+                        )}
+
+                        {precision === 'year' && (
+                            <>
+                                <label>Конечный год:</label>
+                                <input
+                                    className="text-input"
+                                    type="number"
+                                    name="end_year"
+                                    min="1900"
+                                    max="2100"
+                                    value={formState.end_year}
+                                    onChange={handleChange}
+                                    required
+                                />
+                            </>
+                        )}
+                    </>
+                )}
+            </div>
+        </>
+    );
 }
- 
+
 export default DateSelect;

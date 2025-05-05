@@ -19,10 +19,12 @@ const apiService = {
             console.log('response');
             return response.data;
         } catch (error) {
-            console.log('401 error');
-            // Обрабатываем 401 ошибку
+            // Обрабатываем ошибку
             if (error.response?.status === 401) {
+                console.log('401 error');
                 throw new Error('Неверный пароль');
+            } else if (error.response?.status === 404) {
+                throw new Error('Пользователь не найден');
             }
             throw error;
         }
@@ -74,6 +76,24 @@ const apiService = {
         } catch (error) {
             throw error;
         }
+    },
+
+    suggestTaxon: async (filters) => {
+        if (!filters || filters.text.length < 2) {
+            return [];
+        }
+        try {
+            const response = await api.post('/api/suggest_taxon', filters);
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    },
+
+    gepPublication: async () => {
+        const response = await api.get('/api/get_publ');
+        return response.data;
     }
 };
 

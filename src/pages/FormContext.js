@@ -9,6 +9,10 @@ export const defaultState = {
   gathering_place: '',
   coordinate_north: '',
   coordinate_east: '',
+  geo_origin: '',
+  geo_uncert: 0,
+  adm_verbatim: null,
+  geo_REM: '',
   place_notes: '',
   begin_year: 0,
   begin_month: 0,
@@ -16,15 +20,17 @@ export const defaultState = {
   end_month: 0,
   begin_date: '',
   end_date: '',
+  eve_day_def: true,
+  eve_REM: '',
   biotope: '',
   collector: '',
   measurement_units: '',
   selective_gain: '',
   matherial_notes: '',
   taxonomic_notes: '',
-  is_new_species: null,
-  is_defined_species: null,
-  is_in_wsc: null,
+  tax_nsp: null,
+  tax_sp_def: true,
+  type_status: null,
   specimens: {}
 };
 
@@ -87,21 +93,21 @@ export const FormProvider = ({ children }) => {
   }, [formState, pinnedSections, pinnedData]);
 
   return (
-    <FormContext.Provider
-      value={{
-        formState,
-        setFormState,
-        pinnedSections,
-        setPinnedSections,
-        pinnedData,
-        setPinnedData,
-        resetForm,
-        collapsedSections,
-        toggleCollapseSection
-      }}
-    >
-      {children}
-    </FormContext.Provider>
+      <FormContext.Provider
+          value={{
+            formState,
+            setFormState,
+            pinnedSections,
+            setPinnedSections,
+            pinnedData,
+            setPinnedData,
+            resetForm,
+            collapsedSections,
+            toggleCollapseSection
+          }}
+      >
+        {children}
+      </FormContext.Provider>
   );
 };
 
@@ -112,4 +118,3 @@ export const useFormContext = () => {
   }
   return context;
 };
-

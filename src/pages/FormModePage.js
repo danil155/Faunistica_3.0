@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
 import "../styles/formMode.css";
 import PinToggle from "../components/pin-toggle/PinToggle";
 import {DropDown} from "../components/cascading-dropdown/DropDown";
-import ArticleInfo from "../components/article-info/ArticleInfo";
 import DateSelect from "../components/DateSelect";
 import { apiService } from '../api'
 
 const fieldsMap = {
-    "Административное положение": ["country", "region", "district", "gathering_place"],
-    "Географическое положение": ["coordinate_north", "coordinate_east"],
+    "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
+    "Географическое положение": ["coordinate_north", "coordinate_east", "geo_origin", "geo_REM", "geo_unsert"],
     "Сбор материала": [
         "begin_date",
         "end_date",
@@ -23,11 +22,30 @@ const fieldsMap = {
         "collector",
         "measurement_units",
         "selective_gain",
+        "eve_REM"
     ],
-    'Таксономия': ["family", "genus", "species", "taxonomic_notes"],
+    'Таксономия': ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
 };
 
 const FormModePage = () => {
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [publication, setPublication] = useState(null);
+    useEffect(() => {
+        const fetchPublication = async () => {
+            try {
+                const data = await apiService.getGeneralStats();
+                setPublication(data);
+            } catch (err) {
+                setError(err.message);
+                return (
+                    <p>Не смогли найти Вашу статью (, Ошибка {error}</p>
+                );
+            } finally {
+                setLoading(false);
+            }
+        }
+    }, [])
     // Получение контекста формы
     const {
         formState,
@@ -42,13 +60,16 @@ const FormModePage = () => {
 
     const [showResetModal, setShowResetModal] = useState(false);
     const [resetMode, setResetMode] = useState("soft");
-    
+    const [isNewSpecies, setIsNewSpecies] = useState(false);
+    const [isTaxDefined, setIsTaxDefined] = useState(!formState.tax_sp_def);
+
 
     // Обработчик изменений для текстовых полей
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormState((prev) => ({ ...prev, [name]: value }));
     };
+
 
     // Получение данных секции
     const getSectionData = (sectionName) => {
@@ -96,6 +117,7 @@ const FormModePage = () => {
                 place: formState.gathering_place,
                 north: formState.coordinate_north,
                 east: formState.coordinate_east,
+                geo_REM: formState.geo_REM,
                 begin_year: formState.begin_year,
                 begin_month: formState.begin_month,
                 begin_day: formState.begin_day,
@@ -106,7 +128,16 @@ const FormModePage = () => {
                 genus: formState.genus,
                 species: formState.species,
                 taxonomic_notes: formState.taxonomic_notes,
-                collector: formState.collector
+                tax_sp_def: formState.tax_sp_def,
+                tax_nsp: formState.tax_nsp,
+                type_status: formState.type_status,
+                geo_origin: formState.geo_origin,
+                collector: formState.collector,
+                eve_effort: formState.selective_gain,
+                eve_habitat: formState.biotope,
+                eve_REM: formState.eve_REM,
+                geo_uncert: formState.geo_uncert,
+                adm_verbatim: formState.adm_verbatim
             };
 
             await apiService.insertRecord(recordData);
@@ -142,71 +173,20 @@ const FormModePage = () => {
             </header>
 
             <form onSubmit={handleSubmit} className="specimen-form">
+
+
+
                 {/* Секция: Административное положение */}
                 <div className="section article">
                     <h4>Ваша статья:</h4>
-                    <ArticleInfo />
-                </div>
-                <div
-                    className={getSectionClassName(
-                        "Административное положение"
-                    )}
-                >
-                    <div
-                        className={`section-header ${
-                            collapsedSections["Административное положение"]
-                                ? "collapsed"
-                                : ""
-                        }`}
-                    >
-                        <div className="section-controls">
-                            <h4>Административное положение</h4>
-                            <PinToggle
-                                isChecked={
-                                    pinnedSections[
-                                        "Административное положение"
-                                    ] || false
-                                }
-                                onChange={() =>
-                                    pinSection(
-                                        "Административное положение"
-                                    )
-                                }
-                            />
+                    <div className="form-grid">
+                        <div className="form-group">
+                            <p><b>Название: </b>{publication?.name}</p>
+                            <p><b>Автор: </b>{publication?.author}</p>
+                            <p><b>Год издания: </b>{publication?.year}</p>
+                            <p><b>Ссылка на публикацию: </b>{publication?.pdf_file}</p>
                         </div>
-                        <button
-                            className="collapse-toggle"
-                            type="button"
-                            onClick={() =>
-                                toggleCollapseSection(
-                                    "Административное положение"
-                                )
-                            }
-                        >
-                            {collapsedSections["Административное положение"]
-                                ? "Развернуть"
-                                : "Свернуть"}
-                        </button>
                     </div>
-                    {!collapsedSections["Административное положение"] && (
-                        <div className="form-grid">
-                            <DropDown
-                                default_country={formState.country}
-                                default_region={formState.region}
-                                default_district={formState.district}
-                                handleInputChange={handleInputChange}
-                            />
-                            <div className="form-group">
-                                <label>Место сбора:</label>
-                                <input
-                                    type="text"
-                                    name="gathering_place"
-                                    value={formState.gathering_place}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {/* Секция: Географическое положение */}
@@ -227,7 +207,7 @@ const FormModePage = () => {
                                 isChecked={
                                     pinnedSections[
                                         "Географическое положение"
-                                    ] || false
+                                        ] || false
                                 }
                                 onChange={() =>
                                     pinSection("Географическое положение")
@@ -254,6 +234,7 @@ const FormModePage = () => {
                             <div className="form-group">
                                 <label>Широта (N):</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="coordinate_north"
                                     value={formState.coordinate_north}
@@ -265,11 +246,110 @@ const FormModePage = () => {
                             <div className="form-group">
                                 <label>Долгота (E):</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="coordinate_east"
                                     value={formState.coordinate_east}
                                     onChange={handleInputChange}
                                     placeholder="00.0000"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="geo-origin">Происхождение координат:</label>
+                                <select id="geo-origin"
+                                        name="geo_origin"
+                                        className="form-control"
+                                        onChange={handleInputChange}>
+                                    <option value=''></option>
+                                    <option value="original">Из статьи</option>
+                                    <option value="volunteer">Моя привязка</option>
+                                    <option value="nothing">Координат не будет</option>
+                                </select>
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor={"geo_uncert"}>Радиус неточности координат, м:</label>
+                                <input
+                                    className="text-input"
+                                    id="geo_uncert"
+                                    type="number"
+                                    name="geo_uncert"
+                                    value={formState.geo_uncert}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="geo_REM">Примечания к расположению</label>
+                                <textarea id = "geo_REM" name="geo_REM" />
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <div
+                    className={getSectionClassName(
+                        "Административное положение"
+                    )}
+                >
+                    <div
+                        className={`section-header ${
+                            collapsedSections["Административное положение"]
+                                ? "collapsed"
+                                : ""
+                        }`}
+                    >
+                        <div className="section-controls">
+                            <h4>Административное положение</h4>
+                            <PinToggle
+                                isChecked={
+                                    pinnedSections[
+                                        "Административное положение"
+                                        ] || false
+                                }
+                                onChange={() =>
+                                    pinSection(
+                                        "Административное положение"
+                                    )
+                                }
+                            />
+                        </div>
+                        <button
+                            className="collapse-toggle"
+                            type="button"
+                            onClick={() =>
+                                toggleCollapseSection(
+                                    "Административное положение"
+                                )
+                            }
+                        >
+                            {collapsedSections["Административное положение"]
+                                ? "Развернуть"
+                                : "Свернуть"}
+                        </button>
+                    </div>
+                    {!collapsedSections["Административное положение"] && (
+                        <div className="form-grid">
+                            <div className="form-group">
+                                <div className="form-row">
+                                    <input id="adm_verbatim"
+                                           name={"adm_verbatim"}
+                                           type="checkbox"
+                                           checked={formState.adm_verbatim ?? false}
+                                           onChange={handleInputChange}
+                                    />
+                                    <label htmlFor="adm_verbatim" >Местоположение относится к Уралу</label>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Место сбора:</label>
+                                <input
+                                    className="text-input"
+                                    type="text"
+                                    name="gathering_place"
+                                    value={formState.gathering_place}
+                                    onChange={handleInputChange}
                                 />
                             </div>
                         </div>
@@ -315,6 +395,7 @@ const FormModePage = () => {
                             <div className="form-group">
                                 <label>Коллектор:</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="collector"
                                     value={formState.collector}
@@ -325,6 +406,7 @@ const FormModePage = () => {
                             <div className="form-group">
                                 <label>Единицы измерения:</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="measurement_units"
                                     value={
@@ -338,11 +420,17 @@ const FormModePage = () => {
                             <div className="form-group">
                                 <label>Выборочное усиление:</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="selective_gain"
                                     value={formState.selective_gain}
                                     onChange={handleInputChange}
                                 />
+                            </div>
+
+                            <div className="form-group">
+                                <label htmlFor="eve_REM">Примечания к сбору материала</label>
+                                <textarea id = "eve_REM" name="eve_REM" />
                             </div>
                         </div>
                     )}
@@ -378,8 +466,65 @@ const FormModePage = () => {
                     {!collapsedSections["Таксономия"] && (
                         <div className="form-grid">
                             <div className="form-group">
+                                <div className="form-row">
+                                    <input id="tax_sp_def"
+                                           name={"tax_sp_def"}
+                                           type="checkbox"
+                                           checked={isTaxDefined}
+                                           onChange={() =>
+                                           {formState.tax_sp_def = isTaxDefined;
+                                               setIsTaxDefined(!isTaxDefined)
+                                               console.log(formState.tax_sp_def);}}
+                                    />
+                                    <label htmlFor="tax_sp_def" >Вид определён</label>
+                                </div>
+
+                                <div className="form-row">
+                                    <input id="tax_nsp"
+                                           name={"tax_nsp"}
+                                           type="checkbox"
+                                           value={"true"}
+                                           checked={formState.tax_nsp}
+                                           onChange={(e) => {formState.tax_nsp = e.target.checked}}
+                                    />
+                                    <label htmlFor="tax_nsp" >Отсутствует в списке</label>
+                                </div>
+
+                                <div className="form-row">
+                                    <input id="is_new_species"
+                                           name={"is_new_species"}
+                                           type="checkbox"
+                                           value={''}
+                                           checked={isNewSpecies}
+                                           onChange={() => {
+                                               setIsNewSpecies(!isNewSpecies)}}
+                                    />
+                                    <label htmlFor="is_new_species" >Описан, как новый вид</label>
+                                </div>
+
+                                {isNewSpecies ?
+                                    <div className='form-group'>
+                                        <label htmlFor="type_status">Типовой статус:</label>
+                                        <select
+                                            id="type_status"
+                                            name="type_status"
+                                            value={formState.type_status ?? ''}
+                                            onChange={handleInputChange}>
+                                            <option value=''></option>
+                                            <option value='holotype'>Голотип</option>
+                                            <option value='paratype'>Паратип</option>
+                                            <option value='neotype'>Неотип</option>
+                                            <option value='other'>Другое</option>
+                                        </select>
+                                    </div>:''}
+                            </div>
+
+                            <DropDown />
+
+                            <div className="form-group">
                                 <label>Семейство:</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="family"
                                     value={formState.family}
@@ -390,6 +535,7 @@ const FormModePage = () => {
                             <div className="form-group">
                                 <label>Род:</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="genus"
                                     value={formState.genus}
@@ -400,6 +546,7 @@ const FormModePage = () => {
                             <div className="form-group">
                                 <label>Вид:</label>
                                 <input
+                                    className="text-input"
                                     type="text"
                                     name="species"
                                     value={formState.species}
@@ -416,6 +563,8 @@ const FormModePage = () => {
                                     rows={3}
                                 />
                             </div>
+
+
                         </div>
                     )}
                 </div>
@@ -427,12 +576,12 @@ const FormModePage = () => {
                         value={
                             Object.keys(formState.specimens).length > 0
                                 ? Object.entries(formState.specimens).map(
-                                      ([key, count]) => {
-                                          const [gender, maturity] =
-                                              key.split("_");
-                                          return { gender, maturity, count };
-                                      }
-                                  )
+                                    ([key, count]) => {
+                                        const [gender, maturity] =
+                                            key.split("_");
+                                        return { gender, maturity, count };
+                                    }
+                                )
                                 : []
                         }
                         onChange={(specimens) => {
