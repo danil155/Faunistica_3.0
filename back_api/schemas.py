@@ -100,3 +100,13 @@ class PublResponse(BaseModel):
     year: Optional[str]
     name: Optional[str]
     pdf_file: Optional[str]
+
+
+class AutofillTaxonRequest(BaseModel):
+    field: str
+    text: str
+
+
+class AutofillTaxonResponse(BaseModel):
+    family: Optional[str]
+    genus: Optional[str]
