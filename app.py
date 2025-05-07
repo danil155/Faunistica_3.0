@@ -1,14 +1,14 @@
-import logging
 import asyncio
+import logging
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.middleware import SlowAPIMiddleware
 
-from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout, suggest_taxon, autofill_taxon, get_publ
-from bot.bot_main import bot_start
+from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout, suggest_taxon, autofill_taxon, get_publ, support
 from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
-
+from bot.bot_main import bot_start
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,6 +55,7 @@ app.include_router(logout.router, prefix="/api")
 app.include_router(suggest_taxon.router, prefix="/api")
 app.include_router(autofill_taxon.router, prefix="/api")
 app.include_router(get_publ.router, prefix="/api")
+app.include_router(support.router, prefix="/api")
 
 if __name__ == '__main__':
     asyncio.run(bot_start())
