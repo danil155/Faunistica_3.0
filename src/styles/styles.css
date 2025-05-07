@@ -73,6 +73,8 @@ h3 {
     backdrop-filter: blur(8px);
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
 }
 
 .hero-text h1 {
@@ -92,13 +94,14 @@ h3 {
     display: inline-block;
     width: fit-content;
     text-decoration: none;
+    transition: background-color 0.3s;
 }
 
 .hero .join-button {
     margin-bottom: 10px;
 }
 
-.join-button {
+.join-button:hover {
     background-color: #45a049;
 }
 
@@ -199,6 +202,7 @@ h3 {
     border-radius: 5px;
     resize: none;
     transition: all 0.3s ease;
+    margin-bottom: 10px;
 }
 
 .text-area:focus {
@@ -337,51 +341,6 @@ header a{
     border-radius: 8px;
 }
 
-@media (max-width: 768px) {
-    .container {
-        padding: 0 20px;
-    }
-
-    .nav-list {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .nav-list li {
-        margin: 10px 0;
-    }
-
-
-
-    .hero h1 {
-        font-size: 28px;
-    }
-
-    .hero p {
-        font-size: 16px;
-    }
-
-    .project-info-placeholder,
-    .volunteer-guide-placeholder,
-    .statistics-placeholder,
-    .about-placeholder {
-        padding: 15px;
-    }
-
-    footer {
-        padding: 15px 0;
-    }
-
-    footer .social-media a {
-        margin-right: 5px;
-    }
-
-    footer .policies a {
-        margin-right: 5px;
-    }
-}
-
-
 .form-mode-container {
     padding: 0 50px;
 }
@@ -403,4 +362,125 @@ header a{
 
 .feedback .submit-button {
     width: 200px;
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1120px) {
+  .about-project {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .proj-step {
+    width: 45%;
+    min-width: 250px;
+  }
+}
+
+
+/* Mobile-specific styles */
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .nav-list li {
+        margin: 10px 0;
+    }
+
+    .project-info-placeholder,
+    .volunteer-guide-placeholder,
+    .statistics-placeholder,
+    .about-placeholder {
+        padding: 15px;
+    }
+
+    footer {
+        padding: 15px 0;
+    }
+
+    footer .social-media a {
+        margin-right: 5px;
+    }
+
+    footer .policies a {
+        margin-right: 5px;
+    }
+
+    .hero {
+        height: 300px;
+    }
+
+    .hero h1 {
+        font-size: 28px;
+    }
+
+    .hero p {
+        font-size: 16px;
+    }
+    .hero-text h1 {
+        font-size: 24px;
+    }
+
+    .proj-step {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    #volunteer-info {
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+    }
+
+    #volunteer-spider {
+        width: 200px;
+        margin: 0 auto;
+    }
+
+    #volunteer-info-text {
+        text-align: center;
+        max-width: 100%;
+    }
+
+    .join-button {
+        margin: 0 auto;
+    }
+
+    .what-we-do h2 {
+        font-size: 20px;
+        padding: 0 15px;
+    }
+
+    .article-card {
+        margin-bottom: 40px;
+    }
+}
+
+
+@media (max-width: 510px) {
+    .text-container header h3 {
+        max-width: 70px;
+    }
+
+    .article-card {
+        flex-direction: column;
+        margin-bottom: 50px;
+    }
+
+    .article-card img {
+        margin-left: auto;
+        margin-right: auto;
+        width: 150px;
+    }
+
+    #article_info_container {
+        text-wrap: wrap;
+        max-width: 90%;
+    }
 }

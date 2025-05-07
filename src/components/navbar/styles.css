@@ -1,13 +1,15 @@
 nav {
     background-color: #4CAF50;
+    position: relative;
 }
 
 .nav-content {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    gap: 2em;
-    padding: 0 50px;
+    padding: 15px 20px;
+    position: relative;
+    transition: all 0.5s ease;
 }
 
 .logo {
@@ -15,17 +17,21 @@ nav {
     font-size: 24px;
     color: white;
     text-decoration: none;
+    z-index: 1001;
 }
 
-.nav {
+.nav-links {
     display: flex;
-    justify-content: center;
+    margin-left: 50px;
+    transition: all 0.5s ease;
 }
 
 .nav-list {
     display: flex;
     list-style: none;
     padding: 0;
+    margin: auto;
+    margin-right: 50px;
 }
 
 .nav-list li {
@@ -36,6 +42,7 @@ nav {
     color: white;
     text-decoration: none;
     font-size: 14px;
+    padding: 5px 0;
 }
 
 .nav-list a:hover {
@@ -47,6 +54,7 @@ nav {
     justify-content: flex-end;
     align-items: center;
     gap: 15px;
+    z-index: 1001;
 }
 
 .auth-buttons a,
@@ -56,10 +64,113 @@ nav {
     margin-left: 15px;
 }
 
-.avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    margin-right: 10px;
+/* Burger menu styles */
+.burger-menu {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
 }
 
+.burger-line {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4px 0;
+    transition: all 0.5s ease;
+}
+
+
+/* Mobile styles */
+@media (max-width: 922px) {
+    nav {
+        margin-bottom: 30px;
+    }
+
+    .nav-content {
+        flex-wrap: wrap;
+        padding: 5px 25px;
+        height: 15px;
+    }
+
+    .nav-content.open {
+        margin-bottom: 235px;
+        transition: margin-bottom 0.5s ease;
+    }
+
+    .burger-menu {
+        display: block;
+        order: 1;
+    }
+
+    .logo {
+        order: 0;
+        white-space: nowrap;
+        margin-right: auto;
+    }
+
+    .nav-links {
+        position: absolute;
+        margin-left: 0;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #4CAF50;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+        max-height: 0;
+        overflow: hidden;
+        z-index: 1000;
+        width: 100%;
+        transition: max-height 0.5s ease, padding 0.5s ease;
+    }
+
+    .nav-links.open {
+        max-height: 265px;
+        padding: 20px 0;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        margin: 10px 0px;
+    }
+
+    .nav-list li {
+        margin: 10px 0;
+    }
+
+    .mobile-auth-button {
+        display: block;
+        width: 80%;
+        margin: 10px auto;
+        padding: 10px;
+        background-color: #3a8b3f;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .mobile-auth-button:hover {
+        background-color: #2e7032;
+        text-decoration: none;
+    }
+
+    .burger-line.open:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .burger-line.open:nth-child(2) {
+        opacity: 0;
+    }
+
+    .burger-line.open:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+}
