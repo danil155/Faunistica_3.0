@@ -31,45 +31,45 @@
 }
 
 .telegram-login-modal {
-  max-width: 400px;
-  text-align: center;
+    max-width: 400px;
+    text-align: center;
 }
 
 .telegram-instructions {
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .qr-code-container {
-  margin: 20px 0;
-  padding: 15px;
-  background: white;
-  border-radius: 8px;
-  display: inline-block;
+    margin: 20px 0;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    display: inline-block;
 }
 
 .qr-code {
-  width: 180px;
-  height: 180px;
-  display: block;
-  margin: 0 auto 10px;
+    width: 180px;
+    height: 180px;
+    display: block;
+    margin: 0 auto 10px;
 }
 
 .qr-code-container p {
-  margin: 5px 0 0;
-  font-size: 0.9rem;
-  color: #666;
+    margin: 5px 0 0;
+    font-size: 0.9rem;
+    color: #666;
 }
 
 .help-text {
-  margin-top: 20px;
-  font-size: 0.9rem;
-  color: #666;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: #666;
 }
 
 .error-message {
-  color: #d32f2f;
-  font-size: 0.8rem;
-  margin-top: 5px;
+    color: #d32f2f;
+    font-size: 0.8rem;
+    margin-top: 5px;
 }
 
 .telegram-login-modal {
@@ -115,9 +115,9 @@
 }
 
 
-.form-group input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+.form-group .text-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }

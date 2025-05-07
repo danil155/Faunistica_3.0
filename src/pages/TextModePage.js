@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import { apiService } from "../api";
@@ -99,15 +99,11 @@ const TextModePage = () => {
   return (
     <div className="text-container">
       <header>
-        <h3>Введите текст для частичного автозаполнения</h3>
+        <h3>Вставьте текст</h3>
         <p>или</p>
-        <button 
-          onClick={() => navigate('/form')} 
-          className="toggle-button"
-          disabled={isLoading}
-        >
+        <Link to="/form" className="switch-mode-button">
           Заполните форму вручную
-        </button>
+        </Link>
       </header>
 
       <div className="section article">

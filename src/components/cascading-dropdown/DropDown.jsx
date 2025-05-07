@@ -1,9 +1,9 @@
-import React, { useState, useCallback} from "react";
+import React, { useState, useCallback, useMemo} from "react";
 import { useFormContext } from "../../pages/FormContext";
 import {apiService} from "../../api";
 
 export function DropDown({debounceTime = 300}) {
-    const {setFormState} = useFormContext();
+    const {formState, setFormState} = useFormContext();
     const updateField = (fieldName, value) => {
         setFormState(prev => ({
             ...prev,
@@ -12,17 +12,10 @@ export function DropDown({debounceTime = 300}) {
     };
 
     const levels = [
-        { name: 'family', placeholder: 'Start typing family...' },
-        { name: 'genus', placeholder: 'Start typing genus...' },
-        { name: 'species', placeholder: 'Start typing species...' }
+        { name: 'family', placeholder: 'Начните печатать семейство...', heading: 'Семейство:' },
+        { name: 'genus', placeholder: 'Начните печатать род...', heading: 'Род:' },
+        { name: 'species', placeholder: 'Начните печатать вид...',  heading: 'Вид:'}
     ];
-
-    // Состояния
-    const [selected, setSelected] = useState({
-        family: null,
-        genus: null,
-        species: null
-    });
 
     const [inputValues, setInputValues] = useState({
         family: '',
@@ -50,7 +43,7 @@ export function DropDown({debounceTime = 300}) {
 
     // Запрос данных
     const fetchWithFilters = useCallback(
-        debounce(async (fieldName, searchText) => {
+        useMemo(() => debounce(async (fieldName, searchText) => {
             if (searchText.length < 2) {
                 setOptions(prev => ({ ...prev, [fieldName]: [] }));
                 return;
@@ -60,11 +53,11 @@ export function DropDown({debounceTime = 300}) {
             try {
                 // Формируем фильтры на основе предыдущих выборов
                 const filters = {};
-                if (fieldName === 'genus' && selected.family) {
-                    filters.family = selected.family.id;
+                if (fieldName === 'genus' && formState.family) {
+                    filters.family = formState.family.id;
                 }
-                if (fieldName === 'species' && selected.genus) {
-                    filters.genus = selected.genus.id;
+                if (fieldName === 'species' && formState.genus) {
+                    filters.genus = formState.genus.id;
                 }
 
                 const data = await apiService.suggestTaxon({
@@ -76,8 +69,8 @@ export function DropDown({debounceTime = 300}) {
             } finally {
                 setLoading(false);
             }
-        }, debounceTime),
-        [selected.family, selected.genus]
+        }, debounceTime), [debounceTime, formState.family, formState.genus]),
+        [debounceTime, formState.family, formState.genus]
     );
 
     // Обработчики событий
@@ -110,16 +103,19 @@ export function DropDown({debounceTime = 300}) {
     };
 
     const isFieldDisabled = (fieldName) => {
-        if (fieldName === 'genus') return !selected.family;
-        if (fieldName === 'species') return !selected.genus;
+        if (fieldName === 'genus') return !formState.family;
+        if (fieldName === 'species') return !formState.genus;
         return false;
     };
 
     return (
-        <div className="taxonomic-dropdown">
+        <div className="form-group">
             {levels.map(level => (
-                <div key={level.name} className="taxonomic-level">
+                <div key={level.name} className="form-group">
+                    <label htmlFor={`input-${level.name}`}>{level.heading}</label>
                     <input
+                        className="text-input"
+                        id={`input-${level.name}`}
                         value={inputValues[level.name]}
                         onChange={(e) => handleInputChange(level.name, e.target.value)}
                         placeholder={level.placeholder}
@@ -128,7 +124,7 @@ export function DropDown({debounceTime = 300}) {
                     />
 
                     {activeDropdown === level.name && options[level.name].length > 0 && (
-                        <div className="dropdown-list">
+                        <>
                             {options[level.name].map(option => (
                                 <div
                                     key={option.id}
@@ -137,7 +133,7 @@ export function DropDown({debounceTime = 300}) {
                                     {option.name}
                                 </div>
                             ))}
-                        </div>
+                        </>
                     )}
                 </div>
             ))}

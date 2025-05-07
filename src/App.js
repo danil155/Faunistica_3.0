@@ -5,22 +5,20 @@ import Footer from "./components/footer/Footer";
 import Home from "./pages/Home";
 import LoginModal from './components/login/LoginModal';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import { Route, Routes} from 'react-router-dom';
 import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
 import LoginPage from "./pages/LoginPage";
 import useToken  from "./components/useToken";
 import StatsPage from "./pages/Stats";
-import ProtectedRoute from "./components/ProtectedRoute";
-import { apiService } from "./api";
+import FeedbackPage from "./pages/Feedback";
 
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuth, checkAuth, login, logout } = useToken();
+  const { isAuth, login, logout } = useToken();
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     if (isAuth === false && (location.pathname === '/form' || location.pathname === '/text')) {
@@ -28,21 +26,6 @@ function App() {
     }
   }, [isAuth, location.pathname, navigate]);
 
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const data = await apiService.getGeneralStats();
-        setStats(data);
-      } catch (error) {
-        console.error('Error loading stats:', error);
-      }
-    };
-
-    if (isAuth) {
-      fetchStats();
-    }
-  }, [isAuth]);
 
   const handleLogin = async (username, password) => {
     try {
@@ -62,6 +45,10 @@ function App() {
   const handleClose = () => {
     setShowLoginModal(false);
   };
+
+  const handleLoginPageClose = () => {
+    navigate("/");
+  }
 
   return (
     <div className="App">
@@ -87,19 +74,13 @@ function App() {
             />
           </>
         }/>
-        <Route path="/form" element={isAuth?<FormModePage />:<LoginPage onLogin={handleLogin} onClose={handleClose}/>}/>
-        <Route path="/text" element={isAuth?<TextModePage />:<LoginPage onLogin={handleLogin} onClose={handleClose}/>}/>
+        <Route path="/feedback" element={<FeedbackPage />} />
+        <Route path="/form" element={!(isAuth)?<FormModePage />:<LoginPage onLogin={handleLogin} onClose={handleLoginPageClose} />}/>
+        <Route path="/text" element={!(isAuth)?<TextModePage />:<LoginPage onLogin={handleLogin} onClose={handleLoginPageClose} />}/>
         <Route path="/stats" element={<StatsPage/>} />
       </Routes>
 
       <Footer />
-
-      {isAuth && stats && (
-          <div className="stats-preview">
-            <p>Всего записей: {stats.total_records}</p>
-            <p>Последняя запись: {stats.latest_record?.date}</p>
-          </div>
-      )}
     </div>
   );
 }

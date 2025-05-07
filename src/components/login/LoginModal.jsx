@@ -3,11 +3,10 @@
 чтобы добавить взаимодействие с тг ботом, выдающим эти пароли), так вот по нажатию "Войти" 
 он пересылает нас на route формы*/
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ReactComponent as QrCode } from '../../img/qr-code.svg';
 import { useNavigate } from 'react-router-dom';
-import "./LoginModal.css"
-import { apiService } from '../../api'
+import "./LoginModal.css";
 
 const LoginModal = ({ onClose, onLogin }) => {
   const navigate = useNavigate();
@@ -15,6 +14,7 @@ const LoginModal = ({ onClose, onLogin }) => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTooManyRequests, setIsTooManyRequests] = useState(false);
 
   const handleSubmit = async e =>{
     e.preventDefault();
@@ -34,12 +34,19 @@ const LoginModal = ({ onClose, onLogin }) => {
 
       if (err.message === 'Неверный пароль') {
         setError('Неверный пароль. Попробуйте снова.');
-      } else if (err.response.message === 'Пользователь не найден') {
+      } else if (err.message === 'Пользователь не найден') {
         setError('Пользователь не найден')
+      } else if (err.message === 'Количество попыток превышено'){
+        setIsTooManyRequests(true);
+        setError('Количество попыток превышено. Попробуйте через минуту.');
+        setTimeout(() => {
+          setIsTooManyRequests(false);
+          setError('');
+        }, 30000);
       } else {
         setError('Ошибка входа. Попробуйте позже.')
-      }
 
+      }
     } finally {
       setIsLoading(false);
     }
@@ -91,9 +98,10 @@ const LoginModal = ({ onClose, onLogin }) => {
           </div>
 
           <button
+              id="button_submit_text"
               type="submit"
               className="submit-button"
-              disabled={isLoading}
+              disabled={isLoading || isTooManyRequests}
           >
             {isLoading ? (
                 <>

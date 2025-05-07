@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { jwtDecode } from 'jwt-decode';
 
 const API_URL = 'http://localhost:5001';
 
@@ -21,10 +20,11 @@ const apiService = {
         } catch (error) {
             // Обрабатываем ошибку
             if (error.response?.status === 401) {
-                console.log('401 error');
                 throw new Error('Неверный пароль');
             } else if (error.response?.status === 404) {
                 throw new Error('Пользователь не найден');
+            } else if (error.response?.status === 429) {
+                throw new Error('Количество попыток превышено')
             }
             throw error;
         }
@@ -91,9 +91,15 @@ const apiService = {
         }
     },
 
-    gepPublication: async () => {
-        const response = await api.get('/api/get_publ');
-        return response.data;
+    getPublication: async () => {
+        try {
+            const response = await api.get('/api/get_publ');
+            return response.data;
+        } catch (error) {
+            if (error.response?.status === 403) {
+                throw new Error('lalallalala');
+            }
+        }
     }
 };
 

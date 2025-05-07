@@ -23,12 +23,14 @@ h3 {
 #root {
     min-height: 100vh;
     width: 100%;
+    background-color: var(--main-bg-color);
 }
 
 .App {
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 100vh;
+    background-color: #f8f9fa;
 }
 
 
@@ -67,7 +69,7 @@ h3 {
     transform: translate(-50%, -50%);
     text-align: center;
     color: white;
-    background-color: rgba(207, 174, 165, 0.213);  
+    background-color: rgba(207, 174, 165, 0.213);
     backdrop-filter: blur(8px);
     border-radius: 15px;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -96,7 +98,7 @@ h3 {
     margin-bottom: 10px;
 }
 
-.join-button:hover {
+.join-button {
     background-color: #45a049;
 }
 
@@ -104,7 +106,7 @@ h3 {
     text-align: center;
 }
 
-.add-button:hover {
+.add-button:hover, .submit-button:hover {
     background-color: #45a049;
 }
 
@@ -282,7 +284,14 @@ form {
 
 header {
     display: flex;
+    align-items: center;
     padding: 15px;
+}
+
+header a{
+    text-decoration: none;
+    padding: 3px 10px;
+    margin: 10px;
 }
 
 .text-container {
@@ -334,7 +343,7 @@ header {
         margin: 10px 0;
     }
 
-    
+
 
     .hero h1 {
         font-size: 28px;
@@ -364,16 +373,27 @@ header {
     }
 }
 
-@media (max-width: 480px) {
-    nav .logo a {
-        font-size: 18px;
-    }
 
-    .hero h1 {
-        font-size: 24px;
-    }
-
-    .hero p {
-        font-size: 14px;
-    }
+.form-mode-container {
+    padding: 0 50px;
 }
+
+.feedback {
+    margin: 20px 50px;
+    padding: 10px 50px;
+    background-color: white;
+    border-radius: 15px;
+}
+
+.feedback form {
+    margin: 10px 0;
+}
+
+.feedback h1 {
+    box-shadow:  0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.feedback .submit-button {
+    width: 200px;
+}
+

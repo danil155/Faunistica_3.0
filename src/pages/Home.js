@@ -37,22 +37,22 @@ const Home = ({isAuthenticated, onLoginClick}) => {
 
           <section className="about-project">
             <div className="proj-step">
-              <img src={icon1} />
+              <img src={icon1} alt="people icon" />
               <h3>Разработка платформы оцифровки данных</h3>
             </div>
             <div className="proj-step">
-              <img src={icon2} />
-              <h3>Сбор базы ранных по обнаруженным видам</h3>
+              <img src={icon2} alt="database icon" />
+              <h3>Сбор базы данных по обнаруженным видам</h3>
             </div>
             <div className="proj-step">
-              <img src={icon3} />
+              <img src={icon3} alt={"community icon"}/>
               <h3>Обеспечение свободного доступа к полученным данным</h3>
             </div>
           </section>
 
           <section id="volunteer-info-container">
             <div id="volunteer-info">
-            <img src={spidey} id="volunteer-spider" />
+            <img src={spidey} id="volunteer-spider" alt={"volunteer spider"} />
             
             <div id="volunteer-info-text">
               <h2>Роль волонтеров</h2>

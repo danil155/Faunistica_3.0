@@ -7,6 +7,7 @@ import PinToggle from "../components/pin-toggle/PinToggle";
 import {DropDown} from "../components/cascading-dropdown/DropDown";
 import DateSelect from "../components/DateSelect";
 import { apiService } from '../api'
+import PublicationErrorModal from "../components/PublicationErrorModal";
 
 const fieldsMap = {
     "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
@@ -31,21 +32,31 @@ const FormModePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [publication, setPublication] = useState(null);
-    useEffect(() => {
-        const fetchPublication = async () => {
-            try {
-                const data = await apiService.getGeneralStats();
-                setPublication(data);
-            } catch (err) {
-                setError(err.message);
-                return (
-                    <p>Не смогли найти Вашу статью (, Ошибка {error}</p>
-                );
-            } finally {
-                setLoading(false);
-            }
+    const [showPublicationError, setShowPublicationError] = useState(false);
+    let data;
+    const fetchPublication = async () => {
+        try {
+            data = await apiService.getPublication();
+            setPublication(data);
+            console.log(showPublicationError);
+        } catch (err) {
+            setError(err.message);
+            setShowPublicationError(true);
+            console.log(showPublicationError);
+        } finally {
+            setLoading(false);
+            console.log(showPublicationError);
         }
-    }, [])
+    }
+    useEffect(() => {
+         fetchPublication()
+        .catch(error => {
+                // This catch is redundant since you already have one in fetchPublication
+                // but shows how you could handle it here
+                console.error("Failed to fetch publication:", error);
+            });
+        }
+    , [])
     // Получение контекста формы
     const {
         formState,
@@ -163,12 +174,20 @@ const FormModePage = () => {
         return `section ${pinnedSections[sectionName] ? "pinned" : ""}`;
     };
 
+    const handleRetry = () => {
+        fetchPublication();
+        setShowPublicationError(false);
+    }
+
     return (
+        <>
+        {showPublicationError&&<PublicationErrorModal onRetry={handleRetry} />}
         <div className="form-mode-container">
             <header>
                 <h3>Заполните форму вручную</h3>
+                <p>или</p>
                 <Link to="/text" className="switch-mode-button">
-                    Ввести текст
+                    Введите текст
                 </Link>
             </header>
 
@@ -176,7 +195,7 @@ const FormModePage = () => {
 
 
 
-                {/* Секция: Административное положение */}
+                {/* Секция: Ваша статья */}
                 <div className="section article">
                     <h4>Ваша статья:</h4>
                     <div className="form-grid">
@@ -287,6 +306,10 @@ const FormModePage = () => {
                         </div>
                     )}
                 </div>
+
+
+                {/* Секция: Административное положение */}
+
                 <div
                     className={getSectionClassName(
                         "Административное положение"
@@ -522,39 +545,6 @@ const FormModePage = () => {
                             <DropDown />
 
                             <div className="form-group">
-                                <label>Семейство:</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="family"
-                                    value={formState.family}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Род:</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="genus"
-                                    value={formState.genus}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Вид:</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="species"
-                                    value={formState.species}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="form-group">
                                 <label>Таксономические примечания:</label>
                                 <textarea
                                     name="taxonomic_notes"
@@ -667,6 +657,7 @@ const FormModePage = () => {
                 </div>
             )}
         </div>
+        </>
     );
 };
 
