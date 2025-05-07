@@ -8,13 +8,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Route, Routes} from 'react-router-dom';
 import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
-import LoginPage from "./pages/LoginPage";
 import useToken  from "./components/useToken";
 import StatsPage from "./pages/Stats";
+import { Outlet } from 'react-router-dom'
 import FeedbackPage from "./pages/Feedback";
 
-
 function App() {
+
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuth, login, logout } = useToken();
@@ -44,10 +44,19 @@ function App() {
 
   const handleClose = () => {
     setShowLoginModal(false);
+    navigate("/");
   };
 
-  const handleLoginPageClose = () => {
-    navigate("/");
+
+  const PrivateRoutes = () => {
+    if (!isAuth) {
+      setShowLoginModal(true);
+    } else {
+      setShowLoginModal(false);
+    }
+    return (
+        <Outlet />
+    )
   }
 
   return (
@@ -57,17 +66,20 @@ function App() {
         onLoginClick={() => setShowLoginModal(true)}
         onLogoutClick={handleLogout}
       />
+
+      {showLoginModal && (
+          <LoginModal
+              onClose={handleClose}
+
+              onLogin={handleLogin}
+          />
+      )}
       {/*<Home />*/}
+
       <Routes>
         <Route path="/" element={
           <>
-            {showLoginModal && (
-                <LoginModal
-                    onClose={handleClose}
 
-                    onLogin={handleLogin}
-                />
-            )}
             <Home
                 isAuthenticated={isAuth}
                 onLoginClick={() => setShowLoginModal(true)}
@@ -75,8 +87,10 @@ function App() {
           </>
         }/>
         <Route path="/feedback" element={<FeedbackPage />} />
-        <Route path="/form" element={!(isAuth)?<FormModePage />:<LoginPage onLogin={handleLogin} onClose={handleLoginPageClose} />}/>
-        <Route path="/text" element={!(isAuth)?<TextModePage />:<LoginPage onLogin={handleLogin} onClose={handleLoginPageClose} />}/>
+        <Route element={<PrivateRoutes auth={isAuth} />} >
+          <Route path="/form" element={<FormModePage />} />
+          <Route path="/text" element={<TextModePage />} />
+        </Route>
         <Route path="/stats" element={<StatsPage/>} />
       </Routes>
 

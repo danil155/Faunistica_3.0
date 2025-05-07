@@ -96,9 +96,7 @@ const apiService = {
             const response = await api.get('/api/get_publ');
             return response.data;
         } catch (error) {
-            if (error.response?.status === 403) {
-                throw new Error('lalallalala');
-            }
+            throw new Error(error);
         }
     }
 };

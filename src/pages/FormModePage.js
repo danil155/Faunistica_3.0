@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
@@ -7,7 +7,7 @@ import PinToggle from "../components/pin-toggle/PinToggle";
 import {DropDown} from "../components/cascading-dropdown/DropDown";
 import DateSelect from "../components/DateSelect";
 import { apiService } from '../api'
-import PublicationErrorModal from "../components/PublicationErrorModal";
+import ArticleInfo from "../components/article-info/ArticleInfo";
 
 const fieldsMap = {
     "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
@@ -29,34 +29,6 @@ const fieldsMap = {
 };
 
 const FormModePage = () => {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [publication, setPublication] = useState(null);
-    const [showPublicationError, setShowPublicationError] = useState(false);
-    let data;
-    const fetchPublication = async () => {
-        try {
-            data = await apiService.getPublication();
-            setPublication(data);
-            console.log(showPublicationError);
-        } catch (err) {
-            setError(err.message);
-            setShowPublicationError(true);
-            console.log(showPublicationError);
-        } finally {
-            setLoading(false);
-            console.log(showPublicationError);
-        }
-    }
-    useEffect(() => {
-         fetchPublication()
-        .catch(error => {
-                // This catch is redundant since you already have one in fetchPublication
-                // but shows how you could handle it here
-                console.error("Failed to fetch publication:", error);
-            });
-        }
-    , [])
     // Получение контекста формы
     const {
         formState,
@@ -174,14 +146,10 @@ const FormModePage = () => {
         return `section ${pinnedSections[sectionName] ? "pinned" : ""}`;
     };
 
-    const handleRetry = () => {
-        fetchPublication();
-        setShowPublicationError(false);
-    }
+
 
     return (
         <>
-        {showPublicationError&&<PublicationErrorModal onRetry={handleRetry} />}
         <div className="form-mode-container">
             <header>
                 <h3>Заполните форму вручную</h3>
@@ -195,19 +163,7 @@ const FormModePage = () => {
 
 
 
-                {/* Секция: Ваша статья */}
-                <div className="section article">
-                    <h4>Ваша статья:</h4>
-                    <div className="form-grid">
-                        <div className="form-group">
-                            <p><b>Название: </b>{publication?.name}</p>
-                            <p><b>Автор: </b>{publication?.author}</p>
-                            <p><b>Год издания: </b>{publication?.year}</p>
-                            <p><b>Ссылка на публикацию: </b>{publication?.pdf_file}</p>
-                        </div>
-                    </div>
-                </div>
-
+                <ArticleInfo />
                 {/* Секция: Географическое положение */}
                 <div
                     className={getSectionClassName("Географическое положение")}
@@ -358,8 +314,8 @@ const FormModePage = () => {
                                     <input id="adm_verbatim"
                                            name={"adm_verbatim"}
                                            type="checkbox"
-                                           checked={formState.adm_verbatim ?? false}
-                                           onChange={handleInputChange}
+                                           checked={formState.adm_verbatim || false}
+                                           onChange={(e) => setFormState(prev => ({...prev, adm_verbatim: e.target.checked}))}
                                     />
                                     <label htmlFor="adm_verbatim" >Местоположение относится к Уралу</label>
                                 </div>

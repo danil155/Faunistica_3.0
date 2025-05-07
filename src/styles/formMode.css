@@ -23,7 +23,7 @@ p {
 }
 
 /* Кнопки */
-button {
+button, .publ-error-btn-left {
   cursor: pointer;
   transition: all 0.3s ease;
   border: none;
@@ -32,15 +32,20 @@ button {
   font-size: 14px;
 }
 
-.collapse-toggle, .switch-mode-button, .submit-button {
+a {
+  color: var(--main-blue-color);
+  text-decoration: none;
+}
+
+.collapse-toggle, .switch-mode-button, .submit-button, .publ-error-btn-left {
   background-color: var(--main-bg-color);
   color: white;
 }
 
-.toggle-button:hover, .switch-mode-button:hover {
+.toggle-button:hover, .switch-mode-button:hover, .publ-error-btn-left:hover {
   background-color: var(--main-blue-color);
+  text-decoration: underline;
 }
-
 
 .reset-button {
   background-color: white;

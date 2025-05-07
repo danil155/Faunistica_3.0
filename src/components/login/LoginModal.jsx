@@ -67,14 +67,14 @@ const LoginModal = ({ onClose, onLogin }) => {
             </a>
             <p>Наведите камеру или нажмите на QR-код</p>
           </div>
-          
-          <p>После получения пароля введите его ниже:</p>
+
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Данные из Telegram:</label>
             <input
+                className="text-input"
                 type="text"
                 value={username}
                 onChange={(e) => {
@@ -85,6 +85,7 @@ const LoginModal = ({ onClose, onLogin }) => {
                 required
             />
             <input
+                className="text-input"
               type="password"
               value={password}
               onChange={(e) => {
