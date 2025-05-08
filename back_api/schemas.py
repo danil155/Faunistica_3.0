@@ -116,4 +116,5 @@ class SupportRequest(BaseModel):
     link: str
     user_name: Optional[str]
     text: str
-    # type - str (Type of issue, e.g. Registration issue, Publication issue, Form issue, etc.)
+    type: str
+    
