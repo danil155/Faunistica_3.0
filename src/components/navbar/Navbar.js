@@ -31,13 +31,16 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
                   <NavLink to="/text" onClick={() => setIsMenuOpen(false)}>Форма</NavLink>
                 </li>
                 <li>
-                  <a href="/" onClick={() => setIsMenuOpen(false)}>Инструкция</a>
+                  <NavLink to="/" onClick={() => setIsMenuOpen(false)}>Инструкция</NavLink>
                 </li>
                 <li>
-                  <Link to="/stats" onClick={() => setIsMenuOpen(false)}>Статистика</Link>
+                  <NavLink to="/stats" onClick={() => setIsMenuOpen(false)}>Статистика</NavLink>
                 </li>
                 <li>
-                  <a href="/" onClick={() => setIsMenuOpen(false)}>О нас</a>
+                  <NavLink to="/feedback" onClick={() => setIsMenuOpen(false)}>Поддержка</NavLink>
+                </li>
+                <li>
+                  <NavLink to="/" onClick={() => setIsMenuOpen(false)}>О нас</NavLink>
                 </li>
               </ul>
               

@@ -45,7 +45,12 @@ const FormModePage = () => {
     const [resetMode, setResetMode] = useState("soft");
     const [isNewSpecies, setIsNewSpecies] = useState(false);
     const [isTaxDefined, setIsTaxDefined] = useState(!formState.tax_sp_def);
-
+    const adm = [
+        {name: "country", heading: "Страна" },
+        {name: "region", heading: "Регион" },
+        {name: "district", heading: "Район" },
+        {name: "gathering_place", heading: "Место сбора" },
+    ]
 
     // Обработчик изменений для текстовых полей
     const handleInputChange = (e) => {
@@ -321,16 +326,21 @@ const FormModePage = () => {
                                 </div>
                             </div>
 
-                            <div className="form-group">
-                                <label>Место сбора:</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="gathering_place"
-                                    value={formState.gathering_place}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
+                            {adm.map((field) => (
+                                <div className="form-group">
+                                    <label htmlFor={field.name}>{field.heading}:</label>
+                                    <input
+                                        id={field.name}
+                                        className="text-input"
+                                        type="text"
+                                        name={field.name}
+                                        value={formState[field.name]}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                            ))}
+
+
                         </div>
                     )}
                 </div>

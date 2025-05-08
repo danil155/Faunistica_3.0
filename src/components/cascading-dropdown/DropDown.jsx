@@ -1,9 +1,12 @@
-import React, { useState, useCallback, useMemo} from "react";
+import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { useFormContext } from "../../pages/FormContext";
-import {apiService} from "../../api";
+import { apiService } from "../../api";
+import "./dropdown.css";
 
-export function DropDown({debounceTime = 300}) {
-    const {formState, setFormState} = useFormContext();
+export function DropDown({ debounceTime = 300 }) {
+    const { formState, setFormState } = useFormContext();
+    const dropdownRefs = useRef({});
+
     const updateField = (fieldName, value) => {
         setFormState(prev => ({
             ...prev,
@@ -14,7 +17,7 @@ export function DropDown({debounceTime = 300}) {
     const levels = [
         { name: 'family', placeholder: 'Начните печатать семейство...', heading: 'Семейство:' },
         { name: 'genus', placeholder: 'Начните печатать род...', heading: 'Род:' },
-        { name: 'species', placeholder: 'Начните печатать вид...',  heading: 'Вид:'}
+        { name: 'species', placeholder: 'Начните печатать вид...', heading: 'Вид:' }
     ];
 
     const [inputValues, setInputValues] = useState({
@@ -32,7 +35,20 @@ export function DropDown({debounceTime = 300}) {
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    // Debounce функция
+    // Эффект для закрытия dropdown при клике вне элемента
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (activeDropdown && !dropdownRefs.current[activeDropdown]?.contains(event.target)) {
+                setActiveDropdown(null);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [activeDropdown]);
+
     const debounce = (func, delay) => {
         let timeoutId;
         return (...args) => {
@@ -41,7 +57,6 @@ export function DropDown({debounceTime = 300}) {
         };
     };
 
-    // Запрос данных
     const fetchWithFilters = useCallback(
         useMemo(() => debounce(async (fieldName, searchText) => {
             if (searchText.length < 2) {
@@ -51,7 +66,6 @@ export function DropDown({debounceTime = 300}) {
 
             setLoading(true);
             try {
-                // Формируем фильтры на основе предыдущих выборов
                 const filters = {};
                 if (fieldName === 'genus' && formState.family) {
                     filters.family = formState.family.id;
@@ -65,7 +79,7 @@ export function DropDown({debounceTime = 300}) {
                     text: searchText,
                     filters: filters
                 });
-                setOptions(prev => ({ ...prev, [fieldName]: data }));
+                setOptions(prev => ({ ...prev, [fieldName]: data?.suggestions }));
             } finally {
                 setLoading(false);
             }
@@ -73,30 +87,28 @@ export function DropDown({debounceTime = 300}) {
         [debounceTime, formState.family, formState.genus]
     );
 
-    // Обработчики событий
     const handleInputChange = (fieldName, value) => {
         setInputValues(prev => ({ ...prev, [fieldName]: value }));
+        setActiveDropdown(fieldName);
         fetchWithFilters(fieldName, value);
     };
 
     const handleSelect = (fieldName, option) => {
         updateField(fieldName, option);
-
-        // Обновляем локальное состояние
         setInputValues(prev => ({
             ...prev,
-            [fieldName]: option.name,
-            // Сбрасываем последующие поля
+            [fieldName]: option,
             ...(fieldName === 'family' && { genus: '', species: '' }),
             ...(fieldName === 'genus' && { species: '' })
         }));
 
-        // Сбрасываем выбранные значения для зависимых полей
         if (fieldName === 'family') {
-            updateField('genus', '');
-            updateField('species', '');
+            updateField('genus', null);
+            updateField('species', null);
+            setOptions(prev => ({ ...prev, genus: [], species: [] }));
         } else if (fieldName === 'genus') {
-            updateField('species', '');
+            updateField('species', null);
+            setOptions(prev => ({ ...prev, species: [] }));
         }
 
         setActiveDropdown(null);
@@ -109,36 +121,48 @@ export function DropDown({debounceTime = 300}) {
     };
 
     return (
-        <div className="form-group">
-            {levels.map(level => (
-                <div key={level.name} className="form-group">
+        <div className="form-group dropdown-container">
+            {levels.map((level) => (
+                <div
+                    key={level.name}
+                    className="dropdown-group"
+                    ref={el => dropdownRefs.current[level.name] = el}
+                >
                     <label htmlFor={`input-${level.name}`}>{level.heading}</label>
-                    <input
-                        className="text-input"
-                        id={`input-${level.name}`}
-                        value={inputValues[level.name]}
-                        onChange={(e) => handleInputChange(level.name, e.target.value)}
-                        placeholder={level.placeholder}
-                        disabled={isFieldDisabled(level.name)}
-                        onClick={() => setActiveDropdown(level.name)}
-                    />
+                    <div className="dropdown-wrapper">
+                        <input
+                            className="dropdown-input text-input"
+                            id={`input-${level.name}`}
+                            value={inputValues[level.name]}
+                            onChange={(e) => handleInputChange(level.name, e.target.value)}
+                            placeholder={level.placeholder}
+                            disabled={isFieldDisabled(level.name)}
+                            onFocus={() => setActiveDropdown(level.name)}
+                        />
 
-                    {activeDropdown === level.name && options[level.name].length > 0 && (
-                        <>
-                            {options[level.name].map(option => (
-                                <div
-                                    key={option.id}
-                                    onClick={() => handleSelect(level.name, option)}
-                                >
-                                    {option.name}
-                                </div>
-                            ))}
-                        </>
-                    )}
+                        {activeDropdown === level.name && (
+                            <div className="dropdown-menu">
+                                {loading ? (
+                                    <div className="dropdown-item">Loading...</div>
+                                ) : options[level.name].length > 0 ? (
+                                    options[level.name].map(option => (
+                                        <div
+                                            key={option}
+                                            className="dropdown-item"
+                                            onClick={() => handleSelect(level.name, option)}
+                                        >
+                                            {option}
+                                        </div>
+                                    ))
+                                ) : (
+                                    inputValues[level.name].length >= 2 &&
+                                    <div className="dropdown-item no-results">No results found</div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             ))}
-
-            {loading && <div className="loading">Loading...</div>}
         </div>
     );
-  }
+}

@@ -1,21 +1,67 @@
+import {apiService} from "../api";
 import {useState} from "react";
 
+
 const FeedbackPage = () => {
+    const [error, setError] = useState(null);
+    const [feedback, setFeedback] = useState({
+        link: "",
+        user_name: "",
+        text: "",
+        type: null
+    });
+    const [loading, setLoading] = useState(false);
+    const handleSubmit = (e) => {
+
+        e.preventDefault();
+
+        for (let item in feedback) {
+            if (item !== "type" && feedback[item] === "") {
+                setError("Пожалуйста, введите необходимые данные!");
+
+                return;
+            }
+        }
+        try {
+            setLoading(true);
+            apiService.postSupport(feedback)
+                .then(() => {
+
+                    console.log("Успешно отправлено");
+                })
+                .catch(error => {
+                    console.error("Ошибка:", error);
+                    setError(error.message);
+                })
+                .finally(() => {
+                        setLoading(false);
+                });
+        } catch (error) {
+            console.log(error.message);
+            setError(error.message);
+
+        }
+    }
+
+    const onChange = (e) => {
+        setFeedback((prev) => ({ ...prev, [e.target.name]: e.target.value.trim() }));
+    }
+
     return (
         <div className="feedback">
             <h1>Форма обратной связи</h1>
-            <form className="feedback-form" onSubmit={(e) => {}}>
+            <form className="feedback-form" onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="telegram-id">Ваш ID в telegram:</label>
-                    <input className={"text-input"} id="telegram-id" type="text" name="telegram-id" required={true} />
+                    <label htmlFor="link">Ваш ID в telegram:</label>
+                    <input className={"text-input"} id="link" type="text" name="link" required={true} onChange={onChange} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="nickname">Ваш никнейм, заданный в боте (необязательно)</label>
-                    <input className={"text-input"} id="nickname" type="text" name="nickname" />
+                    <label htmlFor="user_name">Ваш никнейм, заданный в боте (необязательно)</label>
+                    <input className={"text-input"} id="user_name" type="text" name="user_name" onChange={onChange} />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="problem">С чем возникла ваша проблема?</label>
-                    <select id="problem" className="form-control">
+                    <label htmlFor="type">С чем возникла ваша проблема?</label>
+                    <select id="type" className="form-control" onChange={onChange}>
                         <option value="">-</option>
                         <option value="authorisation-website">Пробемы с авторизацией на сайте</option>
                         <option value="authorisation-tg">Пробемы с авторизацией в боте</option>
@@ -28,15 +74,18 @@ const FeedbackPage = () => {
                     </select>
                 </div>
                 <div className="content">
-                    <label htmlFor="problem_description">Опишите вашу проблему здесь:</label>
+                    <label htmlFor="text">Опишите вашу проблему здесь:</label>
                     <textarea
                         placeholder="Введите вашу проблему здесь..."
                         className="text-area"
-                        id="problem_description"
+                        id="text"
+                        name="text"
+                        onChange={onChange}
                         required={true}
                     ></textarea>
                 </div>
-                <button type={"submit"} className="submit-button">Сообщить о проблеме</button>
+                {error ? <p className="error-message">{error}</p> :""}
+                <button type={"submit"} className="button_submit_text submit-button" disabled={loading}>{!loading?"Сообщить о проблеме": "Отправка..."}</button>
             </form>
         </div>
     );

@@ -128,7 +128,7 @@ const TextModePage = () => {
         )}
         
         <button 
-          id="button_submit_text" 
+          className="button_submit_text"
           onClick={handleSubmit}
           disabled={isLoading || !text.trim()}
         >

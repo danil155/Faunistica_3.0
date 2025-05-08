@@ -98,6 +98,23 @@ const apiService = {
         } catch (error) {
             throw new Error(error);
         }
+    },
+
+    postSupport: async (data) => {
+        try {
+            await api.post('/api/support', data);
+        } catch (error) {
+            if (error.response) {
+                // Сервер ответил с кодом состояния, выходящим за пределы 2xx
+                throw new Error(error.response.data.message || 'Произошла ошибка при отправке запроса');
+            } else if (error.request) {
+                // Запрос был сделан, но ответ не получен (бэкенд недоступен)
+                throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже.');
+            } else {
+                // Произошла ошибка при настройке запроса
+                throw new Error('Произошла ошибка при отправке запроса');
+            }
+        }
     }
 };
 

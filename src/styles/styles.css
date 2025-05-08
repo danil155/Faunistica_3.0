@@ -318,11 +318,11 @@ header a{
     gap: 10px;
 }
 
-#button_submit_text:disabled {
+.button_submit_text:disabled {
     background-color: #8eb98f;
 }
 
-#button_submit_text {
+.button_submit_text {
     background-color: var(--main-bg-color);
     color: white;
 }
