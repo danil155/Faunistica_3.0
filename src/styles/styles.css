@@ -61,6 +61,10 @@ h3 {
     object-fit: cover;
 }
 
+.participant {
+    color: white;
+}
+
 .hero-text {
     position: absolute;
     padding: 10px 20px;
@@ -276,6 +280,17 @@ form {
 
 #volunteer-info-container {
     background-color: #e8f5e9;
+}
+
+.what-we-do span {
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.what-we-do p {
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 16px;
 }
 
 #volunteer-info-text {

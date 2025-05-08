@@ -39,9 +39,6 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
                 <li>
                   <NavLink to="/feedback" onClick={() => setIsMenuOpen(false)}>Поддержка</NavLink>
                 </li>
-                <li>
-                  <NavLink to="/" onClick={() => setIsMenuOpen(false)}>О нас</NavLink>
-                </li>
               </ul>
               
               {isAuthenticated ? (

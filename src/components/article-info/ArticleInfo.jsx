@@ -29,20 +29,23 @@ const ArticleInfo = () => {
 
     function handleRetry() {
         console.log('uwu');
-        fetchPublication();
+        fetchPublication()
+            .catch(error => {
+                console.error("Failed to fetch publication:", error);
+            })
         setShowPublicationError(false);
     }
 
     return (
         <>
-        {showPublicationError && <PublicationErrorModal onRetry={handleRetry} />}
+        {!showPublicationError && <PublicationErrorModal onRetry={handleRetry} />}
             <div className='article-card'>
                 <img src="https://placehold.co/120x120" alt="Обложка статьи" />
                 <div id="article_info_container">
                     <p>Название: {publication?.name ?? "Все рассказы (сборник)"}</p>
                     <p>Авторы: {publication?.author ?? "Эдгар Аллан По"}</p>
                     <p>Год издания: {publication?.year ?? 2009}</p>
-                    <p>Ссылка на файл: <Link to={publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}>{publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}</Link></p>
+                    <p>Ссылка на файл: <Link to={publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"} target="_blank">{publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}</Link></p>
                 </div>
             </div>
         </>

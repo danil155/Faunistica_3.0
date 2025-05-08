@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from 'react-router-dom';
+import {Link, NavLink} from 'react-router-dom';
 
 import spider from "../img/main_spider3.png";
 import icon1 from "../img/about-proj-icon-1.svg";
@@ -61,6 +61,24 @@ const Home = ({isAuthenticated, onLoginClick}) => {
                     сведений о находках пауков из предложенных научных статей: кого, где, когда и кто нашел. </p>
                   <Link className="join-button" to="/">Узнать больше</Link>
                 </div>
+              </div>
+            </section>
+
+            <section className="what-we-do">
+              <h2>Как нам помочь?</h2>
+              <div className="about-project">
+              <div className="proj-step">
+                <span>1</span>
+                <p>Зарегистрируйся через нашего <Link to={"https://t.me/FaunisticaV3Bot"}>тг-бота</Link></p>
+              </div>
+              <div className="proj-step">
+                <span>2</span>
+                <p>Внимательно изучи <NavLink to={"/"}>инструкцию</NavLink></p>
+              </div>
+              <div className="proj-step">
+                <span>3</span>
+                <p>Заполни свою первую <NavLink to={"/text"}>форму</NavLink></p>
+              </div>
               </div>
             </section>
           </div>
