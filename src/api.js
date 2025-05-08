@@ -91,6 +91,16 @@ const apiService = {
         }
     },
 
+    autofillTaxon: async (field, text) => {
+        try {
+            const response = await api.post('/api/autofill_taxon', { field, text });
+            return response.data;
+        } catch (error) {
+            console.error("Autofill error:", error);
+            return {};
+        }
+    },
+
     getPublication: async () => {
         try {
             const response = await api.get('/api/get_publ');

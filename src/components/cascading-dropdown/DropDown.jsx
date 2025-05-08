@@ -93,30 +93,53 @@ export function DropDown({ debounceTime = 300 }) {
         fetchWithFilters(fieldName, value);
     };
 
-    const handleSelect = (fieldName, option) => {
+    const handleSelect = async (fieldName, option) => {
         updateField(fieldName, option);
         setInputValues(prev => ({
             ...prev,
-            [fieldName]: option,
-            ...(fieldName === 'family' && { genus: '', species: '' }),
-            ...(fieldName === 'genus' && { species: '' })
+            [fieldName]: option
         }));
 
+        let autofillField = '';
+        if (fieldName === 'genus') autofillField = 'genus';
+        else if (fieldName === 'species') autofillField = 'species';
+
+        if (autofillField) {
+            const autofillResult = await apiService.autofillTaxon(autofillField, option);
+
+            if (autofillResult.family) {
+                updateField('family', autofillResult.family);
+                setInputValues(prev => ({ ...prev, family: autofillResult.family }));
+            }
+
+            if (autofillResult.genus) {
+                updateField('genus', autofillResult.genus);
+                setInputValues(prev => ({ ...prev, genus: autofillResult.genus }));
+            }
+        }
+
         if (fieldName === 'family') {
-            updateField('genus', null);
-            updateField('species', null);
-            setOptions(prev => ({ ...prev, genus: [], species: [] }));
+            if (formState.genus || formState.species) {
+                updateField('genus', null);
+                updateField('species', null);
+                setInputValues(prev => ({ ...prev, genus: '', species: '' }));
+                setOptions(prev => ({ ...prev, genus: [], species: [] }));
+            }
         } else if (fieldName === 'genus') {
-            updateField('species', null);
-            setOptions(prev => ({ ...prev, species: [] }));
+            if (formState.species) {
+                updateField('species', null);
+                setInputValues(prev => ({ ...prev, species: '' }));
+                setOptions(prev => ({ ...prev, species: [] }));
+            }
         }
 
         setActiveDropdown(null);
     };
 
+
     const isFieldDisabled = (fieldName) => {
-        if (fieldName === 'genus') return !formState.family;
-        if (fieldName === 'species') return !formState.genus;
+        // if (fieldName === 'genus') return !formState.family;
+        // if (fieldName === 'species') return !formState.genus;
         return false;
     };
 

@@ -38,7 +38,7 @@ const ArticleInfo = () => {
 
     return (
         <>
-        {!showPublicationError && <PublicationErrorModal onRetry={handleRetry} />}
+        {showPublicationError && <PublicationErrorModal onRetry={handleRetry} />}
             <div className='article-card'>
                 <img src="https://placehold.co/120x120" alt="Обложка статьи" />
                 <div id="article_info_container">
