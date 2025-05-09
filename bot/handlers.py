@@ -12,7 +12,7 @@ from bot.button_markups import Keyboards
 from bot.generate_pass import generate_secure_password
 from database.crud import get_user, create_user, log_action, get_publication, update_user, get_user_stats, \
     get_general_stats, get_volunteers_achievements, count_users_with_name, get_publications_for_language, \
-    is_publ_filled
+    is_publ_filled, get_user_id_by_username
 from bot.states import (
     RegistrationStates,
     SupportStates,
@@ -916,16 +916,13 @@ class Handlers:
 
     # ========== HELPER METHODS ========== #
 
-    def format_publication(self, publ: dict) -> str:
-        pub_type = {
-            'S': "Глава книги",
-            'A': "Статья",
-            'B': "Книга"
-        }.get(publ['type'], "Публикация")
+    async def send_support_message_from_website(self, username: str, message_text: str, user_link: str = None):
+        async for session in self.db_session_factory():
+            user_id = await get_user_id_by_username(session, username)
 
-        external_link = f'<a href="sozontov.cc/arachnolibrary/files/{publ["pdf_file"]}">{publ["external"]}</a>'
-
-        if pub_type == "Книга":
-            return f"📔\n{pub_type}: {publ['author']} {publ['year']} {publ['name']}. {external_link}"
-        else:
-            return f"📖\n{pub_type}: {publ['author']} {publ['year']} {publ['name']} // {external_link}"
+            await self.bot.send_message(
+                chat_id=config.ADMIN_CHAT_ID,
+                text=Messages.request_for_support_from_website(username, user_id, message_text, user_link),
+                parse_mode="HTML",
+                disable_web_page_preview=True
+            )

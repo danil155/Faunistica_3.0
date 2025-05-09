@@ -162,6 +162,17 @@ class Messages:
     def cancellation_support_request() -> str:
         return 'Обращение в поддержку отменено 🫡'
 
+    @staticmethod
+    def request_for_support(username: str, user_id: int, text: str) -> str:
+        return f'Пользователь @{username}, ID: {user_id} обратился в поддержку:\n\n{text}'
+
+    @staticmethod
+    def request_for_support_from_website(username: str, user_id: int, text: str, user_link: str) -> str:
+        return f'Пользователь @{username}, ID: {user_id} обратился в ' \
+               f'поддержку <b>из веб-формы</b>:\n\n' \
+               f'{text}\n\n' \
+               f'Ссылка на юзера: {user_link}'
+
     # ========== STATS MESSAGE ========== #
 
     @staticmethod
@@ -286,10 +297,6 @@ class Messages:
     @staticmethod
     def response_from_support(reply_text: str) -> str:
         return f'🛠️ Ответ от поддержки:\n\n{reply_text}'
-
-    @staticmethod
-    def request_for_support(username: str, user_id: int, text: str) -> str:
-        return f'Пользователь @{username}, ID: {user_id} обратился в поддержку:\n\n{text}'
 
     # ========== MENU MESSAGE ========== #
 

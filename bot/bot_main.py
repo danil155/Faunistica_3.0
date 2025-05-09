@@ -7,9 +7,14 @@ from config import config
 from database.database import init_db, get_session
 from bot.handlers import Handlers
 
+bot_instance = None
+
 
 async def bot_start():
+    global bot_instance
     bot = Bot(token=config.BOT_TOKEN)
+    bot_instance = bot
+
     dp = Dispatcher(storage=MemoryStorage())
 
     # Initialize database
@@ -24,6 +29,10 @@ async def bot_start():
         await dp.start_polling(bot)
     finally:
         await bot.session.close()
+
+
+def get_bot_instance() -> Bot:
+    return bot_instance
 
 
 if __name__ == '__main__':
