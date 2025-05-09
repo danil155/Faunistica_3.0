@@ -1,8 +1,11 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from back_api.schemas import SupportRequest
+from back_api.messages import send_support_message
+from database.database import get_session
+from database.crud import get_user_id_by_username
 from .rate_limiter import limiter
-from bot.bot_main import bot_instance
 
 router = APIRouter()
 
@@ -11,14 +14,12 @@ router = APIRouter()
 @limiter.limit("60/minute")
 async def suggest_taxon(
         request: Request,
-        data: SupportRequest
+        data: SupportRequest,
+        session: AsyncSession = Depends(get_session)
 ):
     try:
-        await bot_instance.handlers.send_support_message_from_website(
-            username=data.user_name,
-            message_text=data.text,
-            user_link=data.link
-        )
-        return {"message": "OK"}
+        user_id = await get_user_id_by_username(session, data.user_name) 
+        await send_support_message(data, user_id)
+        return {"message": "Support request received"}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Bot error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to process support request: {str(e)}")

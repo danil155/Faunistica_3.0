@@ -116,5 +116,5 @@ class SupportRequest(BaseModel):
     link: str
     user_name: Optional[str]
     text: str
-    type: str
+    issue_type: str
     
