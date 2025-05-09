@@ -5,7 +5,7 @@ from typing import Optional
 
 async def send_support_message(data, user_id) -> None:
     message = (
-        f"📢 Новое сообщение в поддержку 📢\n"
+        f"📢 Новое сообщение в поддержку из веб-формы 📢\n"
         f"🔗 Ссылка на Telegram: {data.link}\n"
         f"👤 Username в боте: {data.user_name if data.user_name else 'Не указан'}\n"
         f"🪪 ID: {user_id if user_id != -1 else 'Не найден'}\n"
