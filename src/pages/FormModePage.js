@@ -8,6 +8,7 @@ import {DropDown} from "../components/cascading-dropdown/DropDown";
 import DateSelect from "../components/DateSelect";
 import { apiService } from '../api'
 import ArticleInfo from "../components/article-info/ArticleInfo";
+import TaxonDropdown from "../components/cascading-dropdown/TaxonDropdown";
 
 const fieldsMap = {
     "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
@@ -130,14 +131,11 @@ const FormModePage = () => {
 
             await apiService.insertRecord(recordData);
             resetForm(resetMode === "soft");
-            alert("Данные успешно отправлены!");
+            alert("Данные успешно отправлены! Незакреплённые поля очищены.");
         } catch (error) {
             console.error("Ошибка при отправке данных:", error);
             alert("Произошла ошибка при отправке данных");
         }
-
-        resetForm(resetMode === "soft");
-        alert("Форма отправлена! Незакреплённые поля очищены.");
     };
 
     // Обработчик очистки формы
@@ -327,9 +325,10 @@ const FormModePage = () => {
                             </div>
 
                             {adm.map((field) => (
-                                <div className="form-group">
+                                <div  key={field.name} className="form-group">
                                     <label htmlFor={field.name}>{field.heading}:</label>
                                     <input
+                                        key={field.name}
                                         id={field.name}
                                         className="text-input"
                                         type="text"
@@ -454,61 +453,75 @@ const FormModePage = () => {
 
                     {!collapsedSections["Таксономия"] && (
                         <div className="form-grid">
+                            <TaxonDropdown isDefined={formState.tax_sp_def}/>
                             <div className="form-group">
                                 <div className="form-row">
-                                    <input id="tax_sp_def"
-                                           name={"tax_sp_def"}
-                                           type="checkbox"
-                                           checked={isTaxDefined}
-                                           onChange={() =>
-                                           {formState.tax_sp_def = isTaxDefined;
-                                               setIsTaxDefined(!isTaxDefined)
-                                               console.log(formState.tax_sp_def);}}
+                                    <input
+                                        id="tax_sp_def"
+                                        name="tax_sp_def"
+                                        type="checkbox"
+                                        checked={!(formState.tax_sp_def ?? false)}
+                                        onChange={(e) =>
+                                            setFormState(prev => ({
+                                                ...prev,
+                                                tax_sp_def: !e.target.checked
+                                            }))
+                                        }
                                     />
-                                    <label htmlFor="tax_sp_def" >Вид определён</label>
+                                    <label htmlFor="tax_sp_def">Вид определён</label>
                                 </div>
 
                                 <div className="form-row">
-                                    <input id="tax_nsp"
-                                           name={"tax_nsp"}
-                                           type="checkbox"
-                                           value={"true"}
-                                           checked={formState.tax_nsp}
-                                           onChange={(e) => {formState.tax_nsp = e.target.checked}}
+                                    <input
+                                        id="tax_nsp"
+                                        name="tax_nsp"
+                                        type="checkbox"
+                                        checked={formState.tax_nsp || false}
+                                        onChange={(e) =>
+                                            setFormState(prev => ({
+                                                ...prev,
+                                                tax_nsp: e.target.checked
+                                            }))
+                                        }
                                     />
-                                    <label htmlFor="tax_nsp" >Отсутствует в списке</label>
+                                    <label htmlFor="tax_nsp">Отсутствует в списке</label>
                                 </div>
 
                                 <div className="form-row">
-                                    <input id="is_new_species"
-                                           name={"is_new_species"}
-                                           type="checkbox"
-                                           value={''}
-                                           checked={isNewSpecies}
-                                           onChange={() => {
-                                               setIsNewSpecies(!isNewSpecies)}}
+                                    <input
+                                        id="is_new_species"
+                                        name="is_new_species"
+                                        type="checkbox"
+                                        checked={isNewSpecies}
+                                        onChange={() => setIsNewSpecies(!isNewSpecies)}
                                     />
-                                    <label htmlFor="is_new_species" >Описан, как новый вид</label>
+                                    <label htmlFor="is_new_species">Описан, как новый вид</label>
                                 </div>
 
-                                {isNewSpecies ?
+                                {isNewSpecies && (
                                     <div className='form-group'>
                                         <label htmlFor="type_status">Типовой статус:</label>
                                         <select
                                             id="type_status"
                                             name="type_status"
                                             value={formState.type_status ?? ''}
-                                            onChange={handleInputChange}>
+                                            onChange={handleInputChange}
+                                        >
                                             <option value=''></option>
                                             <option value='holotype'>Голотип</option>
                                             <option value='paratype'>Паратип</option>
                                             <option value='neotype'>Неотип</option>
                                             <option value='other'>Другое</option>
                                         </select>
-                                    </div>:''}
+                                    </div>
+                                )}
                             </div>
 
-                            <DropDown />
+                            <DropDown
+                                disabled={!formState.tax_sp_def}
+                                allowFreeInput={formState.tax_nsp}
+                            />
+
 
                             <div className="form-group">
                                 <label>Таксономические примечания:</label>

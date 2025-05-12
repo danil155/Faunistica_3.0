@@ -48,16 +48,16 @@ function App() {
   };
 
 
-  const PrivateRoutes = () => {
-    if (!isAuth) {
-      setShowLoginModal(true);
-    } else {
-      setShowLoginModal(false);
-    }
-    return (
-        <Outlet />
-    )
-  }
+  const PrivateRoutes = ({ auth }) => {
+    // Показываем модалку только при первом рендере, если пользователь не авторизован
+    useEffect(() => {
+      if (!isAuth) {
+        setShowLoginModal(true);
+      }
+    }, []); // Пустой массив зависимостей = эффект сработает только один раз
+
+    return <Outlet />; // Если не авторизован — не рендерим дочерние роуты
+  };
 
   return (
     <div className="App">

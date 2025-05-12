@@ -10,7 +10,7 @@
     src: url(../fonts/onest.ttf);
 }
 body {
-    font-family: Onest;
+    font-family: Onest, serif;
     font-size: 14px;
     background-color: #f9f9f9;
     color: #333;
@@ -18,6 +18,10 @@ body {
 
 h3 {
     font-weight: 500;
+}
+
+main {
+    width: inherit;
 }
 
 #root {
@@ -36,7 +40,7 @@ h3 {
 
 /* Контейнер */
 .main-container {
-    width: 100%;
+    width: 100vw;
     margin: 0 auto; /* Центрирование */
 }
 

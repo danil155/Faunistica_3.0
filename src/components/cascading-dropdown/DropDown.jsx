@@ -1,9 +1,9 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
 import "./dropdown.css";
 
-export function DropDown({ debounceTime = 300 }) {
+export function DropDown({ allowFreeInput, debounceTime = 300 }) {
     const { formState, setFormState } = useFormContext();
     const dropdownRefs = useRef({});
 
@@ -20,12 +20,6 @@ export function DropDown({ debounceTime = 300 }) {
         { name: 'species', placeholder: 'Начните печатать вид...', heading: 'Вид:' }
     ];
 
-    const [inputValues, setInputValues] = useState({
-        family: '',
-        genus: '',
-        species: ''
-    });
-
     const [options, setOptions] = useState({
         family: [],
         genus: [],
@@ -34,8 +28,12 @@ export function DropDown({ debounceTime = 300 }) {
 
     const [activeDropdown, setActiveDropdown] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [missingInList, setMissingInList] = useState({
+        family: false,
+        genus: false,
+        species: false
+    });
 
-    // Эффект для закрытия dropdown при клике вне элемента
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (activeDropdown && !dropdownRefs.current[activeDropdown]?.contains(event.target)) {
@@ -57,48 +55,73 @@ export function DropDown({ debounceTime = 300 }) {
         };
     };
 
-    const fetchWithFilters = useCallback(
-        useMemo(() => debounce(async (fieldName, searchText) => {
-            if (searchText.length < 2) {
-                setOptions(prev => ({ ...prev, [fieldName]: [] }));
-                return;
+    const fetchWithFilters = useMemo(() => debounce(async (fieldName, searchText) => {
+        if (searchText.length < 2 || missingInList[fieldName]) {
+            setOptions(prev => ({ ...prev, [fieldName]: [] }));
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const filters = {};
+            if (fieldName === 'genus' && formState.family) {
+                filters.family = formState.family.id;
+            }
+            if (fieldName === 'species' && formState.genus) {
+                filters.genus = formState.genus.id;
             }
 
-            setLoading(true);
-            try {
-                const filters = {};
-                if (fieldName === 'genus' && formState.family) {
-                    filters.family = formState.family.id;
-                }
-                if (fieldName === 'species' && formState.genus) {
-                    filters.genus = formState.genus.id;
-                }
-
-                const data = await apiService.suggestTaxon({
-                    field: fieldName,
-                    text: searchText,
-                    filters: filters
-                });
-                setOptions(prev => ({ ...prev, [fieldName]: data?.suggestions }));
-            } finally {
-                setLoading(false);
-            }
-        }, debounceTime), [debounceTime, formState.family, formState.genus]),
-        [debounceTime, formState.family, formState.genus]
-    );
+            const data = await apiService.suggestTaxon({
+                field: fieldName,
+                text: searchText,
+                filters: filters
+            });
+            setOptions(prev => ({ ...prev, [fieldName]: data?.suggestions }));
+        } finally {
+            setLoading(false);
+        }
+    }, debounceTime), [debounceTime, formState.family, formState.genus]);
 
     const handleInputChange = (fieldName, value) => {
-        setInputValues(prev => ({ ...prev, [fieldName]: value }));
-        setActiveDropdown(fieldName);
-        fetchWithFilters(fieldName, value);
+        updateField(fieldName, value);
+
+        if (allowFreeInput || missingInList[fieldName]) {
+            // При свободном вводе или если выбрано "missing"
+
+
+            // Если пользователь начал редактировать поле с "missing"
+            if (missingInList[fieldName] && value !== "") {
+                setMissingInList(prev => ({ ...prev, [fieldName]: false }));
+                setActiveDropdown(fieldName);
+                fetchWithFilters(fieldName, value);
+            }
+        } else {
+            // При выборе из списка показываем предложения
+            setActiveDropdown(fieldName);
+            fetchWithFilters(fieldName, value);
+        }
     };
 
     const handleSelect = async (fieldName, option) => {
+        if (option === "missing") {
+            // 1. Сначала обновляем missingInList
+            const newMissingState = { ...missingInList, [fieldName]: true };
+            setMissingInList(newMissingState);
+
+            // 2. Затем очищаем значение в форме
+            updateField(fieldName, "");
+
+            // 3. Закрываем дропдаун
+            setActiveDropdown(null);
+
+            console.log("Missing selected for", fieldName, "New state:", newMissingState);
+            return;
+        }
+
+        // Обычный выбор значения
+        setMissingInList(prev => ({ ...prev, [fieldName]: false }));
         updateField(fieldName, option);
-        setInputValues(prev => ({
-            ...prev,
-            [fieldName]: option
-        }));
+        setActiveDropdown(null);
 
         let autofillField = '';
         if (fieldName === 'genus') autofillField = 'genus';
@@ -109,38 +132,29 @@ export function DropDown({ debounceTime = 300 }) {
 
             if (autofillResult.family) {
                 updateField('family', autofillResult.family);
-                setInputValues(prev => ({ ...prev, family: autofillResult.family }));
             }
 
             if (autofillResult.genus) {
                 updateField('genus', autofillResult.genus);
-                setInputValues(prev => ({ ...prev, genus: autofillResult.genus }));
             }
         }
 
         if (fieldName === 'family') {
             if (formState.genus || formState.species) {
-                updateField('genus', null);
-                updateField('species', null);
-                setInputValues(prev => ({ ...prev, genus: '', species: '' }));
+                updateField('genus', '');
+                updateField('species', '');
                 setOptions(prev => ({ ...prev, genus: [], species: [] }));
+                setMissingInList(prev => ({ ...prev, genus: false, species: false }));
             }
         } else if (fieldName === 'genus') {
             if (formState.species) {
-                updateField('species', null);
-                setInputValues(prev => ({ ...prev, species: '' }));
+                updateField('species', '');
                 setOptions(prev => ({ ...prev, species: [] }));
+                setMissingInList(prev => ({ ...prev, species: false }));
             }
         }
 
         setActiveDropdown(null);
-    };
-
-
-    const isFieldDisabled = (fieldName) => {
-        // if (fieldName === 'genus') return !formState.family;
-        // if (fieldName === 'species') return !formState.genus;
-        return false;
     };
 
     return (
@@ -156,30 +170,46 @@ export function DropDown({ debounceTime = 300 }) {
                         <input
                             className="dropdown-input text-input"
                             id={`input-${level.name}`}
-                            value={inputValues[level.name]}
+                            value={ formState[level.name]}
                             onChange={(e) => handleInputChange(level.name, e.target.value)}
                             placeholder={level.placeholder}
-                            disabled={isFieldDisabled(level.name)}
-                            onFocus={() => setActiveDropdown(level.name)}
+                            onFocus={() => !allowFreeInput && !missingInList[level.name] && setActiveDropdown(level.name)}
                         />
 
-                        {activeDropdown === level.name && (
+                        {!allowFreeInput && !missingInList[level.name] && activeDropdown === level.name && (
                             <div className="dropdown-menu">
                                 {loading ? (
                                     <div className="dropdown-item">Loading...</div>
                                 ) : options[level.name].length > 0 ? (
-                                    options[level.name].map(option => (
+                                    <>
+                                        {options[level.name].map(option => (
+                                            <div
+                                                key={option}
+                                                className="dropdown-item"
+                                                onClick={() => handleSelect(level.name, option)}
+                                            >
+                                                {option}
+                                            </div>
+                                        ))}
                                         <div
-                                            key={option}
-                                            className="dropdown-item"
-                                            onClick={() => handleSelect(level.name, option)}
+                                            className="dropdown-item missing-item"
+                                            onClick={() => handleSelect(level.name, "missing")}
                                         >
-                                            {option}
+                                            missing
                                         </div>
-                                    ))
+                                    </>
                                 ) : (
-                                    inputValues[level.name].length >= 2 &&
-                                    <div className="dropdown-item no-results">No results found</div>
+                                    formState[level.name].length >= 2 && (
+                                        <>
+                                            <div className="dropdown-item no-results">No results found</div>
+                                            <div
+                                                className="dropdown-item missing-item"
+                                                onClick={() => handleSelect(level.name, "missing")}
+                                            >
+                                                missing
+                                            </div>
+                                        </>
+                                    )
                                 )}
                             </div>
                         )}

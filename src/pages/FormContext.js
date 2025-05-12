@@ -28,8 +28,11 @@ export const defaultState = {
   selective_gain: '',
   matherial_notes: '',
   taxonomic_notes: '',
+  family: '',
+  genus: '',
+  species: '',
   tax_nsp: null,
-  tax_sp_def: true,
+  tax_sp_def: null,
   type_status: null,
   specimens: {}
 };
