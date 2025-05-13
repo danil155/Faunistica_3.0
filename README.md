@@ -115,7 +115,7 @@ server {
 
 server {
     listen 443 ssl;
-    server_name *YOUR_DOMEN*; /
+    server_name *YOUR_DOMEN*;
 
     # SSL сертификаты
     ssl_certificate     /..;
