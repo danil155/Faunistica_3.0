@@ -4,7 +4,6 @@ import { useFormContext } from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
 import "../styles/formMode.css";
 import PinToggle from "../components/pin-toggle/PinToggle";
-import {DropDown} from "../components/cascading-dropdown/DropDown";
 import DateSelect from "../components/DateSelect";
 import { apiService } from '../api'
 import ArticleInfo from "../components/article-info/ArticleInfo";
@@ -453,7 +452,7 @@ const FormModePage = () => {
 
                     {!collapsedSections["Таксономия"] && (
                         <div className="form-grid">
-                            <TaxonDropdown isDefined={formState.tax_sp_def}/>
+
                             <div className="form-group">
                                 <div className="form-row">
                                     <input
@@ -461,11 +460,18 @@ const FormModePage = () => {
                                         name="tax_sp_def"
                                         type="checkbox"
                                         checked={!(formState.tax_sp_def ?? false)}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setFormState(prev => ({
                                                 ...prev,
                                                 tax_sp_def: !e.target.checked
-                                            }))
+                                            }));
+                                            if (!e.target.checked) {
+                                                setFormState(prev => ({...prev,
+                                                    family: '',
+                                                    genus: '',
+                                                    species: '',}))
+                                            }
+                                        }
                                         }
                                     />
                                     <label htmlFor="tax_sp_def">Вид определён</label>
@@ -477,11 +483,20 @@ const FormModePage = () => {
                                         name="tax_nsp"
                                         type="checkbox"
                                         checked={formState.tax_nsp || false}
-                                        onChange={(e) =>
+                                        onChange={(e) => {
                                             setFormState(prev => ({
                                                 ...prev,
                                                 tax_nsp: e.target.checked
-                                            }))
+                                            }));
+                                            if (!e.target.checked) {
+                                                setFormState(prev => ({...prev,
+                                                    family: '',
+                                                    genus: '',
+                                                    species: '',}))
+                                            }
+                                        }
+
+
                                         }
                                     />
                                     <label htmlFor="tax_nsp">Отсутствует в списке</label>
@@ -516,13 +531,7 @@ const FormModePage = () => {
                                     </div>
                                 )}
                             </div>
-
-                            <DropDown
-                                disabled={!formState.tax_sp_def}
-                                allowFreeInput={formState.tax_nsp}
-                            />
-
-
+                            <TaxonDropdown isDefined={formState.tax_sp_def} isInList={formState.tax_nsp} />
                             <div className="form-group">
                                 <label>Таксономические примечания:</label>
                                 <textarea
