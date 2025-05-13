@@ -1,12 +1,14 @@
 # Проект Faunistica_3.0
 
-Проект предназначен для доработки сервиса Faunistica 2.0.
+Проект предназначен для доработки сервиса [Faunistica 2.0](https://sozontov.cc/faunistica_2.0/).
 
-## Функционал (в разработке)
+## Функционал
 
+«Faunistica 3.0»: Система обработки научных литературных источников и регистрации на этой основе данных о находках пауков.
+Программа предназначена для извлечения и структурирования данных из научных публикаций, содержащих упоминания о находках экземпляров пауков, и последующего формирования стандартизированной базы данных. Она ориентирована на использование биологами-исследователями и волонтерами для систематизации сведений об распространении пауков, что способствует углубленному изучению экологии и биогеографии.
 ...
 
-# Инструкция по запуску backend-a
+## Инструкция по запуску backend
 
 **Подготовка:**
 
@@ -14,10 +16,11 @@
 
 Заполнение ".env":
 ```
-BOT_TOKEN = *YOUR_BOT_TOKEN*
-ADMIN_CHAT_ID = *YOUR_ADMIN_CHAT_ID*
+BOT_TOKEN = *YOUR_BOT_TOKEN* #Токен вашего чат-бота в Telegram
+ADMIN_CHAT_ID = *YOUR_ADMIN_CHAT_ID* #ID телеграм-чата, в котором находится администрация тех.поддержки
 
-DB_NAME = *YOUR_DB_NAME*
+# Данные необходимые для базы данных PostgreSQL
+DB_NAME = *YOUR_DB_NAME* 
 DB_HOST = *YOUR_DB_HOST*
 DB_PORT = *YOUR_DB_PORT*
 DB_USER = *YOUR_DB_USER*
@@ -28,23 +31,27 @@ POSTGRES_PASS = *YOUR_POSTGRES_PASS*
 PGADMIN_DEFAULT_EMAIL = *YOUR_PGADMIN_DEFAULT_EMAIL*
 PGADMIN_DEFAULT_PASSWORD=*YOUR_PGADMIN_DEFAULT_PASSWORD*
 
+# Ключи для генерации JWT токенов
 PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
-private key here
+*private key here*
 -----END PRIVATE KEY-----"
 
 PUBLIC_KEY="-----BEGIN PUBLIC KEY-----
-public key here
+*public key here*
 -----END PUBLIC KEY-----"
 
-ALGORITHM = *YOUR_ALGORITHM*
-ACCESS_TOKEN_EXPIRE = *YOUR_ACCESS_TOKEN_EXPIRE*
-REFRESH_TOKEN_EXPIRE = *YOUR_REFRESH_TOKEN_EXPIRE*
+ALGORITHM = *YOUR_ALGORITHM* #Название алгоритма для генерации JWT токенов
+ACCESS_TOKEN_EXPIRE = *YOUR_ACCESS_TOKEN_EXPIRE* #Время жизни ACCESS токена в МИНУТАХ (лучше устанавливать число в диапозоне от 15 до 30)
+REFRESH_TOKEN_EXPIRE = *YOUR_REFRESH_TOKEN_EXPIRE* #Время жизни REFRESH токена в МИНУТАХ (лучше устанавливать число в диапозоне от 7 до 30)
 ```
 
-Далее нужно создать файл "hash.py" в папке "database", который будет хэшировать данные:
+Далее нужно создать файл "hash.py" в директории "../database/hash.py", который будет хэшировать данные:
 ```python
+'''
 
-#Ваш метод хэширования
+Ваш метод хэширования
+
+'''
 
 def register_user(user_pass):
     db_hash = ph.hash(user_pass)
@@ -58,7 +65,7 @@ def check_pass(user_pass, db_hash):
     except VerifyMismatchError:
         return False
 ```
-
+> Подробнее о JWT токенах и алгоритмах можно прочитать [здесь](https://pyjwt.readthedocs.io/en/latest/usage.html)
 ---
 
 **Запуск:**
@@ -66,20 +73,20 @@ def check_pass(user_pass, db_hash):
 > Убедитесь, что у вас установлен Docker и Docker Compose.
 > Если нет, то [здесь](https://docs.docker.com/compose/install/) ссылка на скачивание.
 
-В корневой папке backend-a через терминал прописываем:
+В корневой папке backend через терминал прописываем:
 `docker-compose up -d --build`
 
 ---
 
 >Если у вас не появились ошибки в терминале, создалась база данных в PGadmin и чат-бот в Telegram функционируте, то поздравляю! Полдела сделано, backend запущен!
 
-# Инструкция по запуску frontend-a
+## Инструкция по запуску frontend-a
 
 > Перед началом убедитесь, что у вас установлен Node.js, если нет, то его можно установить [здесь](https://nodejs.org/en/download).
 
 ## Локальный запуск
 
-В корневой папке frontend-a через терминал прописываем:
+В корневой папке frontend через терминал прописываем:
 
 `npm install`
 
@@ -90,8 +97,9 @@ def check_pass(user_pass, db_hash):
 ## Запуск на сервере
 
 > Убедитесь, что у вас установлен nginx
+> Если нет, прочитать о нем и установить его можно [здесь](https://nginx.org/)
 
-В корневой папке frontend-a через терминал прописываем:
+В корневой папке frontend через терминал прописываем:
 
 `npm install`
 
@@ -103,12 +111,12 @@ def check_pass(user_pass, db_hash):
 server {
     listen 80;
     server_name faunistica.ru;
-    return 301 https://$host$request_uri; # Редирект на HTTPS
+    return 301 https://$host$request_uri; #Редирект на HTTPS
 }
 
 server {
     listen 443 ssl;
-    server_name faunistica.ru;
+    server_name *YOUR_DOMEN*; /
 
     # SSL сертификаты
     ssl_certificate     /..;
