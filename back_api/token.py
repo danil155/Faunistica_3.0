@@ -5,13 +5,13 @@ from datetime import datetime, timedelta, UTC
 
 
 def create_access_token(data: dict) -> str:
-    expires = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE)
+    expires = datetime.now(UTC) + timedelta(seconds=ACCESS_TOKEN_EXPIRE)
     data.update({'exp': expires, 'type': 'access'})
     return jwt.encode(data, PRIVATE_KEY, algorithm=ALGORITHM)
 
 
 def create_refresh_token(data: dict) -> str:
-    expires = datetime.now(UTC) + timedelta(minutes=REFRESH_TOKEN_EXPIRE)
+    expires = datetime.now(UTC) + timedelta(seconds=REFRESH_TOKEN_EXPIRE)
     data.update({'exp': expires, 'type': 'refresh'})
     return jwt.encode(data, PRIVATE_KEY, algorithm=ALGORITHM)
 
