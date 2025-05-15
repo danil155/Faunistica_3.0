@@ -51,6 +51,7 @@ const FormModePage = () => {
         {name: "district", heading: "Район" },
         {name: "gathering_place", heading: "Место сбора" },
     ]
+    const [coodrFormat, setCoodrFormat] = useState("grads")
 
     // Обработчик изменений для текстовых полей
     const handleInputChange = (e) => {
@@ -209,28 +210,74 @@ const FormModePage = () => {
                     {!collapsedSections["Географическое положение"] && (
                         <div className="form-grid">
                             <div className="form-group">
-                                <label>Широта (N):</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="coordinate_north"
-                                    value={formState.coordinate_north}
-                                    onChange={handleInputChange}
-                                    placeholder="00.0000"
-                                />
+                                <label htmlFor="coord-format">
+                                    Формат координат
+                                </label>
+                                <select id="coord-format" onChange={
+                                    (e) => {setCoodrFormat(e.target.value)}
+                                }>
+                                    <option value="grads">ГГ.гггг° (56.83777°)</option>
+                                    <option value="mins">ГГ°ММ.мм' (56° 50.266')</option>
+                                    <option value="secs">ГГ°ММ'СС'' (56° 50' 15.99")</option>
+                                </select>
                             </div>
+                            {coodrFormat === "grads" ?
+                                <>
+                                <div className="form-group">
 
-                            <div className="form-group">
-                                <label>Долгота (E):</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="coordinate_east"
-                                    value={formState.coordinate_east}
-                                    onChange={handleInputChange}
-                                    placeholder="00.0000"
-                                />
-                            </div>
+                                    <label>Широта (N):</label>
+                                    <input
+                                        className="text-input"
+                                        type="text"
+                                        name="coordinate_north"
+                                        value={formState.coordinate_north}
+                                        onChange={handleInputChange}
+                                        placeholder="00.0000"
+                                    />
+                                    <label>Долгота (E):</label>
+                                    <input
+                                        className="text-input"
+                                        type="text"
+                                        name="coordinate_east"
+                                        value={formState.coordinate_east}
+                                        onChange={handleInputChange}
+                                        placeholder="00.0000"
+                                    />
+                                </div>
+                                </>:
+                                coodrFormat === "mins" ?
+
+
+                                    <div className="form-group">
+                                        <label>Широта N°</label>
+                                        <div className="form-row">
+                                            <input id="grads" className="coord"/><label htmlFor="grads">°</label>
+                                            <input id="mins" className="coord"/><label htmlFor="mins">'</label>
+                                        </div>
+                                        <label>Долгота E°</label>
+                                        <div className="form-row">
+                                            <input id="grads" className="coord"/><label htmlFor="grads">°</label>
+                                            <input id="mins" className="coord"/><label htmlFor="mins">'</label>
+                                        </div>
+                                    </div>
+
+                            :
+                                    <div className="form-group">
+                                        <label>Широта N°</label>
+                                        <div className="form-row">
+                                            <input id="grads" className="coord sec"/><label htmlFor="grads">°</label>
+                                            <input id="mins" className="coord sec"/><label htmlFor="mins">'</label>
+                                            <input id="mins" className="coord sec"/><label htmlFor="secs">"</label>
+                                        </div>
+                                        <label>Долгота E°</label>
+                                        <div className="form-row">
+                                            <input id="grads" className="coord sec"/><label htmlFor="grads">°</label>
+                                            <input id="mins" className="coord sec"/><label htmlFor="mins">'</label>
+                                            <input id="mins" className="coord sec"/><label htmlFor="secs">"</label>
+                                        </div>
+                                    </div>
+                            }
+
 
                             <div className="form-group">
                                 <label htmlFor="geo-origin">Происхождение координат:</label>

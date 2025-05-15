@@ -5,27 +5,19 @@ import Footer from "./components/footer/Footer";
 import Home from "./pages/Home";
 import LoginModal from './components/login/LoginModal';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Route, Routes} from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
-import useToken  from "./components/useToken";
+import useToken from "./components/useToken";
 import StatsPage from "./pages/Stats";
-import { Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom';
 import FeedbackPage from "./pages/Feedback";
 
 function App() {
-
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuth, login, logout } = useToken();
   const [showLoginModal, setShowLoginModal] = useState(false);
-
-  useEffect(() => {
-    if (isAuth === false && (location.pathname === '/form' || location.pathname === '/text')) {
-      navigate('/');
-    }
-  }, [isAuth, location.pathname, navigate]);
-
 
   const handleLogin = async (username, password) => {
     try {
@@ -47,55 +39,54 @@ function App() {
     navigate("/");
   };
 
-
   const PrivateRoutes = ({ auth }) => {
-    // Показываем модалку только при первом рендере, если пользователь не авторизован
-    useEffect(() => {
-      if (!isAuth) {
-        setShowLoginModal(true);
-      }
-    }, []); // Пустой массив зависимостей = эффект сработает только один раз
+    const [initialCheckDone, setInitialCheckDone] = useState(false);
 
-    return <Outlet />; // Если не авторизован — не рендерим дочерние роуты
+    useEffect(() => {
+      if (auth !== null && !initialCheckDone) {
+        if (!auth) {
+          setShowLoginModal(true);
+        }
+        setInitialCheckDone(true);
+      }
+    }, [auth, initialCheckDone]);
+
+    return auth ? <Outlet /> : null;
   };
 
   return (
-    <div className="App">
-      <Navbar
-        isAuthenticated={isAuth}
-        onLoginClick={() => setShowLoginModal(true)}
-        onLogoutClick={handleLogout}
-      />
+      <div className="App">
+        <Navbar
+            isAuthenticated={isAuth}
+            isLoading={isAuth === null}
+            onLoginClick={() => setShowLoginModal(true)}
+            onLogoutClick={handleLogout}
+        />
 
-      {showLoginModal && (
-          <LoginModal
-              onClose={handleClose}
+        {showLoginModal && isAuth === false && (
+            <LoginModal
+                onClose={handleClose}
+                onLogin={handleLogin}
+            />
+        )}
 
-              onLogin={handleLogin}
-          />
-      )}
-      {/*<Home />*/}
-
-      <Routes>
-        <Route path="/" element={
-          <>
-
+        <Routes>
+          <Route path="/" element={
             <Home
                 isAuthenticated={isAuth}
                 onLoginClick={() => setShowLoginModal(true)}
             />
-          </>
-        }/>
-        <Route path="/feedback" element={<FeedbackPage />} />
-        <Route element={<PrivateRoutes auth={isAuth} />} >
-          <Route path="/form" element={<FormModePage />} />
-          <Route path="/text" element={<TextModePage />} />
-        </Route>
-        <Route path="/stats" element={<StatsPage/>} />
-      </Routes>
+          }/>
+          <Route path="/feedback" element={<FeedbackPage />} />
+          <Route element={<PrivateRoutes auth={isAuth} />}>
+            <Route path="/form" element={<FormModePage />} />
+            <Route path="/text" element={<TextModePage />} />
+          </Route>
+          <Route path="/stats" element={<StatsPage />} />
+        </Routes>
 
-      <Footer />
-    </div>
+        <Footer />
+      </div>
   );
 }
 

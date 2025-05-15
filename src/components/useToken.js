@@ -2,7 +2,7 @@ import {useState, useCallback, useEffect} from 'react';
 import { apiService } from '../api';
 
 export default function useToken() {
-  const [isAuth, setIsAuth] = useState(null);
+  const [isAuth, setIsAuth] = useState(false);
 
   const checkAuth = async () => {
     try {

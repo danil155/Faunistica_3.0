@@ -40,7 +40,7 @@ const ArticleInfo = () => {
         <>
         {showPublicationError && <PublicationErrorModal onRetry={handleRetry} />}
             <div className='article-card'>
-                <img src="https://placehold.co/120x120" alt="Обложка статьи" />
+                <img src={publication?.year ? require(`../../img/publ-spider-${(publication?.year % 8)}.png`) : "https://placehold.co/120x120"} style={{width:"120px"}} alt="Обложка статьи" />
                 <div id="article_info_container">
                     <p>Название: {publication?.name ?? "Все рассказы (сборник)"}</p>
                     <p>Авторы: {publication?.author ?? "Эдгар Аллан По"}</p>

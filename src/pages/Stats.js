@@ -89,7 +89,7 @@ const StatsPage = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        {stats.latest_records.map((record, index) => (
+                        {stats?.latest_records.map((record, index) => (
                             <tr key={index}>
                                 <td>{new Date(record.datetime).toLocaleDateString()}</td>
                                 <td>{record.species}</td>

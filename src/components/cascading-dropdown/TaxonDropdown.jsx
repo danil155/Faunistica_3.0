@@ -7,7 +7,6 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
     const { formState, setFormState } = useFormContext();
     const [loading, setLoading] = useState(false);
 
-
     const levels = [
         { name: 'family', placeholder: 'Начните печатать семейство...', heading: 'Семейство' },
         { name: 'genus', placeholder: 'Начните печатать род...', heading: 'Род' },
@@ -74,8 +73,6 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
     };
 
     const autoUpdate = useMemo(() => debounce(async (fieldName, option) => {
-        if (!isInList) return;
-
         try {
             const autofillResult = await apiService.autofillTaxon(fieldName, option);
             console.log(autofillResult)
@@ -108,58 +105,58 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
     return (
         <div className="form-group dropdown-container">
             {levels.map((level) => (
-                !isInList ? (
-                    <Autocomplete
-                        key={level.name}
-                        sx={{
-                            p: 0
-                        }}
-                        filterOptions={(x) => x}
-                        onChange={(event, newValue) => {
-                            autoUpdate(level.name, newValue);
-                            updateField(level.name, newValue);
-                        }}
-                        onInputChange={(_, input, reason) => {
-                            if (reason === "clear" || reason === "removeOption" || reason === "reset") {
-                                setInputValues({...inputValues, [level.name]: ""});
-                            } else if (!options[level.name].includes(input)) {
-                                setInputValues({...inputValues, [level.name]: input});
-                                fetchWithFilters(level.name, input);
-                                console.log(input)
-                            }
-                        }}
-                        autoSelect={true}
-                        value={formState[level.name]}
-                        autoHighlight={true}
-                        id={level.name}
-                        options={options[level.name]}
-                        loading={loading}
-                        disabled={isDefined}
-                        renderInput={(params) => (
-                            <TextField
-                                {...params}
-                                placeholder={isDefined ? "Не определено" : level.placeholder}
-                                size="small"
-                            />
-                        )}
-                    />
-                ) : (
-                    <TextField
-                        key={level.name}
-                        sx={{
-                            py: "8px",
-                            px: "12px"
-                        }}
-                        id={level.name}
-                        value={formState[level.name]?.name || ''}
-                        onChange={(e) => {
-                            updateField(level.name, {name: e.target.value});
-                        }}
-                        placeholder={`Введите ${level.heading.toLowerCase()}`}
-                        disabled={isDefined}
-                        fullWidth
-                    />
-                )
+                <div key={level.name} className="input-group">
+                    <label htmlFor={level.name}>
+                        {level.heading}:
+                    </label>
+                    {!isInList ? (
+                        <Autocomplete
+                            sx={{
+                                p: 0
+                            }}
+                            filterOptions={(x) => x}
+                            onChange={(event, newValue) => {
+                                autoUpdate(level.name, newValue);
+                                updateField(level.name, newValue);
+                            }}
+                            onInputChange={(_, input, reason) => {
+                                if (reason === "clear" || reason === "removeOption" || reason === "reset") {
+                                    setInputValues({...inputValues, [level.name]: ""});
+                                } else if (!options[level.name].includes(input)) {
+                                    setInputValues({...inputValues, [level.name]: input});
+                                    fetchWithFilters(level.name, input);
+                                    console.log(input)
+                                }
+                            }}
+                            autoSelect={true}
+                            value={formState[level.name]}
+                            autoHighlight={true}
+                            id={level.name}
+                            options={options[level.name]}
+                            loading={loading}
+                            disabled={isDefined}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    placeholder={isDefined ? "Не определено" : level.placeholder}
+                                    size="small"
+                                />
+                            )}
+                        />
+                    ) : (
+                        <TextField
+                            size="small"
+                            id={level.name}
+                            value={formState[level.name]?.name || ''}
+                            onChange={(e) => {
+                                updateField(level.name, {name: e.target.value});
+                            }}
+                            placeholder={`Введите ${level.heading.toLowerCase()}`}
+                            disabled={isDefined}
+                            fullWidth
+                        />
+                    )}
+                </div>
             ))}
         </div>
     )

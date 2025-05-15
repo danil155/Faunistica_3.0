@@ -383,6 +383,16 @@ header a{
     width: 200px;
 }
 
+.coord {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.coord.sec {
+    width: 70px;
+}
+
 /* Tablet styles */
 @media (min-width: 769px) and (max-width: 1120px) {
   .about-project {
