@@ -1,9 +1,9 @@
-/* Это popup регистрации через бота телеграм
+/* Это popup регистрации через бот телеграм
 При вводе пароля (и по идее проверке, но там надо Даню или кого-то ещё, наверное, 
 чтобы добавить взаимодействие с тг ботом, выдающим эти пароли), так вот по нажатию "Войти" 
 он пересылает нас на route формы*/
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ReactComponent as QrCode } from '../../img/qr-code.svg';
 import { useNavigate } from 'react-router-dom';
 import "./LoginModal.css";
@@ -62,7 +62,7 @@ const LoginModal = ({ onClose, onLogin }) => {
           <p>Войдите с помощью нашего Telegram бота</p>
           
           <div className="qr-code-container">
-            <a href="https://t.me/faunistica_2_bot" target="_blank" rel="noopener noreferrer">
+            <a href="https://t.me/FaunisticaV3Bot" target="_blank" rel="noopener noreferrer">
                 <QrCode className="qr-code" />
             </a>
             <p>Наведите камеру или нажмите на QR-код</p>
