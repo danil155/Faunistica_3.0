@@ -41,18 +41,32 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
 
         setLoading(true);
         try {
-            console.log("send!")
-            const filters = {
-                family: null,
-                genus: null
-            };
-            if (fieldName === 'genus' && formState.family) {
-                filters.family = formState.family.id;
-            }
-            if (fieldName === 'species' && formState.genus) {
-                filters.genus = formState.genus.id;
-            }
+            console.log("send!");
+            const storedFormData = localStorage.getItem('formData');
+						console.log(storedFormData);
+						let localFamily = null;
+						let localGenus = null;
+						if (storedFormData) {
+								try {
+										const parsed = JSON.parse(storedFormData);
+										localFamily = parsed.family || null;
+										localGenus = parsed.genus || null;
+								} catch (e) {
+										console.warn('Failed to parse formData from localStorage', e);
+								}
+						}
+						const filters = {
+								family: null,
+								genus: null
+						};
 
+						if (fieldName === 'genus') {
+								filters.family = formState.family?.id || localFamily;
+						}
+						if (fieldName === 'species') {
+								filters.family = formState.family?.id || localFamily;
+								filters.genus = formState.genus?.id || localGenus;
+						}
             const data = await apiService.suggestTaxon({
                 field: fieldName,
                 text: searchText,

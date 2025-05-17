@@ -1,67 +1,43 @@
 import { useFormContext } from "../pages/FormContext";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
+const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
 const DateSelect = () => {
-    const {formState, setFormState} = useFormContext();
+    const { formState, setFormState } = useFormContext();
 
     const [isInterval, setIsInterval] = useState(false);
     const [precision, setPrecision] = useState('exact');
-    const [beginMonth, setBeginMonth] = useState('');
-    const [endMonth, setEndMonth] = useState('');
 
     function resetForm() {
         setFormState(prev => ({
             ...prev,
             begin_date: '',
             end_date: '',
-            begin_year: 0,
-            end_year: 0,
-            begin_month: 0,
-            end_month: 0,
+            begin_year: '',
+            end_year: '',
+            begin_month: '',
+            end_month: '',
             eve_day_def: null
         }));
     }
 
-
     const handleChange = (e) => {
         const { name, value } = e.target;
-        if (name === "begin_month") {
-            setBeginMonth(value);
-            let nums = value.split("-");
-            formState.begin_year = Number(nums[0]);
-            formState.begin_month = Number(nums[1]);
-        } else if (name === "end_month") {
-            setEndMonth(value);
-            let nums = value.split("-");
-            formState.end_year = Number(nums[0]);
-            formState.end_month = Number(nums[1]);
-        } else {
-            setFormState(prev => ({...prev, [name]: value}));
-        }
+
+        setFormState(prev => ({
+            ...prev,
+            [name]: name.includes("year") || name.includes("month") ? Number(value) || '' : value
+        }));
     };
-
-    useEffect(() => {
-        if (formState.begin_month === 0) {
-            setBeginMonth('');
-        }
-
-    },[formState.begin_month]);
-
-    useEffect(() => {
-        if (formState.end_month === 0) {
-            setEndMonth('');
-
-        }
-    }, [formState.end_month]);
 
     return (
         <>
             <div className="form-group">
                 <label>Тип даты:</label>
                 <select
-                    value={isInterval}
-                    onChange={(e) => {setIsInterval(e.target.value);resetForm()}}
+                    value={isInterval.toString()}
+                    onChange={(e) => { setIsInterval(e.target.value === "true"); resetForm(); }}
                     className="form-control"
                 >
                     <option value={false}>Одиночная дата</option>
@@ -71,7 +47,11 @@ const DateSelect = () => {
                 <label>Точность:</label>
                 <select
                     value={precision}
-                    onChange={(e) => {setPrecision(e.target.value);resetForm();formState.eve_day_def = e.target.value === "exact";}}
+                    onChange={(e) => {
+                        setPrecision(e.target.value);
+                        resetForm();
+                        setFormState(prev => ({ ...prev, eve_day_def: e.target.value === "exact" }));
+                    }}
                     className="form-control"
                 >
                     <option value="exact">Точная дата</option>
@@ -81,6 +61,7 @@ const DateSelect = () => {
             </div>
 
             <div className="form-group">
+                {/* Точная дата */}
                 {precision === 'exact' && (
                     <>
                         <label>Дата:</label>
@@ -95,20 +76,40 @@ const DateSelect = () => {
                     </>
                 )}
 
+                {/* До месяца */}
                 {precision === 'month' && (
                     <>
-                        <label>Месяц и год:</label>
-                        <input
-                            type="month"
+                        <label>Месяц:</label>
+                        <select
                             name="begin_month"
-                            value={beginMonth}
+                            value={formState.begin_month || ''}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="" disabled hidden>Выберите месяц</option>
+                            {Array.from({ length: 12 }, (_, i) => (
+                                <option key={i + 1} value={i + 1}>
+                                    {capitalize(new Date(0, i).toLocaleString("ru-RU", { month: "long" }))}
+                                </option>
+                            ))}
+                        </select>
+
+                        <label>Год:</label>
+                        <input
+                            className="text-input"
+                            type="number"
+                            name="begin_year"
+                            min="1900"
+                            max="2100"
+                            value={formState.begin_year || ''}
                             onChange={handleChange}
                             required
                         />
                     </>
                 )}
 
-                {(precision === 'year') && (
+                {/* До года */}
+                {precision === 'year' && (
                     <>
                         <label>Год:</label>
                         <input
@@ -117,23 +118,24 @@ const DateSelect = () => {
                             name="begin_year"
                             min="1900"
                             max="2100"
-                            value={formState.begin_year}
+                            value={formState.begin_year || ''}
                             onChange={handleChange}
                             required
                         />
                     </>
                 )}
 
-
+                {/* Интервал */}
                 {isInterval && (
                     <>
+                        {/* Точный конец */}
                         {precision === 'exact' && (
                             <>
                                 <label>Конечная дата:</label>
                                 <input
                                     className="text-input"
                                     type="date"
-                                    name="end_Date"
+                                    name="end_date"
                                     value={formState.end_date}
                                     onChange={handleChange}
                                     required
@@ -141,20 +143,39 @@ const DateSelect = () => {
                             </>
                         )}
 
+                        {/* До месяца */}
                         {precision === 'month' && (
                             <>
-                                <label>Конечный месяц и год:</label>
+                                <label>Конечный месяц:</label>
+                                <select
+                                    name="end_month"
+                                    value={formState.end_month || ''}
+                                    onChange={handleChange}
+                                    required
+                                >
+                                    <option value="" disabled hidden>Выберите месяц</option>
+                                    {Array.from({ length: 12 }, (_, i) => (
+                                        <option key={i + 1} value={i + 1}>
+                                            {capitalize(new Date(0, i).toLocaleString("ru-RU", { month: "long" }))}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <label>Конечный год:</label>
                                 <input
                                     className="text-input"
-                                    type="month"
-                                    name="end_month"
-                                    value={endMonth}
+                                    type="number"
+                                    name="end_year"
+                                    min="1900"
+                                    max="2100"
+                                    value={formState.end_year || ''}
                                     onChange={handleChange}
                                     required
                                 />
                             </>
                         )}
 
+                        {/* До года */}
                         {precision === 'year' && (
                             <>
                                 <label>Конечный год:</label>
@@ -164,7 +185,7 @@ const DateSelect = () => {
                                     name="end_year"
                                     min="1900"
                                     max="2100"
-                                    value={formState.end_year}
+                                    value={formState.end_year || ''}
                                     onChange={handleChange}
                                     required
                                 />
