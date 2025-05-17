@@ -3,12 +3,12 @@ import { useState, useEffect } from "react";
 
 
 const DateSelect = () => {
-    const {formState, setFormState} = useFormContext()
+    const {formState, setFormState} = useFormContext();
 
-    const [isInterval, setIsInterval] = useState(false)
-    const [precision, setPrecision] = useState('exact')
-    const [beginMonth, setBeginMonth] = useState('')
-    const [endMonth, setEndMonth] = useState('')
+    const [isInterval, setIsInterval] = useState(false);
+    const [precision, setPrecision] = useState('exact');
+    const [beginMonth, setBeginMonth] = useState('');
+    const [endMonth, setEndMonth] = useState('');
 
     function resetForm() {
         setFormState(prev => ({
@@ -21,30 +21,30 @@ const DateSelect = () => {
             end_month: 0,
             eve_day_def: null
         }));
-    };
+    }
 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         if (name === "begin_month") {
-            setBeginMonth(value)
-            let nums = value.split("-")
-            formState.begin_year = Number(nums[0])
-            formState.begin_month = Number(nums[1])
+            setBeginMonth(value);
+            let nums = value.split("-");
+            formState.begin_year = Number(nums[0]);
+            formState.begin_month = Number(nums[1]);
         } else if (name === "end_month") {
-            setEndMonth(value)
-            let nums = value.split("-")
-            formState.end_year = Number(nums[0])
-            formState.end_month = Number(nums[1])
+            setEndMonth(value);
+            let nums = value.split("-");
+            formState.end_year = Number(nums[0]);
+            formState.end_month = Number(nums[1]);
         } else {
-            setFormState(prev => ({...prev, [name]: value}))
+            setFormState(prev => ({...prev, [name]: value}));
         }
     };
 
     useEffect(() => {
         if (formState.begin_month === 0) {
-            setBeginMonth('')
-        };
+            setBeginMonth('');
+        }
 
     },[formState.begin_month]);
 
@@ -53,7 +53,7 @@ const DateSelect = () => {
             setEndMonth('');
 
         }
-    }, [formState.end_month])
+    }, [formState.end_month]);
 
     return (
         <>
@@ -175,6 +175,6 @@ const DateSelect = () => {
             </div>
         </>
     );
-}
+};
 
 export default DateSelect;

@@ -1,8 +1,3 @@
-/* Это popup регистрации через бот телеграм
-При вводе пароля (и по идее проверке, но там надо Даню или кого-то ещё, наверное, 
-чтобы добавить взаимодействие с тг ботом, выдающим эти пароли), так вот по нажатию "Войти" 
-он пересылает нас на route формы*/
-
 import React, { useState } from 'react';
 import { ReactComponent as QrCode } from '../../img/qr-code.svg';
 import { useNavigate } from 'react-router-dom';

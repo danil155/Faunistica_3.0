@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-
 const PublicationErrorModal = ({onRetry}) => {
     const [error, setError] = React.useState(null);
 
@@ -12,7 +11,8 @@ const PublicationErrorModal = ({onRetry}) => {
         } catch (err) {
             setError(err);
         }
-    }
+    };
+
     return (
         <div className="modal-overlay">
             <div className="modal telegram-login-modal">
@@ -27,6 +27,7 @@ const PublicationErrorModal = ({onRetry}) => {
               </div>
             </div>
         </div>
-        )
-}
+        );
+};
+
 export default PublicationErrorModal;

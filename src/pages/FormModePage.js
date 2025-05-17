@@ -95,8 +95,6 @@ const FormModePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
-
         try {
             const recordData = {
                 begin_date: formState.begin_date,
@@ -147,8 +145,6 @@ const FormModePage = () => {
     const getSectionClassName = (sectionName) => {
         return `section ${pinnedSections[sectionName] ? "pinned" : ""}`;
     };
-
-
 
     return (
         <>

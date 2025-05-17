@@ -74,7 +74,6 @@ export const CoordinatesInput = () => {
         });
     }
 
-    // Остальной код компонента остается без изменений
     return (
         <>
             <div className="form-group">

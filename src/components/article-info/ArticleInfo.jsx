@@ -20,8 +20,6 @@ const ArticleInfo = () => {
     useEffect(() => {
         fetchPublication()
             .catch(error => {
-                // This catch is redundant since you already have one in fetchPublication
-                // but shows how you could handle it here
                 console.error("Failed to fetch publication:", error);
             });
         }
