@@ -31,6 +31,10 @@ function App() {
 
   const handleLogout = async () => {
     await logout();
+    localStorage.removeItem('formData');
+    localStorage.removeItem('pinnedSections');
+    localStorage.removeItem('pinnedData');
+    localStorage.removeItem('collapsedSections');
     navigate("/");
   };
 
