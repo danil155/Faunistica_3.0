@@ -452,9 +452,7 @@ const FormModePage = () => {
                                             }));
                                             if (!e.target.checked) {
                                                 setFormState(prev => ({...prev,
-                                                    family: '',
-                                                    genus: '',
-                                                    species: '',}))
+                                                    species: ''}))
                                             }
                                         }
                                         }
