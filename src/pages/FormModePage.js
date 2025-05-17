@@ -122,6 +122,7 @@ const FormModePage = () => {
                 place_notes: formState.place_notes,
                 region: formState.region,
                 selective_gain: formState.selective_gain,
+                species: formState.species,
                 specimens: formState.specimens,
                 taxonomic_notes: formState.taxonomic_notes
             };
