@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 
-const FormContext = createContext();
+const FormContext = createContext(undefined);
 
 export const defaultState = {
   country: '',

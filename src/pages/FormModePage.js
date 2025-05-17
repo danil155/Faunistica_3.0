@@ -213,7 +213,6 @@ const FormModePage = () => {
                                         name="geo_origin"
                                         className="form-control"
                                         onChange={handleInputChange}>
-                                    <option value=''></option>
                                     <option value="original">Из статьи</option>
                                     <option value="volunteer">Моя привязка</option>
                                     <option value="nothing">Координат не будет</option>
@@ -508,7 +507,6 @@ const FormModePage = () => {
                                             value={formState.type_status ?? ''}
                                             onChange={handleInputChange}
                                         >
-                                            <option value=''></option>
                                             <option value='holotype'>Голотип</option>
                                             <option value='paratype'>Паратип</option>
                                             <option value='neotype'>Неотип</option>
