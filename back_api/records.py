@@ -72,57 +72,57 @@ def safe_coord_parse(coord: Optional[str]) -> Optional[float]:
 async def insert_record(
         request: Request,
         data: InsertRecordsRequest,
-        user_data: dict = Depends(get_current_user)
+        user_data: dict = Depends(get_current_user),
+        session: AsyncSession = Depends(get_session)
 ):
-    async with get_session() as session:
-        north = safe_coord_parse(data.north)
-        east = safe_coord_parse(data.east)
-        specimen = specimen_parse(data.specimens)
-        user_info = await get_user(session, user_data["sub"])
-        record_json = {
-            "publ_id": user_info.publ_id,
-            "user_id": user_info.id,
-            "datetime": datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S'),
-            "ip": None,
-            "errors": None,
-            "type": None,
-            "adm_country": data.country,
-            "adm_region": data.region,
-            "adm_district": data.district,
-            "adm_loc": data.place,
-            "geo_nn": north,
-            "geo_ee": east,
-            "geo_nn_raw": data.north,
-            "geo_ee_raw": data.east,
-            "geo_origin": data.geo_origin,
-            "geo_REM": None,
-            "eve_YY": data.begin_year,
-            "eve_MM": data.begin_month,
-            "eve_DD": data.begin_day,
-            "eve_day_def": None,
-            "eve_habitat": None,
-            "eve_effort": None,
-            "abu_coll": None,
-            "eve_REM": None,
-            "tax_fam": data.family,
-            "tax_gen": data.genus,
-            "tax_sp": data.species,
-            "tax_sp_def": None,
-            "tax_nsp": None,
-            "type_status": None,
-            "tax_REM": data.taxonomic_notes,
-            "abu": None,
-            "abu_details": specimen,
-            "abu_ind_rem": None,
-            "geo_uncert": None,
-            "eve_YY_end": data.end_year,
-            "eve_MM_end": data.end_month,
-            "eve_DD_end": data.end_day,
-            "adm_verbatim": None
-        }
+    north = safe_coord_parse(data.north)
+    east = safe_coord_parse(data.east)
+    specimen = specimen_parse(data.specimens)
+    user_info = await get_user(session, user_data["sub"])
+    record_json = {
+        "publ_id": user_info.publ_id,
+        "user_id": user_info.id,
+        "datetime": datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S'),
+        "ip": None,
+        "errors": None,
+        "type": None,
+        "adm_country": data.country,
+        "adm_region": data.region,
+        "adm_district": data.district,
+        "adm_loc": data.place,
+        "geo_nn": north,
+        "geo_ee": east,
+        "geo_nn_raw": data.north,
+        "geo_ee_raw": data.east,
+        "geo_origin": data.geo_origin,
+        "geo_REM": None,
+        "eve_YY": "data.begin_year",
+        "eve_MM": "data.begin_month",
+        "eve_DD": "data.begin_day",
+        "eve_day_def": None,
+        "eve_habitat": None,
+        "eve_effort": None,
+        "abu_coll": None,
+        "eve_REM": None,
+        "tax_fam": data.family,
+        "tax_gen": data.genus,
+        "tax_sp": data.species,
+        "tax_sp_def": None,
+        "tax_nsp": None,
+        "type_status": None,
+        "tax_REM": data.taxonomic_notes,
+        "abu": None,
+        "abu_details": specimen,
+        "abu_ind_rem": None,
+        "geo_uncert": None,
+        "eve_YY_end": data.end_year,
+        "eve_MM_end": data.end_month,
+        "eve_DD_end": data.end_day,
+        "adm_verbatim": None
+    }
 
-        try:
-            await add_record_from_json(session, record_json)
-            return {"message": "OK"}
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Server database error: {str(e)}")
+    try:
+        await add_record_from_json(session, record_json)
+        return {"message": "OK"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Server database error: {str(e)}")
