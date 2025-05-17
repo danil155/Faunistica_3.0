@@ -8,6 +8,7 @@ import DateSelect from "../components/DateSelect";
 import { apiService } from '../api'
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import TaxonDropdown from "../components/cascading-dropdown/TaxonDropdown";
+import {CoordinatesInput} from "../components/CoordinatesInput";
 
 const fieldsMap = {
     "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
@@ -44,14 +45,12 @@ const FormModePage = () => {
     const [showResetModal, setShowResetModal] = useState(false);
     const [resetMode, setResetMode] = useState("soft");
     const [isNewSpecies, setIsNewSpecies] = useState(false);
-    const [isTaxDefined, setIsTaxDefined] = useState(!formState.tax_sp_def);
     const adm = [
         {name: "country", heading: "Страна" },
         {name: "region", heading: "Регион" },
         {name: "district", heading: "Район" },
         {name: "gathering_place", heading: "Место сбора" },
     ]
-    const [coodrFormat, setCoodrFormat] = useState("grads")
 
     // Обработчик изменений для текстовых полей
     const handleInputChange = (e) => {
@@ -96,39 +95,39 @@ const FormModePage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        console.log("Отправка данных:", formState);
+
 
         try {
             const recordData = {
+                begin_date: formState.begin_date,
+                begin_day: formState.begin_day || parseInt(formState.begin_date.split('-')[2]),
+                begin_month: formState.begin_month || parseInt(formState.begin_date.split('-')[1]),
+                begin_year: formState.begin_year || parseInt(formState.begin_date.split('-')[0]),
+                biotope: formState.biotope,
+                collector: formState.collector,
                 country: formState.country,
-                region: formState.region,
                 district: formState.district,
-                place: formState.gathering_place,
-                north: formState.coordinate_north,
                 east: formState.coordinate_east,
-                geo_REM: formState.geo_REM,
-                begin_year: formState.begin_year,
-                begin_month: formState.begin_month,
-                begin_day: formState.begin_day,
-                end_year: formState.end_year,
-                end_month: formState.end_month,
-                end_day: formState.end_day,
+                end_date: formState.end_date,
+                end_year: formState.end_year || parseInt(formState.end_date.split('-')[0]),
+                end_month: formState.end_month || parseInt(formState.end_date.split('-')[1]),
+                end_day: formState.end_day || parseInt(formState.end_date.split('-')[2]),
                 family: formState.family,
                 genus: formState.genus,
-                species: formState.species,
-                taxonomic_notes: formState.taxonomic_notes,
-                tax_sp_def: formState.tax_sp_def,
-                tax_nsp: formState.tax_nsp,
-                type_status: formState.type_status,
-                geo_origin: formState.geo_origin,
-                collector: formState.collector,
-                eve_effort: formState.selective_gain,
-                eve_habitat: formState.biotope,
-                eve_REM: formState.eve_REM,
-                geo_uncert: formState.geo_uncert,
-                adm_verbatim: formState.adm_verbatim
+                is_defined_species: formState.tax_sp_def,
+                is_in_wsc: formState.tax_nsp,
+                is_new_species: isNewSpecies,
+                matherial_notes: formState.matherial_notes,
+                measurement_units: formState.measurement_units,
+                north: formState.coordinate_north,
+                place: formState.gathering_place,
+                place_notes: formState.place_notes,
+                region: formState.region,
+                selective_gain: formState.selective_gain,
+                specimens: formState.specimens,
+                taxonomic_notes: formState.taxonomic_notes
             };
-
+            console.log("Отправка данных:", recordData);
             await apiService.insertRecord(recordData);
             resetForm(resetMode === "soft");
             alert("Данные успешно отправлены! Незакреплённые поля очищены.");
@@ -209,76 +208,8 @@ const FormModePage = () => {
 
                     {!collapsedSections["Географическое положение"] && (
                         <div className="form-grid">
-                            <div className="form-group">
-                                <label htmlFor="coord-format">
-                                    Формат координат
-                                </label>
-                                <select id="coord-format" onChange={
-                                    (e) => {setCoodrFormat(e.target.value)}
-                                }>
-                                    <option value="grads">ГГ.гггг° (56.83777°)</option>
-                                    <option value="mins">ГГ°ММ.мм' (56° 50.266')</option>
-                                    <option value="secs">ГГ°ММ'СС'' (56° 50' 15.99")</option>
-                                </select>
-                            </div>
-                            {coodrFormat === "grads" ?
-                                <>
-                                <div className="form-group">
 
-                                    <label>Широта (N):</label>
-                                    <input
-                                        className="text-input"
-                                        type="text"
-                                        name="coordinate_north"
-                                        value={formState.coordinate_north}
-                                        onChange={handleInputChange}
-                                        placeholder="00.0000"
-                                    />
-                                    <label>Долгота (E):</label>
-                                    <input
-                                        className="text-input"
-                                        type="text"
-                                        name="coordinate_east"
-                                        value={formState.coordinate_east}
-                                        onChange={handleInputChange}
-                                        placeholder="00.0000"
-                                    />
-                                </div>
-                                </>:
-                                coodrFormat === "mins" ?
-
-
-                                    <div className="form-group">
-                                        <label>Широта N°</label>
-                                        <div className="form-row">
-                                            <input id="grads" className="coord"/><label htmlFor="grads">°</label>
-                                            <input id="mins" className="coord"/><label htmlFor="mins">'</label>
-                                        </div>
-                                        <label>Долгота E°</label>
-                                        <div className="form-row">
-                                            <input id="grads" className="coord"/><label htmlFor="grads">°</label>
-                                            <input id="mins" className="coord"/><label htmlFor="mins">'</label>
-                                        </div>
-                                    </div>
-
-                            :
-                                    <div className="form-group">
-                                        <label>Широта N°</label>
-                                        <div className="form-row">
-                                            <input id="grads" className="coord sec"/><label htmlFor="grads">°</label>
-                                            <input id="mins" className="coord sec"/><label htmlFor="mins">'</label>
-                                            <input id="mins" className="coord sec"/><label htmlFor="secs">"</label>
-                                        </div>
-                                        <label>Долгота E°</label>
-                                        <div className="form-row">
-                                            <input id="grads" className="coord sec"/><label htmlFor="grads">°</label>
-                                            <input id="mins" className="coord sec"/><label htmlFor="mins">'</label>
-                                            <input id="mins" className="coord sec"/><label htmlFor="secs">"</label>
-                                        </div>
-                                    </div>
-                            }
-
-
+                            <CoordinatesInput />
                             <div className="form-group">
                                 <label htmlFor="geo-origin">Происхождение координат:</label>
                                 <select id="geo-origin"

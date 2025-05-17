@@ -116,7 +116,9 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                             }}
                             filterOptions={(x) => x}
                             onChange={(event, newValue) => {
-                                autoUpdate(level.name, newValue);
+                                if (newValue) {
+                                    autoUpdate(level.name, newValue);
+                                }
                                 updateField(level.name, newValue);
                             }}
                             onInputChange={(_, input, reason) => {
