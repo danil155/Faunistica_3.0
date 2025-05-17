@@ -35,7 +35,7 @@ class InfoResponse(BaseModel):
 
 
 class InsertRecordsRequest(BaseModel):
-    begin_date: Optional[str] = None
+    adm_verbatim: Optional[bool] = None
     begin_day: Optional[int] = None
     begin_month: Optional[int] = None
     begin_year: Optional[int] = None
@@ -44,12 +44,12 @@ class InsertRecordsRequest(BaseModel):
     country: Optional[str] = None
     district: Optional[str] = None
     east: Optional[str] = None
-    end_date: Optional[str] = None
     end_day: Optional[int] = None
     end_month: Optional[int] = None
     end_year: Optional[int] = None
     family: Optional[str] = None
     genus: Optional[str] = None
+    geo_origin: Optional[str] = None
     is_defined_species: Optional[bool] = None
     is_in_wsc: Optional[bool] = None
     is_new_species: Optional[bool] = None
@@ -60,7 +60,8 @@ class InsertRecordsRequest(BaseModel):
     place_notes: Optional[str] = None
     region: Optional[str] = None
     selective_gain: Optional[str] = None
-    specimens: Optional[List[int]] = None
+    species: Optional[str] = None
+    specimens: Optional[Dict[str, Optional[int]]] = None
     taxonomic_notes: Optional[str] = None
 
 

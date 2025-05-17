@@ -11,6 +11,26 @@ from .token import get_current_user
 router = APIRouter()
 
 
+def specimen_parse(specimens: Optional[dict]) -> Optional[str]:
+    if not specimens:
+        return None
+
+    entries = []
+
+    def add_entry(count, label):
+        if count is not None:
+            entries.append(f"{count} {label}")
+
+    add_entry(specimens.get("male_adult"), "mmm")
+    add_entry(specimens.get("female_adult"), "fff")
+    add_entry(specimens.get("male_juvenile"), "ssm")
+    add_entry(specimens.get("female_juvenile"), "ssf")
+    add_entry(specimens.get("undefined_adult"), "adu")
+    add_entry(specimens.get("undefined_juvenile"), "juv")
+
+    return " | ".join(entries) if entries else None
+
+
 def parse_coordinate(coord: str) -> float:
     coord = coord.strip()
 
@@ -57,14 +77,15 @@ async def insert_record(
     async with get_session() as session:
         north = safe_coord_parse(data.north)
         east = safe_coord_parse(data.east)
+        specimen = specimen_parse(data.specimens)
         user_info = await get_user(session, user_data["sub"])
         record_json = {
             "publ_id": user_info.publ_id,
             "user_id": user_info.id,
             "datetime": datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S'),
-            "ip": "WARNING",
-            "errors": "WARNING",
-            "type": "WARNING",
+            "ip": None,
+            "errors": None,
+            "type": None,
             "adm_country": data.country,
             "adm_region": data.region,
             "adm_district": data.district,
@@ -73,31 +94,31 @@ async def insert_record(
             "geo_ee": east,
             "geo_nn_raw": data.north,
             "geo_ee_raw": data.east,
-            "geo_origin": "WARNING",
-            "geo_REM": "WARNING",
+            "geo_origin": data.geo_origin,
+            "geo_REM": None,
             "eve_YY": data.begin_year,
             "eve_MM": data.begin_month,
             "eve_DD": data.begin_day,
-            "eve_day_def": "WARNING",
-            "eve_habitat": "WARNING",
-            "eve_effort": "WARNING",
-            "abu_coll": "WARNING",
-            "eve_REM": "WARNING",
+            "eve_day_def": None,
+            "eve_habitat": None,
+            "eve_effort": None,
+            "abu_coll": None,
+            "eve_REM": None,
             "tax_fam": data.family,
             "tax_gen": data.genus,
             "tax_sp": data.species,
-            "tax_sp_def": "WARNING",
-            "tax_nsp": "WARNING",
-            "type_status": "WARNING",
+            "tax_sp_def": None,
+            "tax_nsp": None,
+            "type_status": None,
             "tax_REM": data.taxonomic_notes,
-            "abu": "WARNING",
-            "abu_details": "WARNING",
-            "abu_ind_rem": "WARNING",
-            "geo_uncert": "WARNING",
+            "abu": None,
+            "abu_details": specimen,
+            "abu_ind_rem": None,
+            "geo_uncert": None,
             "eve_YY_end": data.end_year,
             "eve_MM_end": data.end_month,
             "eve_DD_end": data.end_day,
-            "adm_verbatim": "WARNING"
+            "adm_verbatim": None
         }
 
         try:
