@@ -79,7 +79,7 @@ async def insert_record(
     north = safe_coord_parse(data.north)
     east = safe_coord_parse(data.east)
     specimen = specimen_parse(data.specimens)
-    user_info = await get_user(session, user_data["sub"])
+    user_info = await get_user(session, int(user_data["sub"]))
     record_json = {
         "publ_id": user_info.publ_id,
         "user_id": user_info.id,
