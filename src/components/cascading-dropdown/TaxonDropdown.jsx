@@ -125,9 +125,6 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                     </label>
                     {!isInList ? (
                         <Autocomplete
-                            sx={{
-                                p: 0
-                            }}
                             filterOptions={(x) => x}
                             onChange={(event, newValue) => {
                                 if (newValue) {

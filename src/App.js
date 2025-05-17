@@ -14,7 +14,6 @@ import { Outlet } from 'react-router-dom';
 import FeedbackPage from "./pages/Feedback";
 
 function App() {
-  const location = useLocation();
   const navigate = useNavigate();
   const { isAuth, login, logout } = useToken();
   const [showLoginModal, setShowLoginModal] = useState(false);
