@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
+from sqlalchemy.ext.asyncio import AsyncSession
 from back_api.schemas import InsertRecordsRequest
 from datetime import datetime, UTC
 import re
