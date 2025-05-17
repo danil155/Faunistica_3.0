@@ -51,7 +51,12 @@ function App() {
       }
     }, [auth, initialCheckDone]);
 
-    return auth ? <Outlet /> : null;
+    if (auth === false) {
+			navigate("/", { state: { loginRedirect: true } });
+			return null;
+		}
+		
+		return auth ? <Outlet /> : null;
   };
 
   return (
