@@ -355,6 +355,17 @@ const FormModePage = () => {
                         <div className="form-grid">
                             <DateSelect getSectionData={getSectionData} />
                             <div className="form-group">
+                                <label htmlFor="biotope">Биотоп:</label>
+                                <input
+                                    id="biotope"
+                                    className="text-input"
+                                    type="text"
+                                    name="biotope"
+                                    value={formState.biotope}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                            <div className="form-group">
                                 <label>Коллектор:</label>
                                 <input
                                     className="text-input"
