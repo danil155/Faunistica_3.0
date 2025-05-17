@@ -16,22 +16,22 @@ class InfoRequest(BaseModel):
     
 
 class InfoResponse(BaseModel):
-    country: Optional[str]
-    region: Optional[str]
-    district: Optional[str]
-    gathering_place: Optional[str]
-    coordinate_north: Optional[str]
-    coordinate_east: Optional[str]
-    date: Optional[str]
-    family: Optional[str]
-    genus: Optional[str]
-    species: Optional[str]
-    collector: Optional[List[str]]
-    count_males: Optional[int]
-    count_females: Optional[int]
-    count_juv_male: Optional[int]
-    count_juv_female: Optional[int]
-    count_juv: Optional[int]
+    country: Optional[str] = None
+    region: Optional[str] = None
+    district: Optional[str] = None
+    gathering_place: Optional[str] = None
+    coordinate_north: Optional[str] = None
+    coordinate_east: Optional[str] = None
+    date: Optional[str] = None
+    family: Optional[str] = None
+    genus: Optional[str] = None
+    species: Optional[str] = None
+    collector: Optional[List[str]] = None
+    count_males: Optional[int] = None
+    count_females: Optional[int] = None
+    count_juv_male: Optional[int] = None
+    count_juv_female: Optional[int] = None
+    count_juv: Optional[int] = None
 
 
 class InsertRecordsRequest(BaseModel):
