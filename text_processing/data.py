@@ -7,8 +7,8 @@ class Data:
         self.region = ""
         self.district = ""
         self.gathering_place = ""
-        self.coordinate_north = 0.0
-        self.coordinate_east = 0.0
+        self.coordinate_north = {}
+        self.coordinate_east = {}
         self.date = ""
         self.family = ""
         self.genus = ""

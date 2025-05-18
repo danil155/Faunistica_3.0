@@ -1,6 +1,6 @@
 /.idea
 /.env
 /learning
-/service_log.log
+/logs
 /test.py
 /database/hash.py

@@ -9,9 +9,3 @@ def get_location_info(lat: float, long: float) -> dict:
         return location.raw
 
     return {}
-
-
-if __name__ == '__main__':
-    data = get_location_info()
-    print(data['address'])
-    print(data['display_name'])

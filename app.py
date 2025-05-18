@@ -1,5 +1,7 @@
 import asyncio
 import logging
+from logging.handlers import TimedRotatingFileHandler
+from pathlib import Path
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -10,12 +12,45 @@ from back_api import users, info, records, gen_stats, refresh_token, check_auth,
 from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
 from bot.bot_main import bot_start
 
+logs_dir = Path("logs")
+logs_dir.mkdir(exist_ok=True)
+
+log_format = "%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s"
+
+main_handler = TimedRotatingFileHandler(
+    filename=logs_dir / "service.log",
+    when='midnight',
+    backupCount=30,
+    encoding='utf-8'
+)
+main_handler.setLevel(logging.WARNING)
+main_handler.setFormatter(logging.Formatter(log_format))
+
+error_handler = TimedRotatingFileHandler(
+    filename=logs_dir / "errors.log",
+    when='midnight',
+    backupCount=90,
+    encoding='utf-8'
+)
+error_handler.setLevel(logging.ERROR)
+error_handler.setFormatter(logging.Formatter(log_format))
+
 logging.basicConfig(
-    level=logging.INFO,
-    filename='service_log.log', filemode='w',
-    format="%(asctime)s %(levelname)s %(filename)s:%(lineno)d %(funcName)s() %(message)s",
+    level=logging.WARNING,
+    handlers=[main_handler, error_handler],
+    format=log_format,
     force=True
 )
+
+with open('requirements.txt', 'r', encoding='utf-8') as file:
+    lib_names = file.read().strip().split('\n')
+
+for lib_name in lib_names:
+    lib_logger = logging.getLogger(lib_name)
+    lib_logger.setLevel(logging.WARNING)
+    lib_logger.addHandler(main_handler)
+    lib_logger.addHandler(error_handler)
+    lib_logger.propagate = False
 
 
 @asynccontextmanager

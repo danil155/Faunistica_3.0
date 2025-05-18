@@ -46,23 +46,3 @@ def find_species_in_text(text: str) -> [str, dict]:
             return candidate, data
 
     return None, None
-
-
-if __name__ == "__main__":
-    get_taxon_info("sdfsdfsdf")
-    while True:
-        text = input("Введите текст для анализа (пример: 'Runcinia tarabayevi Marusik et Logunov, 1990 Материал. 1 ♂, Челябинская обл., Троицкий р-н, заказник Троицкий, березовый колок, укосы, 29.VI.2023, Устинова А.Л.'): ")
-        found_name, data = find_species_in_text(text)
-        print(found_name)
-        print(data)
-
-        if not found_name:
-            print("Валидные названия не обнаружены")
-            continue
-        
-        print(f"""
-        Найдено видовое название: {found_name}
-        Семейство: {data['семейство']}
-        Род: {data['род']}
-        Вид: {data['вид']}
-        """)

@@ -8,18 +8,90 @@ from text_processing.gbif_parser import find_species_in_text
 logger = logging.getLogger(__name__)
 
 
-def get_coordinates(text: str) -> list:
+def dms_to_decimal(degrees: float, minutes: float = 0, seconds: float = 0, direction: str = 'N') -> float:
+    decimal = float(degrees) + float(minutes)/60 + float(seconds)/3600
+    if direction.upper() in ['S', 'W']:
+        decimal = -decimal
+    return decimal
+
+def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
+    coord_str = (
+        coord_str.strip()
+        .replace(" ", "")
+        .replace(",", ".")
+        .replace("′", "'")
+        .replace("″", '"')
+        .replace("⁰", "°")
+    )
+    coord_dict = {
+        "degree": None,
+        "minute": None,
+        "second": None,
+        "decimal": None,
+    }
+
+    match = re.match(
+        r"([-+]?\d{1,3})°(\d{1,2})'(\d{1,2}(?:\.\d+)?)\"([NSWE])",
+        coord_str,
+        re.IGNORECASE,
+    )
+    if match:
+        degrees, minutes, seconds, direction = match.groups()
+        coord_dict.update({
+            "degree": float(degrees),
+            "minute": float(minutes),
+            "second": float(seconds),
+            "decimal": dms_to_decimal(degrees, minutes, seconds, direction),
+        })
+        return coord_dict
+
+    match = re.match(
+        r"([-+]?\d{1,3})°(\d{1,2}(?:\.\d+)?)'([NSWE])",
+        coord_str,
+        re.IGNORECASE,
+    )
+    if match:
+        degrees, minutes, direction = match.groups()
+        coord_dict.update({
+            "degree": float(degrees),
+            "minute": float(minutes),
+            "second": 0.0,
+            "decimal": dms_to_decimal(degrees, minutes, 0, direction),
+        })
+        return coord_dict
+
+    match = re.match(
+        r"([-+]?\d{1,3}(?:\.\d+)?)°?([NSWE])",
+        coord_str,
+        re.IGNORECASE,
+    )
+    if match:
+        degrees, direction = match.groups()
+        coord_dict.update({
+            "degree": float(degrees),
+            "minute": 0.0,
+            "second": 0.0,
+            "decimal": dms_to_decimal(degrees, 0, 0, direction),
+        })
+        return coord_dict
+
+    return {"raw": coord_str}
+
+
+def get_coordinates(text: str) -> list[dict]:
     if not isinstance(text, str):
         logger.warning(f' A parameter with the str type was expected, not {type(text)}')
         return list()
 
     coords_pattern = r'''
-         ([-+]?\d{1,3}[°]\s*\d{1,2}['′]\s*\d{1,2}(?:\.\d+)?["″]?\s*[NS])|  # DD° MM' SS.SS" N/S
-         ([-+]?\d{1,3}[°]\s*\d{1,2}(?:\.\d+)?['′]?\s*[NS])|                # DD° MM.MM' N/S
-         ([-+]?\d{1,3}(?:\.\d+)?\s*[NS])|                                  # DD.DD N/S
-         ([-+]?\d{1,3}[°]\s*\d{1,2}['′]\s*\d{1,2}(?:\.\d+)?["″]?\s*[WE])|  # DD° MM' SS.SS" E/W
-         ([-+]?\d{1,3}[°]\s*\d{1,2}(?:\.\d+)?['′]?\s*[WE])|                # DD° MM.MM' E/W
-         ([-+]?\d{1,3}(?:\.\d+)?\s*[WE])                                   # DD.DD E/W
+         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}['′]\s*\d{1,2}(?:[.,]\d+)?[\"″]?\s*[NS])|   # DD° MM' SS.SS" N/S
+         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}(?:[.,]\d+)?['′]?\s*[NS])|                  # DD° MM.MM' N/S
+         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[NS])|                                     # DD.DD N/S
+         ([-+]?\d{1,3}(?:[.,]\d+)?[⁰°]\s*[NS])|                                 # DD.DD° N/S
+         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}['′]\s*\d{1,2}(?:[.,]\d+)?[\"″]?\s*[WE])|   # DD° MM' SS.SS" E/W
+         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}(?:[.,]\d+)?['′]?\s*[WE])|                  # DD° MM.MM' E/W
+         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[WE])                                      # DD.DD E/W
+         ([-+]?\d{1,3}(?:[.,]\d+)?[⁰°]\s*[EW])|                                 # DD.DD° E/W
      '''
 
     coords_match = re.findall(coords_pattern, text, re.VERBOSE)
@@ -30,23 +102,13 @@ def get_coordinates(text: str) -> list:
         if not coord_str:
             continue
         try:
-            direction = coord_str[-1].upper()
-            value_str = coord_str[:-1].strip()
-            if '°' in value_str:
-                parts = re.split(r'[°\'"″′]', value_str)
-                degrees = float(parts[0].strip())
-                minutes = float(parts[1].strip()) if len(parts) > 1 and parts[1].strip() else 0
-                seconds = float(parts[2].strip()) if len(parts) > 2 and parts[2].strip() else 0
-                decimal_coord = degrees + (minutes / 60) + (seconds / 3600)
-            else:
-                decimal_coord = float(value_str.replace(',', '.').strip())
-            if direction in ['S', 'W']:
-                decimal_coord = -abs(decimal_coord)
-            coordinates.append(decimal_coord)
+            parsed_coord = parse_single_coordinate(coord_str)
+            coordinates.append(parsed_coord)
         except (ValueError, IndexError, re.error) as e:
-            logger.warning(f' Error when searching for coordinates: {e}')
+            logger.error(f' Error when searching for coordinates: {e}', exc_info=True)
             continue
 
+    print(coordinates)
     return coordinates
 
 
@@ -60,7 +122,7 @@ def get_region(text: str) -> str:
         region_match = re.search(region_pattern, text)
         return region_match.group(1) if region_match else str()
     except (AttributeError, IndexError, re.error) as e:
-        logger.warning(f' Error when searching for region: {e}')
+        logger.error(f' Error when searching for region: {e}', exc_info=True)
         return str()
 
 
@@ -74,7 +136,7 @@ def get_district(text: str) -> str:
         district_match = re.search(district_pattern, text)
         return district_match.group(1) if district_match else str()
     except (AttributeError, IndexError, re.error) as e:
-        logger.warning(f' Error when searching for district: {e}')
+        logger.error(f' Error when searching for district: {e}', exc_info=True)
         return str()
 
 
@@ -104,7 +166,7 @@ def get_date(text: str) -> str:
                 if not (1 <= day_int <= 31) or not (1000 <= year_int <= 9999):
                     return str()
             except ValueError as e:
-                logger.warning(f' Date error: {e}')
+                logger.error(f' Date error: {e}', exc_info=True)
                 return str()
 
             date_current[0], date_current[2] = date_current[2], date_current[0]
@@ -112,7 +174,7 @@ def get_date(text: str) -> str:
             return date_current
         return str()
     except (AttributeError, IndexError, KeyError, ValueError, re.error) as e:
-        logger.warning(f' Error when searching for date: {e}')
+        logger.error(f' Error when searching for date: {e}', exc_info=True)
         return str()
 
 
@@ -147,7 +209,7 @@ def get_collectors(text: str) -> list:
                 if collector not in ' '.join(collectors):
                     collectors += [collector]
     except (AttributeError, TypeError) as e:
-        logger.warning(f' Error when searching for collectors: {e}')
+        logger.error(f' Error when searching for collectors: {e}', exc_info=True)
 
     return collectors
 
@@ -179,7 +241,7 @@ def get_numbers_species(text: str) -> dict:
                 elif gender in ["♀", "female", "f", "F", "самка"]:
                     species_count['female'] += count
             except (IndexError, ValueError) as e:
-                logger.warning(f' Error parsing: {e}')
+                logger.error(f' Error parsing: {e}', exc_info=True)
                 continue
 
         # Subadults
@@ -191,7 +253,7 @@ def get_numbers_species(text: str) -> dict:
                 elif gender in ["sub♀", "subfemale", "subf", "subF", "sF", "субсамка"]:
                     species_count['sub_female'] += count
             except (IndexError, ValueError) as e:
-                logger.warning(f' Error parsing: {e}')
+                logger.error(f' Error parsing: {e}', exc_info=True)
                 continue
 
         # Juveniles
@@ -204,7 +266,7 @@ def get_numbers_species(text: str) -> dict:
                 count = int(match[0])
                 species_count['juvenile'] += count
             except (IndexError, ValueError, TypeError) as e:
-                logger.warning(f' Error parsing: {e}')
+                logger.error(f' Error parsing: {e}', exc_info=True)
                 continue
 
         # Multiple adults
@@ -216,17 +278,17 @@ def get_numbers_species(text: str) -> dict:
                 elif "♂" in match[1]:
                     species_count['male'] += count
             except (IndexError, ValueError) as e:
-                logger.warning(f' Error parsing: {e}')
+                logger.error(f' Error parsing: {e}', exc_info=True)
                 continue
     except re.error as e:
-        logger.warning(f' Error when searching for numbers species: {e}')
+        logger.error(f' Error when searching for numbers species: {e}', exc_info=True)
     return species_count
 
 
 def check_full_location_data(data: Data) -> None:
     try:
         if data.coordinate_north and data.coordinate_east:
-            location_info = get_location_info(data.coordinate_north, data.coordinate_east)
+            location_info = get_location_info(data.coordinate_north.get('decimal', 0), data.coordinate_east.get('decimal', 0))
             address = location_info.get('address', {})
 
             data.country = data.country or address.get('country', "")
@@ -234,7 +296,7 @@ def check_full_location_data(data: Data) -> None:
             data.district = data.district or address.get('district', "")
             data.gathering_place = data.gathering_place or location_info.get('display_name', "")
     except Exception as e:
-        logger.warning(f' Error when checking full location data: {e}')
+        logger.error(f' Error when checking full location data: {e}', exc_info=True)
 
 
 def get_separated_parameters(text: str) -> Data:
@@ -269,6 +331,11 @@ def get_separated_parameters(text: str) -> Data:
 
         check_full_location_data(data)
     except Exception as e:
-        logger.critical(f' Critical error in text processing: {e}')
+        logger.critical(f' Critical error in text processing: {e}', exc_info=True)
 
     return data
+
+
+if __name__ == '__main__':
+    get_separated_parameters(
+        "Семейство Linyphiidae Agyneta suecica Holm, 1950 Рис. 1, 2А Материал. 5 ♂, Свердловская обл., Первоуральский р-н, окр. Среднеуральского медеплавильного завода (СУМЗ), 56⁰ 54.43'N, 59,874⁰E, лес елово-пихтовый, 6-11.VI.2019, Золотарев М.; 1 ♀, Свердловская обл. Первоуральский р-н, окр. СУМЗ, 56.844⁰N; 59.878⁰E, лес елово-пихтовый, 6-11.VI.2019, Золотарев М. З").print()
