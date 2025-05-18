@@ -17,6 +17,6 @@ async def get_pers_stats(
     user_id = int(user_data["sub"])
     user_info = await get_user(session, user_id)
     username = user_info.name
-    stats = get_user_stats(session, user_id)
-    table_stats = get_personal_stats(session, user_id)
+    stats = await get_user_stats(session, user_id)
+    table_stats = await get_personal_stats(session, user_id)
     return username, user_id, stats, table_stats
