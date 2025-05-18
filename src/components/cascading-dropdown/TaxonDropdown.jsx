@@ -15,8 +15,8 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
 
     const [options, setOptions] = useState({
         family: [],
-        genus: [],
-        species: []
+        genus: ["Не определено"],
+        species: ["Не определено"]
     });
 
     const [inputValues, setInputValues] = useState({
@@ -58,7 +58,14 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                 text: searchText,
                 filters: filters
             });
-            setOptions(prev => ({ ...prev, [fieldName]: data?.suggestions || [] }));
+            if (fieldName === 'family') {
+                setOptions(prev => ({ ...prev, [fieldName]: data?.suggestions || [] }));
+            } else {
+                let opt = ["Не определено"]
+                opt.push(data?.suggestions);
+                setOptions(prev => ({ ...prev, [fieldName]: opt }));
+            }
+
             console.log(data);
         } finally {
             setLoading(false);
@@ -66,10 +73,17 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
     }, debounceTime), [debounceTime, formState.family, formState.genus, isInList]);
 
     const updateField = (fieldName, value) => {
-        setFormState(prev => ({
-            ...prev,
-            [fieldName]: value
-        }));
+        if (value === "Не определено") {
+            setFormState(prev => ({
+                ...prev,
+                [fieldName]: null
+            }));
+        } else {
+            setFormState(prev => ({
+                ...prev,
+                [fieldName]: value
+            }));
+        }
     };
 
     const autoUpdate = useMemo(() => debounce(async (fieldName, option) => {
@@ -133,11 +147,11 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                             id={level.name}
                             options={options[level.name]}
                             loading={loading}
-                            disabled={isDefined}
+                            disabled={(isDefined || formState.genus === null) && (level.name === "species")}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    placeholder={isDefined ? "Не определено" : level.placeholder}
+                                    placeholder={isDefined && (level.name === "species") ? "Не определено" : level.placeholder}
                                     size="small"
                                 />
                             )}
