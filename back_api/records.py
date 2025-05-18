@@ -26,7 +26,7 @@ def specimen_parse(specimens):
     num = 0
 
     def add_entry(count, label, summ):
-        if count is not None or count != 0:
+        if count is not None and count != 0:
             entries.append(f"{count} {label}")
             summ += count
 
