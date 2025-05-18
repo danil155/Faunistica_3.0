@@ -136,7 +136,7 @@ const apiService = {
 
     getProfile: async() => {
         try {
-            const response = await api.get('/api/profile');
+            const response = await api.get('/api/get_pers_stats');
             return response;
         } catch (error) {
             if (error.response) {
@@ -146,6 +146,20 @@ const apiService = {
             } else {
                 throw new Error('Произошла ошибка при запросе профиля');
             }
+        }
+    },
+
+    getProfilePhoto: async(userId) => {
+        try {
+            const response = await api.get('/api/user_photo', {
+                params: {
+                    user_id: userId
+                },
+                responseType: 'blob'
+            });
+            return URL.createObjectURL(response.data);
+        } catch (error) {
+            return null;
         }
     }
 };
