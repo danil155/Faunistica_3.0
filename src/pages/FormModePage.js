@@ -537,8 +537,7 @@ const FormModePage = () => {
                             Object.keys(formState.specimens).length > 0
                                 ? Object.entries(formState.specimens).map(
                                     ([key, count]) => {
-                                        const [gender, maturity] =
-                                            key.split("_");
+                                        const [gender, maturity] = key.split("_");
                                         return { gender, maturity, count };
                                     }
                                 )

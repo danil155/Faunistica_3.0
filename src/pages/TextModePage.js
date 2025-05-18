@@ -9,37 +9,11 @@ const TextModePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { setFormState, pinnedData, resetForm } = useFormContext();
+  const { formState, setFormState, pinnedData, resetForm } = useFormContext();
 
   const handleTextChange = (event) => {
     setText(event.target.value);
     setError(null); // Сбрасываем ошибку при изменении текста
-  };
-
-  // Функция для валидации и преобразования данных с сервера
-  const transformServerData = (data) => {
-    const transformed = {};
-    
-    // Обработка дат (пример)
-    if (data.begin_date) {
-      const [year, month, day] = data.begin_date.split('-');
-      transformed.begin_year = year;
-      transformed.begin_month = month;
-      transformed.begin_day = day;
-    }
-    
-    // Обработка координат (пример)
-    if (data.coordinates) {
-      const [north, east] = data.coordinates.split(',');
-      transformed.north = north.trim();
-      transformed.east = east.trim();
-    }
-    
-    // Возвращаем объединенные данные
-    return {
-      ...data,
-      ...transformed
-    };
   };
 
   async function handleSubmit() {
@@ -53,21 +27,22 @@ const TextModePage = () => {
 
     try {
       const result = await apiService.getInfoFromText(text);
-      
-      // Валидация и преобразование данных
-      const validatedData = transformServerData(result);
-      
-      // Сброс формы с сохранением закрепленных данных
-      resetForm(true); // Мягкий сброс (сохраняет закрепленные данные)
-      
+      const specimens = {};
+      if (result.count_males) specimens.male_adult = result.count_males;
+      if (result.count_females) specimens.female_adult = result.count_females;
+      if (result.count_juv_male) specimens.male_juvenile = result.count_juv_male;
+      if (result.count_juv_female) specimens.female_juvenile = result.count_juv_female;
+      if (result.count_juv) specimens.undefined_juvenile = result.count_juv;
+
       // Обновление состояния формы
       setFormState(prev => ({
         ...prev,
-        ...validatedData,
+        ...result,
+        specimens: specimens,
         // Сохраняем только те закрепленные данные, поля которых не пришли с сервера
         ...Object.entries(pinnedData).reduce((acc, [section, sectionData]) => {
           Object.entries(sectionData).forEach(([field, value]) => {
-            if (!(field in validatedData)) {
+            if (!(field in result)) {
               acc[field] = value;
             }
           });
@@ -81,6 +56,7 @@ const TextModePage = () => {
       setError(error.message || "Произошла ошибка при обработке текста");
     } finally {
       setIsLoading(false);
+      console.log(formState);
     }
   }
 
