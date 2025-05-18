@@ -6,7 +6,7 @@ from datetime import datetime
 import functools
 import asyncio
 from .hash import check_pass
-
+from typing import List, Dict
 from .models import User, Action, Publ, Record
 
 
@@ -223,6 +223,66 @@ async def get_user_stats(session: AsyncSession, user_id: int):
     stats['most_common_species'] = result.scalar()
 
     return stats
+
+
+def format_event_date(yy, mm, dd, yy_end, mm_end, dd_end) -> str:
+    def fmt(y, m, d):
+        parts = []
+        if y:
+            parts.append(str(y)[-2:])
+            if m:
+                parts.append(f"{m:02}")
+                if d:
+                    parts.append(f"{d:02}")
+        return ".".join(parts)
+
+    start = fmt(yy, mm, dd)
+    end = fmt(yy_end, mm_end, dd_end)
+
+    return f"{start} – {end}" if end else start
+
+
+@handle_db_errors
+async def get_personal_stats(session: AsyncSession, user_id: int) -> List[Dict]:
+    stmt = (
+        select(
+            Record.publ_id,
+            Record.datetime,
+            Record.adm_district,
+            Record.adm_region,
+            Record.tax_gen,
+            Record.tax_sp,
+            Record.abu,
+            Record.eve_YY,
+            Record.eve_MM,
+            Record.eve_DD,
+            Record.eve_YY_end,
+            Record.eve_MM_end,
+            Record.eve_DD_end,
+            Publ.author
+        )
+        .join(Publ, Publ.id == Record.publ_id)
+        .where(Record.user_id == user_id)
+        .order_by(Record.datetime.desc())
+    )
+
+    result = await session.execute(stmt)
+    rows = result.all()
+
+    records = []
+    for row in rows:
+        date = format_event_date(row.eve_YY, row.eve_MM, row.eve_DD, row.eve_YY_end, row.eve_MM_end, row.eve_DD_end)
+        location = row.adm_district + ', ' + row.adm_region
+        records.append({
+            "date": str(row.datetime),
+            "author": row.author,
+            "species": row.tax_gen + ' ' + row.tax_sp,
+            "abundance": row.abu,
+            "locality": location,
+            "even_date": date
+        })
+
+    return records
 
 
 # === VOLUNTEERS ===
