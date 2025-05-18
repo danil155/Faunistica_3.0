@@ -61,12 +61,9 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
             if (fieldName === 'family') {
                 setOptions(prev => ({ ...prev, [fieldName]: data?.suggestions || [] }));
             } else {
-                let opt = ["Не определено"]
-                opt.push(data?.suggestions);
+                const opt = ["Не определено"].concat(Array.from(data?.suggestions));
                 setOptions(prev => ({ ...prev, [fieldName]: opt }));
             }
-
-            console.log(data);
         } finally {
             setLoading(false);
         }
@@ -89,7 +86,6 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
     const autoUpdate = useMemo(() => debounce(async (fieldName, option) => {
         try {
             const autofillResult = await apiService.autofillTaxon(fieldName, option);
-            console.log(autofillResult)
 
             if (autofillResult.family) {
                 updateField('family', autofillResult.family);
@@ -138,7 +134,6 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                                 } else if (!options[level.name].includes(input)) {
                                     setInputValues({...inputValues, [level.name]: input});
                                     fetchWithFilters(level.name, input);
-                                    console.log(input)
                                 }
                             }}
                             autoSelect={true}
