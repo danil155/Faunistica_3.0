@@ -23,13 +23,23 @@ def get_info(
     if not data.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
     info = get_separated_parameters(data.text)
+    coordinate_north = {
+        "degrees": info.coordinate_north["degrees"] if info.coordinate_north else None,
+        "minutes": info.coordinate_north["minutes"] if info.coordinate_north else None,
+        "seconds": info.coordinate_north["seconds"] if info.coordinate_north else None
+    }
+    coordinate_east = {
+        "degrees": info.coordinate_east["degrees"] if info.coordinate_east else None,
+        "minutes": info.coordinate_east["minutes"] if info.coordinate_east else None,
+        "seconds": info.coordinate_east["seconds"] if info.coordinate_east else None
+    }
     return InfoResponse(
         country=clean_value(info.country),
         region=clean_value(info.region),
         district=clean_value(info.district),
         gathering_place=clean_value(info.gathering_place),
-        coordinate_north={k: info.coordinate_north[k] for k in ("degrees", "minutes", "seconds") if k in info.coordinate_north},
-        coordinate_east={k: info.coordinate_east[k] for k in ("degrees", "minutes", "seconds") if k in info.coordinate_east},
+        coordinate_north=coordinate_north,
+        coordinate_east=coordinate_east,
         date=clean_value(info.date),
         family=clean_value(info.family),
         genus=clean_value(info.genus),
