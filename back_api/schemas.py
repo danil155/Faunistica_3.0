@@ -20,13 +20,13 @@ class InfoResponse(BaseModel):
     region: Optional[str] = None
     district: Optional[str] = None
     gathering_place: Optional[str] = None
-    coordinate_north: Optional[str] = None
-    coordinate_east: Optional[str] = None
+    coordinate_north: Optional[Dict[str, Optional[str]]] = None
+    coordinate_east: Optional[Dict[str, Optional[str]]] = None
     date: Optional[str] = None
     family: Optional[str] = None
     genus: Optional[str] = None
     species: Optional[str] = None
-    collector: Optional[List[str]] = None
+    collector: Optional[str] = None
     count_males: Optional[int] = None
     count_females: Optional[int] = None
     count_juv_male: Optional[int] = None
@@ -49,9 +49,12 @@ class InsertRecordsRequest(BaseModel):
     end_day: Optional[int] = None
     end_month: Optional[int] = None
     end_year: Optional[int] = None
+    eve_REM: Optional[str] = None
     family: Optional[str] = None
     genus: Optional[str] = None
     geo_origin: Optional[str] = None
+    geo_REM: Optional[str] = None
+    geo_uncert: Optional[int] = None
     is_defined_species: Optional[bool] = None
     is_in_wsc: Optional[bool] = None
     is_new_species: Optional[bool] = None
@@ -65,6 +68,7 @@ class InsertRecordsRequest(BaseModel):
     species: Optional[str] = None
     specimens: Optional[Dict[str, Optional[int]]] = None
     taxonomic_notes: Optional[str] = None
+    type_status: Optional[str] = None
 
 
 class SpeciesStats(BaseModel):
