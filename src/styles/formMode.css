@@ -39,8 +39,14 @@ a {
 
 .collapse-toggle, .switch-mode-button, .submit-button, .publ-error-btn-left {
   background-color: var(--main-bg-color);
+  transition: transform 0.3s ease;
   color: white;
 }
+
+.collapse-toggle.collapsed {
+  transform: rotate(180deg);
+}
+
 
 .toggle-button:hover, .switch-mode-button:hover, .publ-error-btn-left:hover {
   background-color: var(--main-blue-color);
@@ -97,6 +103,12 @@ a {
   margin-bottom: 10px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
 .section.pinned {
@@ -127,6 +139,11 @@ a {
   margin: 0;
 }
 
+.pin-toggle:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
 /* Сетка формы */
 .form-grid {
   display: flex;
@@ -144,6 +161,9 @@ a {
   flex-direction: column;
   justify-content: flex-start;
   gap: 5px;
+  transition:
+          opacity 0.3s ease 0.1s,
+          transform 0.3s ease 0.1s;
 }
 
 .form-group label {
@@ -197,6 +217,13 @@ a {
   max-width: 500px;
   width: 90%;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+}
+
+.modal-overlay {
+  transition: background-color 0.3s ease;
 }
 
 .modal-actions {
@@ -294,15 +321,24 @@ a {
   text-decoration: underline;
 }
 
-/* Анимация при сворачивании/разворачивании */
 .section-content {
-  transition: all 0.3s ease;
   overflow: hidden;
+  transition:
+          max-height 0.4s ease-in-out,
+          opacity 0.3s ease,
+          padding 0.3s ease;
+  max-height: 2000px;
+  opacity: 1;
+  padding: 15px;
+  margin: 0;
+  border-radius: 0 0 6px 6px;
 }
 
 .section-collapsed .section-content {
   max-height: 0;
   opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 .section-expanded .section-content {
@@ -320,9 +356,9 @@ a {
   padding: 8px 12px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  flex: 1; /* Равномерное распределение пространства */
-  min-width: 0; /* Важно для правильной работы flex */
-  margin: 0 2px; /* Небольшие отступы между полями */
+  flex: 1;
+  min-width: 0;
+  margin: 0 2px;
 }
 
 /* Контейнер для строк с полями ввода */
@@ -344,4 +380,38 @@ a {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
+}
+
+.collapsed .form-group {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.form-grid {
+  display: flex;
+  opacity: 1;
+  padding: 15px 0;
+}
+
+/* Анимация для секций */
+.section-header + .form-grid {
+  overflow: hidden;
+  transition:
+          max-height 0.4s ease-in-out,
+          opacity 0.3s ease,
+          padding 0.3s ease;
+  max-height: 1500px;
+  opacity: 1;
+}
+
+.section-header.collapsed + .form-grid {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.section-header.collapsed + .form-grid .form-group {
+  opacity: 0;
+  transform: translateY(-10px);
 }

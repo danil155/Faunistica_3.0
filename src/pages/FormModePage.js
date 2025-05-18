@@ -162,20 +162,12 @@ const FormModePage = () => {
 
             <form onSubmit={handleSubmit} className="specimen-form">
 
-
-
                 <ArticleInfo />
                 {/* Секция: Географическое положение */}
-                <div
-                    className={getSectionClassName("Географическое положение")}
-                >
-                    <div
-                        className={`section-header ${
-                            collapsedSections["Географическое положение"]
-                                ? "collapsed"
-                                : ""
-                        }`}
-                    >
+                <div className={`${getSectionClassName("Географическое положение")} section`}>
+                    <div className={`section-header ${
+                            collapsedSections["Географическое положение"] ? "collapsed" : ""
+                    }`}>
                         <div className="section-controls">
                             <h4>Географическое положение</h4>
 
@@ -191,7 +183,9 @@ const FormModePage = () => {
                             />
                         </div>
                         <button
-                            className="collapse-toggle"
+                            className={`collapse-toggle ${
+                                collapsedSections["Географическое положение"] ? "collapsed" : ""
+                            }`}
                             type="button"
                             onClick={() =>
                                 toggleCollapseSection(
@@ -205,51 +199,46 @@ const FormModePage = () => {
                         </button>
                     </div>
 
-                    {!collapsedSections["Географическое положение"] && (
-                        <div className="form-grid">
-
-                            <CoordinatesInput />
-                            <div className="form-group">
-                                <label htmlFor="geo-origin">Происхождение координат:</label>
-                                <select id="geo-origin"
-                                        name="geo_origin"
-                                        className="form-control"
-                                        onChange={handleInputChange}>
-                                    <option value="original">Из статьи</option>
-                                    <option value="volunteer">Моя привязка</option>
-                                    <option value="nothing">Координат не будет</option>
-                                </select>
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor={"geo_uncert"}>Радиус неточности координат, м:</label>
-                                <input
-                                    className="text-input"
-                                    id="geo_uncert"
-                                    type="number"
-                                    step="0.1"
-                                    name="geo_uncert"
-                                    value={formState.geo_uncert}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="geo_REM">Примечания к расположению</label>
-                                <textarea id = "geo_REM" name="geo_REM" />
-                            </div>
+                    <div className={`form-grid ${
+                        collapsedSections["Географическое положение"] ? "collapsed" : ""
+                    }`}>
+                        <CoordinatesInput />
+                        <div className="form-group">
+                            <label htmlFor="geo-origin">Происхождение координат:</label>
+                            <select id="geo-origin"
+                                    name="geo_origin"
+                                    className="form-control"
+                                    onChange={handleInputChange}>
+                                <option value="original">Из статьи</option>
+                                <option value="volunteer">Моя привязка</option>
+                                <option value="nothing">Координат не будет</option>
+                            </select>
                         </div>
-                    )}
+
+                        <div className="form-group">
+                            <label htmlFor={"geo_uncert"}>Радиус неточности координат, м:</label>
+                            <input
+                                className="text-input"
+                                id="geo_uncert"
+                                type="number"
+                                step="0.1"
+                                name="geo_uncert"
+                                value={formState.geo_uncert}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="geo_REM">Примечания к расположению</label>
+                            <textarea id = "geo_REM" name="geo_REM" />
+                        </div>
+                        </div>
                 </div>
 
 
                 {/* Секция: Административное положение */}
 
-                <div
-                    className={getSectionClassName(
-                        "Административное положение"
-                    )}
-                >
+                <div className={`${getSectionClassName("Административное положение")} section`}>
                     <div
                         className={`section-header ${
                             collapsedSections["Административное положение"]
@@ -273,7 +262,9 @@ const FormModePage = () => {
                             />
                         </div>
                         <button
-                            className="collapse-toggle"
+                            className={`collapse-toggle ${
+                                collapsedSections["Административное положение"] ? "collapsed" : ""
+                            }`}
                             type="button"
                             onClick={() =>
                                 toggleCollapseSection(
@@ -286,42 +277,41 @@ const FormModePage = () => {
                                 : "Свернуть"}
                         </button>
                     </div>
-                    {!collapsedSections["Административное положение"] && (
-                        <div className="form-grid">
-                            <div className="form-group">
-                                <div className="form-row">
-                                    <input id="adm_verbatim"
-                                           name={"adm_verbatim"}
-                                           type="checkbox"
-                                           checked={formState.adm_verbatim || false}
-                                           onChange={(e) => setFormState(prev => ({...prev, adm_verbatim: e.target.checked}))}
-                                    />
-                                    <label htmlFor="adm_verbatim" >Местоположение относится к Уралу</label>
-                                </div>
+                    <div className={`form-grid section-content ${
+                        collapsedSections["Административное положение"] ? "collapsed" : ""
+                    }`}>
+                        <div className="form-group">
+                            <div className="form-row">
+                                <input id="adm_verbatim"
+                                       name={"adm_verbatim"}
+                                       type="checkbox"
+                                       checked={formState.adm_verbatim || false}
+                                       onChange={(e) => setFormState(prev => ({...prev, adm_verbatim: e.target.checked}))}
+                                />
+                                <label htmlFor="adm_verbatim" >Местоположение относится к Уралу</label>
                             </div>
-
-                            {adm.map((field) => (
-                                <div  key={field.name} className="form-group">
-                                    <label htmlFor={field.name}>{field.heading}:</label>
-                                    <input
-                                        key={field.name}
-                                        id={field.name}
-                                        className="text-input"
-                                        type="text"
-                                        name={field.name}
-                                        value={formState[field.name]}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                            ))}
-
-
                         </div>
-                    )}
+
+                        {adm.map((field) => (
+                            <div  key={field.name} className="form-group">
+                                <label htmlFor={field.name}>{field.heading}:</label>
+                                <input
+                                    key={field.name}
+                                    id={field.name}
+                                    className="text-input"
+                                    type="text"
+                                    name={field.name}
+                                    value={formState[field.name]}
+                                    onChange={handleInputChange}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
                 </div>
 
                 {/* Секция: Сбор материала */}
-                <div className={getSectionClassName("Сбор материала")}>
+                <div className={`${getSectionClassName("Сбор материала")} section`}>
                     <div
                         className={`section-header ${
                             collapsedSections["Сбор материала"]
@@ -341,7 +331,9 @@ const FormModePage = () => {
                             />
                         </div>
                         <button
-                            className="collapse-toggle"
+                            className={`collapse-toggle ${
+                                collapsedSections["Сбор материала"] ? "collapsed" : ""
+                            }`}
                             type="button"
                             onClick={() =>
                                 toggleCollapseSection("Сбор материала")
@@ -353,66 +345,66 @@ const FormModePage = () => {
                         </button>
                     </div>
 
-                    {!collapsedSections["Сбор материала"] && (
-                        <div className="form-grid">
-                            <DateSelect getSectionData={getSectionData} />
-                            <div className="form-group">
-                                <label htmlFor="biotope">Биотоп:</label>
-                                <input
-                                    id="biotope"
-                                    className="text-input"
-                                    type="text"
-                                    name="biotope"
-                                    value={formState.biotope}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Коллектор:</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="collector"
-                                    value={formState.collector}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Единицы измерения:</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="measurement_units"
-                                    value={
-                                        formState.measurement_units ||
-                                        "Особи, шт."
-                                    }
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label>Выборочное усиление:</label>
-                                <input
-                                    className="text-input"
-                                    type="text"
-                                    name="selective_gain"
-                                    value={formState.selective_gain}
-                                    onChange={handleInputChange}
-                                />
-                            </div>
-
-                            <div className="form-group">
-                                <label htmlFor="eve_REM">Примечания к сбору материала</label>
-                                <textarea id = "eve_REM" name="eve_REM" />
-                            </div>
+                    <div className={`form-grid section-content ${
+                        collapsedSections["Сбор материала"] ? "collapsed" : ""
+                    }`}>
+                        <DateSelect getSectionData={getSectionData} />
+                        <div className="form-group">
+                            <label htmlFor="biotope">Биотоп:</label>
+                            <input
+                                id="biotope"
+                                className="text-input"
+                                type="text"
+                                name="biotope"
+                                value={formState.biotope}
+                                onChange={handleInputChange}
+                            />
                         </div>
-                    )}
+                        <div className="form-group">
+                            <label>Коллектор:</label>
+                            <input
+                                className="text-input"
+                                type="text"
+                                name="collector"
+                                value={formState.collector}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Единицы измерения:</label>
+                            <input
+                                className="text-input"
+                                type="text"
+                                name="measurement_units"
+                                value={
+                                    formState.measurement_units ||
+                                    "Особи, шт."
+                                }
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Выборочное усиление:</label>
+                            <input
+                                className="text-input"
+                                type="text"
+                                name="selective_gain"
+                                value={formState.selective_gain}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="eve_REM">Примечания к сбору материала</label>
+                            <textarea id = "eve_REM" name="eve_REM" />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Секция: Таксономия */}
-                <div className={getSectionClassName("Таксономия")}>
+                <div className={`${getSectionClassName("Таксономия")} section`}>
                     <div
                         className={`section-header ${
                             collapsedSections["Таксономия"] ? "collapsed" : ""
@@ -428,7 +420,9 @@ const FormModePage = () => {
                             />
                         </div>
                         <button
-                            className="collapse-toggle"
+                            className={`collapse-toggle ${
+                                collapsedSections["Таксономия"] ? "collapsed" : ""
+                            }`}
                             type="button"
                             onClick={() => toggleCollapseSection("Таксономия")}
                         >
@@ -438,98 +432,95 @@ const FormModePage = () => {
                         </button>
                     </div>
 
-                    {!collapsedSections["Таксономия"] && (
-                        <div className="form-grid">
-
-                            <div className="form-group">
-                                <div className="form-row">
-                                    <input
-                                        id="tax_sp_def"
-                                        name="tax_sp_def"
-                                        type="checkbox"
-                                        checked={!(formState.tax_sp_def ?? false)}
-                                        onChange={(e) => {
-                                            setFormState(prev => ({
-                                                ...prev,
-                                                tax_sp_def: !e.target.checked
-                                            }));
-                                            if (!e.target.checked) {
-                                                setFormState(prev => ({...prev,
-                                                    species: ''}))
-                                            }
+                    <div className={`form-grid section-content ${
+                        collapsedSections["Таксономия"] ? "collapsed" : ""
+                    }`}>
+                        <div className="form-group">
+                            <div className="form-row">
+                                <input
+                                    id="tax_sp_def"
+                                    name="tax_sp_def"
+                                    type="checkbox"
+                                    checked={!(formState.tax_sp_def ?? false)}
+                                    onChange={(e) => {
+                                        setFormState(prev => ({
+                                            ...prev,
+                                            tax_sp_def: !e.target.checked
+                                        }));
+                                        if (!e.target.checked) {
+                                            setFormState(prev => ({...prev,
+                                                species: ''}))
                                         }
-                                        }
-                                    />
-                                    <label htmlFor="tax_sp_def">Вид определён</label>
-                                </div>
-
-                                <div className="form-row">
-                                    <input
-                                        id="tax_nsp"
-                                        name="tax_nsp"
-                                        type="checkbox"
-                                        checked={formState.tax_nsp || false}
-                                        onChange={(e) => {
-                                            setFormState(prev => ({
-                                                ...prev,
-                                                tax_nsp: e.target.checked
-                                            }));
-                                            if (!e.target.checked) {
-                                                setFormState(prev => ({...prev,
-                                                    family: '',
-                                                    genus: '',
-                                                    species: '',}))
-                                            }
-                                        }
-
-
-                                        }
-                                    />
-                                    <label htmlFor="tax_nsp">Отсутствует в списке</label>
-                                </div>
-
-                                <div className="form-row">
-                                    <input
-                                        id="is_new_species"
-                                        name="is_new_species"
-                                        type="checkbox"
-                                        checked={formState.is_new_species ?? false}
-                                        onChange={() => setFormState(prev => ({...prev, is_new_species : !prev.is_new_species }))}
-                                    />
-                                    <label htmlFor="is_new_species">Описан, как новый вид</label>
-                                </div>
-
-                                {formState.is_new_species && (
-                                    <div className='form-group'>
-                                        <label htmlFor="type_status">Типовой статус:</label>
-                                        <select
-                                            id="type_status"
-                                            name="type_status"
-                                            value={formState.type_status ?? ''}
-                                            onChange={handleInputChange}
-                                        >
-                                            <option value='holotype'>Голотип</option>
-                                            <option value='paratype'>Паратип</option>
-                                            <option value='neotype'>Неотип</option>
-                                            <option value='other'>Другое</option>
-                                        </select>
-                                    </div>
-                                )}
-                            </div>
-                            <TaxonDropdown isDefined={formState.tax_sp_def} isInList={formState.tax_nsp} />
-                            <div className="form-group">
-                                <label>Таксономические примечания:</label>
-                                <textarea
-                                    name="taxonomic_notes"
-                                    value={formState.taxonomic_notes}
-                                    onChange={handleInputChange}
-                                    rows={3}
+                                    }
+                                    }
                                 />
+                                <label htmlFor="tax_sp_def">Вид определён</label>
                             </div>
 
+                            <div className="form-row">
+                                <input
+                                    id="tax_nsp"
+                                    name="tax_nsp"
+                                    type="checkbox"
+                                    checked={formState.tax_nsp || false}
+                                    onChange={(e) => {
+                                        setFormState(prev => ({
+                                            ...prev,
+                                            tax_nsp: e.target.checked
+                                        }));
+                                        if (!e.target.checked) {
+                                            setFormState(prev => ({...prev,
+                                                family: '',
+                                                genus: '',
+                                                species: '',}))
+                                        }
+                                    }
 
+
+                                    }
+                                />
+                                <label htmlFor="tax_nsp">Отсутствует в списке</label>
+                            </div>
+
+                            <div className="form-row">
+                                <input
+                                    id="is_new_species"
+                                    name="is_new_species"
+                                    type="checkbox"
+                                    checked={formState.is_new_species ?? false}
+                                    onChange={() => setFormState(prev => ({...prev, is_new_species : !prev.is_new_species }))}
+                                />
+                                <label htmlFor="is_new_species">Описан, как новый вид</label>
+                            </div>
+
+                            {formState.is_new_species && (
+                                <div className='form-group'>
+                                    <label htmlFor="type_status">Типовой статус:</label>
+                                    <select
+                                        id="type_status"
+                                        name="type_status"
+                                        value={formState.type_status ?? ''}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value='holotype'>Голотип</option>
+                                        <option value='paratype'>Паратип</option>
+                                        <option value='neotype'>Неотип</option>
+                                        <option value='other'>Другое</option>
+                                    </select>
+                                </div>
+                            )}
                         </div>
-                    )}
+                        <TaxonDropdown isDefined={formState.tax_sp_def} isInList={formState.tax_nsp} />
+                        <div className="form-group">
+                            <label>Таксономические примечания:</label>
+                            <textarea
+                                name="taxonomic_notes"
+                                value={formState.taxonomic_notes}
+                                onChange={handleInputChange}
+                                rows={3}
+                            />
+                        </div>
+                    </div>
                 </div>
 
                 {/* Секция: Добавление особей (без возможности закрепления) */}

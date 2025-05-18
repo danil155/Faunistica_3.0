@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    withCredentials: true,
+    withCredentials: true
 });
 
 let refreshTokenPromise = null;
@@ -56,8 +56,18 @@ const apiService = {
 
     // Получение статистики
     getGeneralStats: async () => {
-        const response = await api.get('/api/get_gen_stats');
-        return response.data;
+        try {
+            const response = await api.get('/api/get_gen_stats');
+            return response.data;
+        } catch (error) {
+            if (error.response) {
+                throw new Error(error.response.data.message || 'Ошибка при получении общей статистики');
+            } else if (error.request) {
+                throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже.');
+            } else {
+                throw new Error('Произошла ошибка при запросе общей статистики');
+            }
+        }
     },
 
     // Обновление токена
@@ -120,6 +130,21 @@ const apiService = {
             } else {
                 // Произошла ошибка при настройке запроса
                 throw new Error('Произошла ошибка при отправке запроса');
+            }
+        }
+    },
+
+    getProfile: async() => {
+        try {
+            const response = await api.get('/api/profile');
+            return response;
+        } catch (error) {
+            if (error.response) {
+                throw new Error(error.response.data.message || 'Ошибка при получении профиля');
+            } else if (error.request) {
+                throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже.');
+            } else {
+                throw new Error('Произошла ошибка при запросе профиля');
             }
         }
     }

@@ -509,7 +509,7 @@ header a{
     }
 
     #article_info_container {
-        text-wrap: wrap;
+        text-wrap: normal;
         max-width: 90%;
     }
 }

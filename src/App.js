@@ -4,7 +4,7 @@ import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import Home from "./pages/Home";
 import LoginModal from './components/login/LoginModal';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Route, Routes } from 'react-router-dom';
 import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
@@ -12,6 +12,7 @@ import useToken from "./components/useToken";
 import StatsPage from "./pages/Stats";
 import { Outlet } from 'react-router-dom';
 import FeedbackPage from "./pages/Feedback";
+import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const navigate = useNavigate();
@@ -85,6 +86,9 @@ function App() {
                 onLoginClick={() => setShowLoginModal(true)}
             />
           }/>
+          <Route path="/profile" element={<PrivateRoutes auth={isAuth} />}>
+            <Route index element={<ProfilePage />} />
+          </Route>
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route element={<PrivateRoutes auth={isAuth} />}>
             <Route path="/form" element={<FormModePage />} />

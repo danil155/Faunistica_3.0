@@ -11,6 +11,7 @@ const StatsPage = () => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
+                setLoading(true);
                 const data = await apiService.getGeneralStats();
                 setStats(data);
             } catch (err) {
@@ -23,8 +24,10 @@ const StatsPage = () => {
         fetchStats();
     }, []);
 
-    if (loading) return <div className="loading">Загрузка...</div>;
-    if (error) return <div className="error">Ошибка: {error}</div>;
+    if (loading) return <div className="loading-message">
+        Загрузка данных<span className="loading-dots"></span>
+    </div>;
+    if (error) return <div className="error-message">{error}</div>;
     if (!stats) return <div className="no-data">Нет данных для отображения</div>;
 
     // Подготовка данных для графика
