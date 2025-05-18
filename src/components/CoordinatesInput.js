@@ -1,9 +1,7 @@
 import { useFormContext } from "../pages/FormContext";
-import { useState } from "react";
 
 export const CoordinatesInput = () => {
     const { formState, setFormState } = useFormContext();
-    const [coordFormat, setCoordFormat] = useState("grads");
 
     const clearCoordFields = () => {
         setFormState({
@@ -76,10 +74,10 @@ export const CoordinatesInput = () => {
             };
 
             // Формируем строку координат в зависимости от формата
-            if (coordFormat === "mins") {
+            if (formState.coordinate_format === "mins") {
                 updatedState.coordinate_north = `${updatedState.grads_north || ''}°${updatedState.mins_north || ''}'`;
                 updatedState.coordinate_east = `${updatedState.grads_east || ''}°${updatedState.mins_east || ''}'`;
-            } else if (coordFormat === "secs") {
+            } else if (formState.coordinate_format === "secs") {
                 updatedState.coordinate_north = `${updatedState.grads_north || ''}°${updatedState.mins_north || ''}'${updatedState.secs_north || ''}"`;
                 updatedState.coordinate_east = `${updatedState.grads_east || ''}°${updatedState.mins_east || ''}'${updatedState.secs_east || ''}"`;
             }
@@ -96,7 +94,7 @@ export const CoordinatesInput = () => {
                 className={`coord ${unit === '"' ? 'sec' : ''}`}
                 name={name}
                 value={value}
-                onChange={(e) => handleInputChange(coordFormat, e)}
+                onChange={(e) => handleInputChange(formState.coordinate_format, e)}
                 placeholder={placeholder}
                 pattern={pattern}
                 inputMode={inputMode}
@@ -112,11 +110,13 @@ export const CoordinatesInput = () => {
                 <label htmlFor="coord-format">Формат координат</label>
                 <select
                     id="coord-format"
+                    name="coordinate_format"
                     onChange={(e) => {
-                        setCoordFormat(e.target.value);
+                        setFormState(prev => ({...prev,
+                        [e.target.name]: e.target.value}));
                         clearCoordFields();
                     }}
-                    value={coordFormat}
+                    value={formState.coordinate_format}
                 >
                     <option value="grads">ГГ.гггг° (56.83777°)</option>
                     <option value="mins">ГГ°ММ.мм' (56° 50.266')</option>
@@ -124,7 +124,7 @@ export const CoordinatesInput = () => {
                 </select>
             </div>
 
-            {coordFormat === "grads" ? (
+            {formState.coordinate_format === "grads" ? (
                 <div className="form-group">
                     <label>Широта N°</label>
                     <input
@@ -132,7 +132,7 @@ export const CoordinatesInput = () => {
                         type="text"
                         name="coordinate_north"
                         value={formState.coordinate_north}
-                        onChange={(e) => handleInputChange(coordFormat, e)}
+                        onChange={(e) => handleInputChange(formState.coordinate_format, e)}
                         placeholder="00.00000"
                         pattern="\d{2}\.\d{1,5}"
                         inputMode="decimal"
@@ -144,14 +144,14 @@ export const CoordinatesInput = () => {
                         type="text"
                         name="coordinate_east"
                         value={formState.coordinate_east}
-                        onChange={(e) => handleInputChange(coordFormat, e)}
+                        onChange={(e) => handleInputChange(formState.coordinate_format, e)}
                         placeholder="00.00000"
                         pattern="\d{2}\.\d{1,5}"
                         inputMode="decimal"
                         maxLength="8"
                     />
                 </div>
-            ) : coordFormat === "mins" ? (
+            ) : formState.coordinate_format === "mins" ? (
                 <div className="form-group">
                     <label>Широта N°</label>
                     <div className="form-row">

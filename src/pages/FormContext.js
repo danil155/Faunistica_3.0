@@ -16,6 +16,7 @@ export const defaultState = {
   mins_east: '',
   secs_north: '',
   secs_east: '',
+  coordinate_format: 'grads',
   geo_origin: '',
   geo_uncert: 0,
   adm_verbatim: null,

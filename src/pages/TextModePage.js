@@ -9,7 +9,7 @@ const TextModePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { formState, setFormState, pinnedData, resetForm } = useFormContext();
+  const { formState, setFormState, pinnedData } = useFormContext();
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -37,15 +37,17 @@ const TextModePage = () => {
       const processResult = {...result};
       if (result.coordinate_north) {
         const {degrees, minutes, seconds } = result.coordinate_north;
-        if (degrees) {
+        if (degrees != null) {
           processResult.grads_north = degrees.toString();
-          if (minutes) {
+          if (minutes != null) {
             processResult.mins_north = minutes.toString();
-            if (seconds) {
+            if (seconds != null) {
               processResult.secs_north = seconds.toString();
               processResult.coordinate_north = degrees.toString() + '°' + minutes.toString() + "'" + seconds.toString() + '"';
+              processResult.coordinate_format = "secs";
             } else {
               processResult.coordinate_north = degrees.toString() + '°' + minutes.toString() + "'";
+              processResult.coordinate_format = "mins";
             }
           } else {
             processResult.coordinate_north = degrees.toString() + '°';
@@ -59,11 +61,11 @@ const TextModePage = () => {
 
       if (result.coordinate_east) {
         const {degrees, minutes, seconds } = result.coordinate_east;
-        if (degrees) {
+        if (degrees != null) {
           processResult.grads_east = degrees.toString();
-          if (minutes) {
+          if (minutes != null) {
             processResult.mins_east = minutes.toString();
-            if (seconds) {
+            if (seconds != null) {
               processResult.secs_east = seconds.toString();
               processResult.coordinate_east = degrees.toString() + '°' + minutes.toString() + "'" + seconds.toString() + '"';
             } else {
@@ -95,7 +97,7 @@ const TextModePage = () => {
           return acc;
         }, {})
       }));
-      console.log(result)
+      console.log(formState.genus)
       navigate('/form');
     } catch (error) {
       console.error("Ошибка запроса:", error);
