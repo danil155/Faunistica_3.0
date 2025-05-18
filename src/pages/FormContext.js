@@ -7,6 +7,7 @@ export const defaultState = {
   region: '',
   district: '',
   gathering_place: '',
+  is_new_species: false,
   coordinate_north: '',
   coordinate_east: '',
   grads_north: '',

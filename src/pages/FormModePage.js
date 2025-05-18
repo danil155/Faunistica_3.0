@@ -44,7 +44,6 @@ const FormModePage = () => {
 
     const [showResetModal, setShowResetModal] = useState(false);
     const [resetMode, setResetMode] = useState("soft");
-    const [isNewSpecies, setIsNewSpecies] = useState(false);
     const adm = [
         {name: "country", heading: "Страна" },
         {name: "region", heading: "Регион" },
@@ -97,7 +96,6 @@ const FormModePage = () => {
 
         try {
             const recordData = {
-                begin_date: formState.begin_date,
                 begin_day: formState.begin_day || parseInt(formState.begin_date.split('-')[2]),
                 begin_month: formState.begin_month || parseInt(formState.begin_date.split('-')[1]),
                 begin_year: formState.begin_year || parseInt(formState.begin_date.split('-')[0]),
@@ -106,15 +104,14 @@ const FormModePage = () => {
                 country: formState.country,
                 district: formState.district,
                 east: formState.coordinate_east,
-                end_date: formState.end_date,
                 end_year: formState.end_year || parseInt(formState.end_date.split('-')[0]),
                 end_month: formState.end_month || parseInt(formState.end_date.split('-')[1]),
                 end_day: formState.end_day || parseInt(formState.end_date.split('-')[2]),
                 family: formState.family,
                 genus: formState.genus,
-                is_defined_species: formState.tax_sp_def,
+                is_defined_species: !formState.tax_sp_def,
                 is_in_wsc: formState.tax_nsp,
-                is_new_species: isNewSpecies,
+                is_new_species: formState.is_new_species,
                 matherial_notes: formState.matherial_notes,
                 measurement_units: formState.measurement_units,
                 north: formState.coordinate_north,
@@ -490,13 +487,13 @@ const FormModePage = () => {
                                         id="is_new_species"
                                         name="is_new_species"
                                         type="checkbox"
-                                        checked={isNewSpecies}
-                                        onChange={() => setIsNewSpecies(!isNewSpecies)}
+                                        checked={formState.is_new_species ?? false}
+                                        onChange={() => setFormState(prev => ({...prev, is_new_species : !prev.is_new_species }))}
                                     />
                                     <label htmlFor="is_new_species">Описан, как новый вид</label>
                                 </div>
 
-                                {isNewSpecies && (
+                                {formState.is_new_species && (
                                     <div className='form-group'>
                                         <label htmlFor="type_status">Типовой статус:</label>
                                         <select
