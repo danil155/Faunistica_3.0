@@ -334,7 +334,6 @@ class Handlers:
             user = await get_user(session, message.from_user.id)
             if user is not None:
                 user_stats = await get_user_stats(session, message.from_user.id)
-                print(user_stats)
 
             await message.answer(
                 Messages.statistics(general_stats, user_stats),
@@ -495,9 +494,7 @@ class Handlers:
 
         original_message = message.reply_to_message.text
         try:
-            print(original_message)
-            user_id = int(original_message.split("ID: ")[1].split(" ")[0])
-            print(user_id)
+            user_id = int(original_message.replace('\n', ' ').split("ID: ")[1].split(" ")[0])
         except (IndexError, ValueError):
             await message.answer(Messages.could_not_extract_id())
             return
@@ -836,7 +833,6 @@ class Handlers:
 
     async def sociology_rating_handler(self, message: Message, state: FSMContext):
         answer = message.text.lower()
-        print(answer)
 
         if answer in config_vars.YES_WORDS:
             rating_value = 1
@@ -913,16 +909,3 @@ class Handlers:
             Messages.unknown_content(),
             reply_markup=Keyboards.remove()
         )
-
-    # ========== HELPER METHODS ========== #
-
-    async def send_support_message_from_website(self, username: str, message_text: str, user_link: str = None):
-        async for session in self.db_session_factory():
-            user_id = await get_user_id_by_username(session, username)
-
-            await self.bot.send_message(
-                chat_id=config.ADMIN_CHAT_ID,
-                text=Messages.request_for_support_from_website(username, user_id, message_text, user_link),
-                parse_mode="HTML",
-                disable_web_page_preview=True
-            )

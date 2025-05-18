@@ -11,14 +11,10 @@ from bot.handlers import Handlers
 
 logger = logging.getLogger(__name__)
 
-bot_instance = None
-
 
 async def bot_start() -> None:
-    global bot_instance
     try:
         bot = Bot(token=config.TEST_BOT_TOKEN)
-        bot_instance = bot
 
         dp = Dispatcher(storage=MemoryStorage())
 
@@ -47,17 +43,3 @@ async def bot_start() -> None:
     except Exception as global_error:
         logger.critical(f' Bot crashed: {global_error}', exc_info=True)
         raise
-    finally:
-        if bot_instance:
-            await bot_instance.session.close()
-
-
-def get_bot_instance() -> Bot:
-    if not bot_instance:
-        logger.warning('Bot instance requested but not initialized yet')
-
-    return bot_instance
-
-
-if __name__ == '__main__':
-    asyncio.run(bot_start())
