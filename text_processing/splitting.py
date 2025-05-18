@@ -75,7 +75,7 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
         })
         return coord_dict
 
-    return {"raw": coord_str}
+    return coord_dict
 
 
 def get_coordinates(text: str) -> list[dict]:
@@ -86,12 +86,10 @@ def get_coordinates(text: str) -> list[dict]:
     coords_pattern = r'''
          ([-+]?\d{1,3}[⁰°]\s*\d{1,2}['′]\s*\d{1,2}(?:[.,]\d+)?[\"″]?\s*[NS])|   # DD° MM' SS.SS" N/S
          ([-+]?\d{1,3}[⁰°]\s*\d{1,2}(?:[.,]\d+)?['′]?\s*[NS])|                  # DD° MM.MM' N/S
-         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[NS])|                                     # DD.DD N/S
-         ([-+]?\d{1,3}(?:[.,]\d+)?[⁰°]\s*[NS])|                                 # DD.DD° N/S
+         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[⁰°]?\s*[NS])|                             # DD.DD N/S or DD.DD° N/S
          ([-+]?\d{1,3}[⁰°]\s*\d{1,2}['′]\s*\d{1,2}(?:[.,]\d+)?[\"″]?\s*[WE])|   # DD° MM' SS.SS" E/W
          ([-+]?\d{1,3}[⁰°]\s*\d{1,2}(?:[.,]\d+)?['′]?\s*[WE])|                  # DD° MM.MM' E/W
-         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[WE])                                      # DD.DD E/W
-         ([-+]?\d{1,3}(?:[.,]\d+)?[⁰°]\s*[EW])|                                 # DD.DD° E/W
+         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[⁰°]?\s*[WE])|                             # DD.DD E/W or DD.DD° E/W
      '''
 
     coords_match = re.findall(coords_pattern, text, re.VERBOSE)
@@ -108,7 +106,6 @@ def get_coordinates(text: str) -> list[dict]:
             logger.error(f' Error when searching for coordinates: {e}', exc_info=True)
             continue
 
-    print(coordinates)
     return coordinates
 
 
@@ -287,7 +284,7 @@ def get_numbers_species(text: str) -> dict:
 
 def check_full_location_data(data: Data) -> None:
     try:
-        if data.coordinate_north and data.coordinate_east:
+        if data.coordinate_north.get('decimal') and data.coordinate_east.get('decimal'):
             location_info = get_location_info(data.coordinate_north.get('decimal', 0), data.coordinate_east.get('decimal', 0))
             address = location_info.get('address', {})
 
@@ -338,4 +335,4 @@ def get_separated_parameters(text: str) -> Data:
 
 if __name__ == '__main__':
     get_separated_parameters(
-        "Семейство Linyphiidae Agyneta suecica Holm, 1950 Рис. 1, 2А Материал. 5 ♂, Свердловская обл., Первоуральский р-н, окр. Среднеуральского медеплавильного завода (СУМЗ), 56⁰ 54.43'N, 59,874⁰E, лес елово-пихтовый, 6-11.VI.2019, Золотарев М.; 1 ♀, Свердловская обл. Первоуральский р-н, окр. СУМЗ, 56.844⁰N; 59.878⁰E, лес елово-пихтовый, 6-11.VI.2019, Золотарев М. З").print()
+        "Семейство Linyphiidae Agyneta suecica Holm, 1950 Рис. 1, 2А Материал. 5 ♂, Свердловская обл., Первоуральский р-н, окр. Среднеуральского медеплавильного завода (СУМЗ),  лес елово-пихтовый, 6-11.VI.2019, Золотарев М.; 1 ♀, Свердловская обл. Первоуральский р-н, окр. СУМЗ, , лес елово-пихтовый, 6-11.VI.2019, Золотарев М. З").print()

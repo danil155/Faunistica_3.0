@@ -4,8 +4,18 @@ class Data:
         self.region = ""
         self.district = ""
         self.gathering_place = ""
-        self.coordinate_north = {}
-        self.coordinate_east = {}
+        self.coordinate_north = {
+            "degrees": None,
+            "minutes": None,
+            "seconds": None,
+            "decimal": None,
+        }
+        self.coordinate_east = {
+            "degrees": None,
+            "minutes": None,
+            "seconds": None,
+            "decimal": None,
+        }
         self.date = ""
         self.family = ""
         self.genus = ""

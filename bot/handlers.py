@@ -384,7 +384,11 @@ class Handlers:
                 await message.answer(Messages.register_for_old())
                 return
             elif 1 < user.reg_stat <= 6:
-                await message.answer(Messages.unavailable_during_registration())
+                await message.answer(
+                    Messages.unavailable_during_registration(),
+                    parse_mode="Markdown",
+                    disable_web_page_preview=True
+                    )
                 return
 
         async for session in self.db_session_factory():
@@ -462,7 +466,11 @@ class Handlers:
                 await message.answer(Messages.register_for_old())
                 return
             elif 1 < user.reg_stat <= 6:
-                await message.answer(Messages.unavailable_during_registration())
+                await message.answer(
+                    Messages.unavailable_during_registration(),
+                    parse_mode="Markdown",
+                    disable_web_page_preview=True
+                )
                 return
 
             await state.clear()
@@ -600,7 +608,11 @@ class Handlers:
         elif not age_msg.isdigit():
             await message.answer(Messages.message_no_digits())
         elif int(age_msg) > 99:
-            await message.answer(Messages.age_too_high())
+            await message.answer(
+                Messages.age_too_high(),
+                parse_mode="Markdown",
+                disable_web_page_preview=True
+            )
         elif int(age_msg) < 14:
             await message.answer(Messages.age_too_low())
         else:
@@ -754,7 +766,11 @@ class Handlers:
         elif not age_msg.isdigit():
             await message.answer(Messages.message_no_digits())
         elif int(age_msg) > 99:
-            await message.answer(Messages.age_too_high())
+            await message.answer(
+                Messages.age_too_high(),
+                parse_mode="Markdown",
+                disable_web_page_preview=True
+            )
         elif int(age_msg) < 14:
             await message.answer(Messages.age_too_low())
         else:
