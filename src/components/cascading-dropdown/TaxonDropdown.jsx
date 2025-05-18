@@ -142,7 +142,7 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                             id={level.name}
                             options={options[level.name]}
                             loading={loading}
-                            disabled={(isDefined || formState.genus === null) && (level.name === "species")}
+                            disabled={(isDefined || !(formState.genus === null)) && (level.name === "species")}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}

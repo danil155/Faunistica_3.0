@@ -34,12 +34,58 @@ const TextModePage = () => {
       if (result.count_juv_female) specimens.female_juvenile = result.count_juv_female;
       if (result.count_juv) specimens.undefined_juvenile = result.count_juv;
 
+      const processResult = {...result};
+      if (result.coordinate_north) {
+        const {degrees, minutes, seconds } = result.coordinate_north;
+        if (degrees) {
+          processResult.grads_north = degrees.toString();
+          if (minutes) {
+            processResult.mins_north = minutes.toString();
+            if (seconds) {
+              processResult.secs_north = seconds.toString();
+              processResult.coordinate_north = degrees.toString() + '°' + minutes.toString() + "'" + seconds.toString() + '"';
+            } else {
+              processResult.coordinate_north = degrees.toString() + '°' + minutes.toString() + "'";
+            }
+          } else {
+            processResult.coordinate_north = degrees.toString() + '°';
+          }
+        } else {
+          processResult.coordinate_north = "";
+        }
+      } else {
+        processResult.coordinate_north = "";
+      }
+
+      if (result.coordinate_east) {
+        const {degrees, minutes, seconds } = result.coordinate_east;
+        if (degrees) {
+          processResult.grads_east = degrees.toString();
+          if (minutes) {
+            processResult.mins_east = minutes.toString();
+            if (seconds) {
+              processResult.secs_east = seconds.toString();
+              processResult.coordinate_east = degrees.toString() + '°' + minutes.toString() + "'" + seconds.toString() + '"';
+            } else {
+              processResult.coordinate_east = degrees.toString() + '°' + minutes.toString() + "'";
+            }
+          } else {
+            processResult.coordinate_east = degrees.toString() + '°'
+          }
+        } else {
+          processResult.coordinate_east = "";
+        }
+      } else {
+        processResult.coordinate_east = "";
+      }
+
       // Обновление состояния формы
       setFormState(prev => ({
         ...prev,
+
         ...result,
+        ...processResult,
         specimens: specimens,
-        // Сохраняем только те закрепленные данные, поля которых не пришли с сервера
         ...Object.entries(pinnedData).reduce((acc, [section, sectionData]) => {
           Object.entries(sectionData).forEach(([field, value]) => {
             if (!(field in result)) {
@@ -49,7 +95,7 @@ const TextModePage = () => {
           return acc;
         }, {})
       }));
-      
+      console.log(result)
       navigate('/form');
     } catch (error) {
       console.error("Ошибка запроса:", error);
