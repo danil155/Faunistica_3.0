@@ -146,7 +146,7 @@ async def insert_record(
         "eve_YY_end": clean_value(data.end_year),
         "eve_MM_end": clean_value(data.end_month),
         "eve_DD_end": clean_value(data.end_day),
-        "adm_verbatim": 1
+        "adm_verbatim": "1"
         # adm_verbatim is unknown
     }
 
