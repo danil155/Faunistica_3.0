@@ -36,7 +36,6 @@ class InfoResponse(BaseModel):
 
 class InsertRecordsRequest(BaseModel):
     adm_verbatim: Optional[bool] = None
-    begin_date: Optional[str] = None
     begin_day: Optional[int] = None
     begin_month: Optional[int] = None
     begin_year: Optional[int] = None
@@ -45,7 +44,6 @@ class InsertRecordsRequest(BaseModel):
     country: Optional[str] = None
     district: Optional[str] = None
     east: Optional[str] = None
-    end_date: Optional[str] = None
     end_day: Optional[int] = None
     end_month: Optional[int] = None
     end_year: Optional[int] = None
