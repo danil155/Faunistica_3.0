@@ -16,52 +16,55 @@ class InfoRequest(BaseModel):
     
 
 class InfoResponse(BaseModel):
-    country: Optional[str]
-    region: Optional[str]
-    district: Optional[str]
-    gathering_place: Optional[str]
-    coordinate_north: Optional[str]
-    coordinate_east: Optional[str]
-    date: Optional[str]
-    family: Optional[str]
-    genus: Optional[str]
-    species: Optional[str]
-    collector: Optional[List[str]]
-    count_males: Optional[int]
-    count_females: Optional[int]
-    count_juv_male: Optional[int]
-    count_juv_female: Optional[int]
-    count_juv: Optional[int]
+    country: Optional[str] = None
+    region: Optional[str] = None
+    district: Optional[str] = None
+    gathering_place: Optional[str] = None
+    coordinate_north: Optional[str] = None
+    coordinate_east: Optional[str] = None
+    date: Optional[str] = None
+    family: Optional[str] = None
+    genus: Optional[str] = None
+    species: Optional[str] = None
+    collector: Optional[List[str]] = None
+    count_males: Optional[int] = None
+    count_females: Optional[int] = None
+    count_juv_male: Optional[int] = None
+    count_juv_female: Optional[int] = None
+    count_juv: Optional[int] = None
 
 
 class InsertRecordsRequest(BaseModel):
-    begin_date: Optional[str]
-    begin_day: Optional[int]
-    begin_month: Optional[int]
-    begin_year: Optional[int]
-    biotope: Optional[str]
-    collector: Optional[str]
-    country: Optional[str]
-    district: Optional[str]
-    east: Optional[str]
-    end_date: Optional[str]
-    end_day: Optional[int]
-    end_month: Optional[int]
-    end_year: Optional[int]
-    family: Optional[str]
-    genus: Optional[str]
-    is_defined_species: Optional[bool]
-    is_in_wsc: Optional[bool]
-    is_new_species: Optional[bool]
-    matherial_notes: Optional[str]
-    measurement_units: Optional[str]
-    north: Optional[str]
-    place: Optional[str]
-    place_notes: Optional[str]
-    region: Optional[str]
-    selective_gain: Optional[str]
-    specimens: Optional[List[int]]
-    taxonomic_notes: Optional[str]
+    adm_verbatim: Optional[bool] = None
+    begin_date: Optional[str] = None
+    begin_day: Optional[int] = None
+    begin_month: Optional[int] = None
+    begin_year: Optional[int] = None
+    biotope: Optional[str] = None
+    collector: Optional[str] = None
+    country: Optional[str] = None
+    district: Optional[str] = None
+    east: Optional[str] = None
+    end_date: Optional[str] = None
+    end_day: Optional[int] = None
+    end_month: Optional[int] = None
+    end_year: Optional[int] = None
+    family: Optional[str] = None
+    genus: Optional[str] = None
+    geo_origin: Optional[str] = None
+    is_defined_species: Optional[bool] = None
+    is_in_wsc: Optional[bool] = None
+    is_new_species: Optional[bool] = None
+    matherial_notes: Optional[str] = None
+    measurement_units: Optional[str] = None
+    north: Optional[str] = None
+    place: Optional[str] = None
+    place_notes: Optional[str] = None
+    region: Optional[str] = None
+    selective_gain: Optional[str] = None
+    species: Optional[str] = None
+    specimens: Optional[Dict[str, Optional[int]]] = None
+    taxonomic_notes: Optional[str] = None
 
 
 class SpeciesStats(BaseModel):
@@ -88,18 +91,18 @@ class StatisticsResponse(BaseModel):
 class SuggestTaxonRequest(BaseModel):
     field: str
     text: str
-    filters: Dict[str, Optional[str]]
+    filters: Optional[Dict[str, Optional[str]]] = None
 
 
 class SuggestTaxonResponse(BaseModel):
-    suggestions: Optional[List[str]]
+    suggestions: Optional[List[str]] = None
 
 
 class PublResponse(BaseModel):
-    author: Optional[str]
-    year: Optional[str]
-    name: Optional[str]
-    pdf_file: Optional[str]
+    author: Optional[str] = None
+    year: Optional[str] = None
+    name: Optional[str] = None
+    pdf_file: Optional[str] = None
 
 
 class AutofillTaxonRequest(BaseModel):
@@ -108,13 +111,13 @@ class AutofillTaxonRequest(BaseModel):
 
 
 class AutofillTaxonResponse(BaseModel):
-    family: Optional[str]
-    genus: Optional[str]
+    family: Optional[str] = None
+    genus: Optional[str] = None
 
 
 class SupportRequest(BaseModel):
     link: str
-    user_name: Optional[str]
+    user_name: Optional[str] = None
     text: str
     issue_type: str
     
