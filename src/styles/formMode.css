@@ -325,21 +325,6 @@ a {
   margin: 0 2px; /* Небольшие отступы между полями */
 }
 
-/* Специальные стили для полей секунд */
-.coord.sec {
-  flex: 0.8; /* Чуть уже, чем остальные поля */
-}
-
-/* Стили для полей в градусах/минутах в формате "grads" и "mins" */
-.form-group .text-input {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  background-color: white;
-}
-
 /* Контейнер для строк с полями ввода */
 .form-row {
   display: flex;
