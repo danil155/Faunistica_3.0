@@ -1,8 +1,8 @@
-import {useFormContext} from "../pages/FormContext";
-import {useState} from "react";
+import { useFormContext } from "../pages/FormContext";
+import { useState } from "react";
 
 export const CoordinatesInput = () => {
-    const {formState, setFormState} = useFormContext();
+    const { formState, setFormState } = useFormContext();
     const [coordFormat, setCoordFormat] = useState("grads");
 
     const clearCoordFields = () => {
@@ -19,49 +19,63 @@ export const CoordinatesInput = () => {
         });
     };
 
-    // Функции валидации (теперь разрешают пустую строку)
-    const validateDecimal = (value) => {
-        return value === '' || /^[0-9]*\.?[0-9]*$/.test(value);
-    };
+    const validateInteger = (value) => value === '' || /^\d*$/.test(value);
+    const validateSeconds = (value) => value === '' || (/^[0-5]?\d\.?\d*$/.test(value) && parseFloat(value) < 60);
 
-    const validateInteger = (value) => {
-        return value === '' || /^[0-9]*$/.test(value);
-    };
+    const handleDecimalInput = (value, beforeLimit, afterLimit) => {
+        let processedValue = value.replace(/[^0-9.]/g, '');
 
-    const validateMinutes = (value) => {
-        return value === '' || (/^[0-5]?[0-9]\.?[0-9]*$/.test(value) && parseFloat(value) < 60);
-    };
-
-    const validateSeconds = (value) => {
-        return value === '' || (/^[0-5]?[0-9]\.?[0-9]*$/.test(value) && parseFloat(value) < 60);
-    };
-
-    function handleInputChange(coordFormat, e) {
-        const { name, value } = e.target;
-
-        // Валидация в зависимости от поля
-        let isValid = true;
-
-        if (name.includes('grads_') && coordFormat === "grads") {
-            isValid = validateDecimal(value);
-        } else if (name.includes('grads_')) {
-            isValid = validateInteger(value);
-        } else if (name.includes('mins_')) {
-            isValid = validateMinutes(value);
-        } else if (name.includes('secs_')) {
-            isValid = validateSeconds(value);
-        } else if (name === 'coordinate_north' || name === 'coordinate_east') {
-            isValid = validateDecimal(value);
+        // Автоматически добавляем точку после beforeLimit цифр, если её нет
+        if (processedValue.length > beforeLimit && !processedValue.includes('.')) {
+            processedValue = `${processedValue.slice(0, beforeLimit)}.${processedValue.slice(beforeLimit)}`;
         }
 
-        if (!isValid) return;
+        // Удаляем лишние точки
+        const parts = processedValue.split('.');
+        if (parts.length > 2) {
+            processedValue = `${parts[0]}.${parts.slice(1).join('')}`;
+        }
+
+        // Ограничиваем длину
+        if (processedValue.includes('.')) {
+            const [beforeDot, afterDot] = processedValue.split('.');
+            if (beforeDot.length > beforeLimit) {
+                processedValue = `${beforeDot.slice(0, beforeLimit)}.${afterDot || ''}`;
+            }
+            if (afterDot && afterDot.length > afterLimit) {
+                processedValue = `${beforeDot}.${afterDot.slice(0, afterLimit)}`;
+            }
+        } else if (processedValue.length > beforeLimit) {
+            processedValue = processedValue.slice(0, beforeLimit);
+        }
+
+        return processedValue;
+    };
+
+    const handleInputChange = (coordFormat, e) => {
+        const { name, value } = e.target;
+
+        // Обработка полей в зависимости от формата
+        let processedValue = value;
+        if (name.includes('mins_')) {
+            processedValue = handleDecimalInput(value, 2, 3);
+        } else if (name.includes('grads_') && coordFormat === "grads") {
+            processedValue = handleDecimalInput(value, 2, 5);
+        } else if (name.includes('secs_')) {
+            processedValue = handleDecimalInput(value, 2, 2);
+        } else if (name.includes('grads_')) {
+            if (!validateInteger(value)) return;
+        } else if (name.includes('secs_')) {
+            if (!validateSeconds(value)) return;
+        }
 
         setFormState(prevState => {
             const updatedState = {
                 ...prevState,
-                [name]: value
+                [name]: processedValue
             };
 
+            // Формируем строку координат в зависимости от формата
             if (coordFormat === "mins") {
                 updatedState.coordinate_north = `${updatedState.grads_north || ''}°${updatedState.mins_north || ''}'`;
                 updatedState.coordinate_east = `${updatedState.grads_east || ''}°${updatedState.mins_east || ''}'`;
@@ -72,7 +86,25 @@ export const CoordinatesInput = () => {
 
             return updatedState;
         });
-    }
+    };
+
+    const renderInputField = (id, name, value, placeholder, pattern, inputMode, maxLength, unit) => (
+        <>
+            <input
+                id={id}
+                type="text"
+                className={`coord ${unit === '"' ? 'sec' : ''}`}
+                name={name}
+                value={value}
+                onChange={(e) => handleInputChange(coordFormat, e)}
+                placeholder={placeholder}
+                pattern={pattern}
+                inputMode={inputMode}
+                maxLength={maxLength}
+            />
+            <label htmlFor={id}>{unit}</label>
+        </>
+    );
 
     return (
         <>
@@ -94,169 +126,57 @@ export const CoordinatesInput = () => {
 
             {coordFormat === "grads" ? (
                 <div className="form-group">
-                    <label>Широта (N):</label>
+                    <label>Широта N°</label>
                     <input
                         className="text-input"
                         type="text"
                         name="coordinate_north"
                         value={formState.coordinate_north}
                         onChange={(e) => handleInputChange(coordFormat, e)}
-                        placeholder="00.0000"
-                        pattern="[0-9.]*"
+                        placeholder="00.00000"
+                        pattern="\d{2}\.\d{1,5}"
                         inputMode="decimal"
+                        maxLength="8"
                     />
-                    <label>Долгота (E):</label>
+                    <label>Долгота E°</label>
                     <input
                         className="text-input"
                         type="text"
                         name="coordinate_east"
                         value={formState.coordinate_east}
                         onChange={(e) => handleInputChange(coordFormat, e)}
-                        placeholder="00.0000"
-                        pattern="[0-9.]*"
+                        placeholder="00.00000"
+                        pattern="\d{2}\.\d{1,5}"
                         inputMode="decimal"
+                        maxLength="8"
                     />
                 </div>
             ) : coordFormat === "mins" ? (
                 <div className="form-group">
                     <label>Широта N°</label>
                     <div className="form-row">
-                        <input
-                            id="grads-north"
-                            type="text"
-                            className="coord"
-                            name="grads_north"
-                            value={formState.grads_north}
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            placeholder="00"
-                            pattern="[0-9]*"
-                            inputMode="numeric"
-                            maxLength="2"
-                        />
-                        <label htmlFor="grads-north">°</label>
-                        <input
-                            id="mins-north"
-                            type="text"
-                            className="coord"
-                            name="mins_north"
-                            value={formState.mins_north}
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            placeholder="00.000"
-                            pattern="[0-9.]*"
-                            inputMode="decimal"
-                            maxLength="6"
-                        />
-                        <label htmlFor="mins-north">'</label>
+                        {renderInputField("grads-north", "grads_north", formState.grads_north, "00", "[0-9]*", "numeric", 2, "°")}
+                        {renderInputField("mins-north", "mins_north", formState.mins_north, "00.000", "[0-9.]*", "decimal", 6, "'")}
                     </div>
                     <label>Долгота E°</label>
                     <div className="form-row">
-                        <input
-                            id="grads-east"
-                            type="text"
-                            className="coord"
-                            value={formState.grads_east}
-                            name="grads_east"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            placeholder="00"
-                            pattern="[0-9]*"
-                            inputMode="numeric"
-                            maxLength="2"
-                        />
-                        <label htmlFor="grads-east">°</label>
-                        <input
-                            id="mins-east"
-                            type="text"
-                            className="coord"
-                            value={formState.mins_east}
-                            name="mins_east"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            placeholder="00.000"
-                            pattern="[0-9.]*"
-                            inputMode="decimal"
-                            maxLength="6"
-                        />
-                        <label htmlFor="mins-east">'</label>
+                        {renderInputField("grads-east", "grads_east", formState.grads_east, "00", "[0-9]*", "numeric", 2, "°")}
+                        {renderInputField("mins-east", "mins_east", formState.mins_east, "00.000", "[0-9.]*", "decimal", 6, "'")}
                     </div>
                 </div>
             ) : (
                 <div className="form-group">
                     <label>Широта N°</label>
                     <div className="form-row">
-                        <input
-                            id="grads-north-secs"
-                            value={formState.grads_north}
-                            className="coord sec"
-                            name="grads_north"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            placeholder="00"
-                            pattern="[0-9]*"
-                            inputMode="numeric"
-                            maxLength="2"
-                        />
-                        <label htmlFor="grads-north-secs">°</label>
-                        <input
-                            id="mins-north-secs"
-                            value={formState.mins_north}
-                            className="coord sec"
-                            name="mins_north"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            placeholder="00"
-                            pattern="[0-9]*"
-                            inputMode="numeric"
-                            maxLength="2"
-                        />
-                        <label htmlFor="mins-north-secs">'</label>
-                        <input
-                            id="secs-north"
-                            value={formState.secs_north}
-                            className="coord sec"
-                            name="secs_north"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            placeholder="00.00"
-                            pattern="[0-9.]*"
-                            inputMode="decimal"
-                            maxLength="5"
-                        />
-                        <label htmlFor="secs-north">"</label>
+                        {renderInputField("grads-north-secs", "grads_north", formState.grads_north, "00", "[0-9]*", "numeric", 2, "°")}
+                        {renderInputField("mins-north-secs", "mins_north", formState.mins_north, "00", "[0-9]*", "numeric", 2, "'")}
+                        {renderInputField("secs-north", "secs_north", formState.secs_north, "00.00", "[0-9.]*", "decimal", 5, '"')}
                     </div>
                     <label>Долгота E°</label>
                     <div className="form-row">
-                        <input
-                            id="grads-east-secs"
-                            value={formState.grads_east}
-                            className="coord sec"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            name="grads_east"
-                            placeholder="00"
-                            pattern="[0-9]*"
-                            inputMode="numeric"
-                            maxLength="3"
-                        />
-                        <label htmlFor="grads-east-secs">°</label>
-                        <input
-                            id="mins-east-secs"
-                            value={formState.mins_east}
-                            className="coord sec"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            name="mins_east"
-                            placeholder="00"
-                            pattern="[0-9]*"
-                            inputMode="numeric"
-                            maxLength="2"
-                        />
-                        <label htmlFor="mins-east-secs">'</label>
-                        <input
-                            id="secs-east"
-                            value={formState.secs_east}
-                            className="coord sec"
-                            onChange={(e) => handleInputChange(coordFormat, e)}
-                            name="secs_east"
-                            placeholder="00.00"
-                            pattern="[0-9.]*"
-                            inputMode="decimal"
-                            maxLength="5"
-                        />
-                        <label htmlFor="secs-east">"</label>
+                        {renderInputField("grads-east-secs", "grads_east", formState.grads_east, "00", "[0-9]*", "numeric", 2, "°")}
+                        {renderInputField("mins-east-secs", "mins_east", formState.mins_east, "00", "[0-9]*", "numeric", 2, "'")}
+                        {renderInputField("secs-east", "secs_east", formState.secs_east, "00.00", "[0-9.]*", "decimal", 5, '"')}
                     </div>
                 </div>
             )}

@@ -107,8 +107,12 @@ const FormModePage = () => {
                 end_year: formState.end_year || parseInt(formState.end_date.split('-')[0]),
                 end_month: formState.end_month || parseInt(formState.end_date.split('-')[1]),
                 end_day: formState.end_day || parseInt(formState.end_date.split('-')[2]),
+                eve_REM: formState.eve_REM,
                 family: formState.family,
                 genus: formState.genus,
+                geo_origin: formState.geo_origin,
+                geo_REM: formState.geo_REM,
+                geo_uncert: formState.geo_uncert,
                 is_defined_species: !formState.tax_sp_def,
                 is_in_wsc: formState.tax_nsp,
                 is_new_species: formState.is_new_species,
@@ -121,7 +125,8 @@ const FormModePage = () => {
                 selective_gain: formState.selective_gain,
                 species: formState.species,
                 specimens: formState.specimens,
-                taxonomic_notes: formState.taxonomic_notes
+                taxonomic_notes: formState.taxonomic_notes,
+                type_status: formState.type_status
             };
             console.log("Отправка данных:", recordData);
             await apiService.insertRecord(recordData);
@@ -222,6 +227,7 @@ const FormModePage = () => {
                                     className="text-input"
                                     id="geo_uncert"
                                     type="number"
+                                    step="0.1"
                                     name="geo_uncert"
                                     value={formState.geo_uncert}
                                     onChange={handleInputChange}
