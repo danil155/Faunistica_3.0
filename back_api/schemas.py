@@ -20,8 +20,8 @@ class InfoResponse(BaseModel):
     region: Optional[str] = None
     district: Optional[str] = None
     gathering_place: Optional[str] = None
-    coordinate_north: Optional[Dict[str, Optional[str]]] = None
-    coordinate_east: Optional[Dict[str, Optional[str]]] = None
+    coordinate_north: Optional[Dict[str, Optional[float]]] = None
+    coordinate_east: Optional[Dict[str, Optional[float]]] = None
     date: Optional[str] = None
     family: Optional[str] = None
     genus: Optional[str] = None
