@@ -18,7 +18,7 @@ def clean_value(value):
     return value
 
 
-def specimen_parse(specimens: Optional[dict]) -> Optional[str, int]:
+def specimen_parse(specimens):
     if not specimens:
         return None, 0
 
