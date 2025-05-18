@@ -55,7 +55,7 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
         coord_dict.update({
             "degrees": float(degrees),
             "minutes": float(minutes),
-            "seconds": 0.0,
+            "seconds": None,
             "decimal": dms_to_decimal(degrees, minutes, 0, direction),
         })
         return coord_dict
@@ -69,8 +69,8 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
         degrees, direction = match.groups()
         coord_dict.update({
             "degrees": float(degrees),
-            "minutes": 0.0,
-            "seconds": 0.0,
+            "minutes": None,
+            "seconds": None,
             "decimal": dms_to_decimal(degrees, 0, 0, direction),
         })
         return coord_dict
