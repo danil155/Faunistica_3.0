@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 async def bot_start() -> None:
     try:
-        bot = Bot(token=config.TEST_BOT_TOKEN)
+        bot = Bot(token=config.BOT_TOKEN)
 
         dp = Dispatcher(storage=MemoryStorage())
 
