@@ -15,6 +15,10 @@ def get_location_names(lat, lon):
 
     try:
         location = geolocator.reverse((lat, lon), language='ru')
+
+        if location is None:
+            raise HTTPException(status_code=404, detail="Location not found for the given coordinates")
+
         address = location.raw.get('address', {})
 
         country = address.get('country', None)

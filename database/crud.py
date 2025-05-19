@@ -400,3 +400,10 @@ async def get_statistics(session: AsyncSession):
     ]
 
     return stats
+
+
+@handle_db_errors
+async def get_user_records(session: AsyncSession, user_id: int):
+    stmt = select(Record).where(Record.user_id == user_id)
+    result = await session.execute(stmt)
+    return result.scalars().all()
