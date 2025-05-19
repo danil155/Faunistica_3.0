@@ -29,13 +29,14 @@ def specimen_parse(specimens):
         if count is not None and count != 0:
             entries.append(f"{count} {label}")
             summ += count
+        return summ
 
-    add_entry(specimens.get("male_adult"), "mmm", num)
-    add_entry(specimens.get("female_adult"), "fff", num)
-    add_entry(specimens.get("male_juvenile"), "ssm", num)
-    add_entry(specimens.get("female_juvenile"), "ssf", num)
-    add_entry(specimens.get("undefined_adult"), "adu", num)
-    add_entry(specimens.get("undefined_juvenile"), "juv", num)
+    num = add_entry(specimens.get("male_adult"), "mmm", num)
+    num = add_entry(specimens.get("female_adult"), "fff", num)
+    num = add_entry(specimens.get("male_juvenile"), "ssm", num)
+    num = add_entry(specimens.get("female_juvenile"), "ssf", num)
+    num = add_entry(specimens.get("undefined_adult"), "adu", num)
+    num = add_entry(specimens.get("undefined_juvenile"), "juv", num)
     if entries:
         res = " | ".join(entries)
         return res, num

@@ -52,7 +52,7 @@ class InsertRecordsRequest(BaseModel):
     genus: Optional[str] = None
     geo_origin: Optional[str] = None
     geo_REM: Optional[str] = None
-    geo_uncert: Optional[int] = None
+    geo_uncert: Optional[float] = None
     is_defined_species: Optional[bool] = None
     is_in_wsc: Optional[bool] = None
     is_new_species: Optional[bool] = None
