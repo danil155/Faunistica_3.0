@@ -82,23 +82,32 @@ const TextModePage = () => {
       }
 
       // Обновление состояния формы
-      setFormState(prev => ({
-        ...prev,
+      setFormState(prev => {
+        const mergedResult = {
+          ...prev,
+          ...Object.fromEntries(
+              Object.entries(result).filter(([_, value]) => value !== undefined && value !== null && value !== '')
+          ),
+          specimens: {
+            ...prev.specimens,
+            ...specimens
+          }
+        };
 
-        ...result,
-        ...processResult,
-        specimens: specimens,
-        ...Object.entries(pinnedData).reduce((acc, [section, sectionData]) => {
+        Object.entries(pinnedData).forEach(([section, sectionData]) => {
           Object.entries(sectionData).forEach(([field, value]) => {
-            if (!(field in result)) {
-              acc[field] = value;
+            if (!(field in mergedResult)) {
+              mergedResult[field] = value;
             }
           });
-          return acc;
-        }, {})
-      }));
+        });
+
+        return mergedResult;
+      });
+
       console.log(formState.genus)
       navigate('/form');
+
     } catch (error) {
       console.error("Ошибка запроса:", error);
       setError(error.message || "Произошла ошибка при обработке текста");
