@@ -127,6 +127,79 @@ a {
     font-size: 14px;
 }
 
+.location-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 18px;
+}
+
+.location-pin-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  color: #4CAF50;
+}
+
+.location-pin-button:hover {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.location-pin-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  color: #cccccc;
+}
+
+.location-pin-button:hover {
+  opacity: 1;
+  visibility: visible;
+  margin-bottom: 12px;
+}
+
+.pulse-icon {
+  animation: pulse 1.5s infinite ease-in-out;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.location-pin-button::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  pointer-events: none;
+  margin-bottom: 10px;
+}
+
+.location-pin-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Форма */
 .specimen-form {
   background-color: #f8f9fa;

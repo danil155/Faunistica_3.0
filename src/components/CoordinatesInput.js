@@ -242,14 +242,19 @@ export const CoordinatesInput = () => {
                     </div>
                 </div>
             )}
-						<div className="form-group">
+            <div className="form-group location-wrapper">
                 <button 
                     type="button" 
                     onClick={getLocationFromCoordinates}
                     disabled={isLoading || disabled}
-                    className="location-button"
+                    className="location-pin-button"
+                    title="Определить местоположение"
                 >
-                    {isLoading ? "Определение..." : "Определить местоположение"}
+                    {isLoading ? (
+                        <span className="pulse-icon">✈️</span>
+                    ) : (
+                        <span className="pin-icon">✈️</span>
+                    )}
                 </button>
                 
                 {error && <div className="location-error">{error}</div>}
