@@ -1,9 +1,13 @@
 import { useFormContext } from "../pages/FormContext";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 
 export const CoordinatesInput = () => {
     const { formState, setFormState } = useFormContext();
     const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
+    let disabled = formState.geo_origin === "nothing";
+    useEffect(() => {
+        disabled = formState.geo_origin === "nothing"
+    }, [formState.geo_origin])
 
     const clearCoordFields = () => {
         setFormState({
@@ -96,6 +100,7 @@ export const CoordinatesInput = () => {
                 className={`coord ${unit === '"' ? 'sec' : ''}`}
                 name={name}
                 value={value}
+                disabled={disabled}
                 onChange={(e) => handleInputChange(coordFormat, e)}
                 placeholder={placeholder}
                 pattern={pattern}
@@ -128,32 +133,10 @@ export const CoordinatesInput = () => {
 
             {coordFormat === "grads"  ? (
                 <div className="form-group">
-                    <label htmlFor="latitude">Широта N°</label>
-                    <input
-                        id="latitude"
-                        className="text-input"
-                        type="text"
-                        name="coordinate_north"
-                        value={formState.coordinate_north}
-                        onChange={(e) => handleInputChange(coordFormat, e)}
-                        placeholder="00.00000"
-                        pattern="\d{2}\.\d{1,5}"
-                        inputMode="decimal"
-                        maxLength="8"
-                    />
-                    <label htmlFor="longitude">Долгота E°</label>
-                    <input
-                        id="longitude"
-                        className="text-input"
-                        type="text"
-                        name="coordinate_east"
-                        value={formState.coordinate_east}
-                        onChange={(e) => handleInputChange(coordFormat, e)}
-                        placeholder="00.00000"
-                        pattern="\d{2}\.\d{1,5}"
-                        inputMode="decimal"
-                        maxLength="8"
-                    />
+                    <label htmlFor="grads-north">Широта N°</label>
+                    {renderInputField("grads-north", "grads_north", formState.grads_north, "00.00000", "[0-9.]*", "decimal", 8, "")}
+                    <label htmlFor="grads-east">Долгота E°</label>
+                    {renderInputField("grads-east", "grads_east", formState.grads_east, "00.00000", "[0-9.]*", "decimal", 8, "")}
                 </div>
             ) : coordFormat === "mins" ? (
                 <div className="form-group">

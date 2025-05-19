@@ -155,8 +155,7 @@ a {
 }
 
 .form-group {
-  min-width: 300px;
-  max-width: 400px;
+  width: 300px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;

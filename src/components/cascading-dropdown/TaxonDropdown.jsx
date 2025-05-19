@@ -1,9 +1,9 @@
-import {Autocomplete, TextField} from "@mui/material";
-import React, {useMemo, useState} from "react";
-import {useFormContext} from "../../pages/FormContext";
-import {apiService} from "../../api";
+import { Autocomplete, TextField } from "@mui/material";
+import React, { useMemo, useState } from "react";
+import { useFormContext } from "../../pages/FormContext";
+import { apiService } from "../../api";
 
-const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
+const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }) => {
     const { formState, setFormState } = useFormContext();
     const [loading, setLoading] = useState(false);
 
@@ -23,7 +23,7 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
         family: '',
         genus: '',
         species: '',
-    })
+    });
 
     const debounce = (func, delay) => {
         let timeoutId;
@@ -42,16 +42,16 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
         setLoading(true);
         try {
             const filters = {
-                    family: null,
-                    genus: null
+                family: null,
+                genus: null
             };
 
             if (fieldName === 'genus') {
-                    filters.family = formState.family;
+                filters.family = formState.family;
             }
             if (fieldName === 'species') {
-                    filters.family = formState.family;
-                    filters.genus = formState.genus;
+                filters.family = formState.family;
+                filters.genus = formState.genus;
             }
             const data = await apiService.suggestTaxon({
                 field: fieldName,
@@ -67,13 +67,13 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
         } finally {
             setLoading(false);
         }
-    }, debounceTime), [debounceTime, formState.family, formState.genus, isInList]);
+    }, debounceTime), [debounceTime, formState.family, formState.genus]);
 
     const updateField = (fieldName, value) => {
         if (value === "Не определено") {
             setFormState(prev => ({
                 ...prev,
-                [fieldName]: null
+                [fieldName]: "unknown"
             }));
         } else {
             setFormState(prev => ({
@@ -99,7 +99,7 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                 if (formState.genus || formState.species) {
                     updateField('genus', '');
                     updateField('species', '');
-                    setOptions({family: autofillResult.family, genus: [], species: [] });
+                    setOptions({ family: autofillResult.family, genus: [], species: [] });
                 }
             } else if (fieldName === 'genus') {
                 if (formState.species) {
@@ -108,7 +108,7 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                 }
             }
         } catch (e) {
-            new Error("uwu")
+            console.error("Error in autoUpdate:", e);
         }
     }, debounceTime), [formState.genus, formState.species, isInList]);
 
@@ -130,24 +130,25 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                             }}
                             onInputChange={(_, input, reason) => {
                                 if (reason === "clear" || reason === "removeOption" || reason === "reset") {
-                                    setInputValues({...inputValues, [level.name]: ""});
+                                    setInputValues({ ...inputValues, [level.name]: "" });
                                 } else if (!options[level.name].includes(input)) {
-                                    setInputValues({...inputValues, [level.name]: input});
+                                    setInputValues({ ...inputValues, [level.name]: input });
                                     fetchWithFilters(level.name, input);
                                 }
                             }}
                             autoSelect={true}
-                            value={formState[level.name]}
+                            value={formState[level.name] === "unknown" ? "Не определено" : formState[level.name]}
                             autoHighlight={true}
                             id={level.name}
                             options={options[level.name]}
                             loading={loading}
-                            disabled={(isDefined || !(formState.genus === null)) && (level.name === "species")}
+                            disabled={(isDefined || (formState.genus === "unknown")) && (level.name === "species")}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    placeholder={isDefined && (level.name === "species") ? "Не определено" : level.placeholder}
+                                    placeholder={(isDefined || (formState.genus === "unknown")) && (level.name === "species") ? "Не определено" : level.placeholder}
                                     size="small"
+                                    required={level.name !== "species" || !isDefined}
                                 />
                             )}
                         />
@@ -157,17 +158,18 @@ const TaxonDropdown = ({isDefined=true, isInList=true, debounceTime = 300}) => {
                             id={level.name}
                             value={formState[level.name]?.name || ''}
                             onChange={(e) => {
-                                updateField(level.name, {name: e.target.value});
+                                updateField(level.name, { name: e.target.value });
                             }}
                             placeholder={`Введите ${level.heading.toLowerCase()}`}
                             disabled={isDefined}
                             fullWidth
+                            required={!isDefined}
                         />
                     )}
                 </div>
             ))}
         </div>
-    )
-}
+    );
+};
 
 export default TaxonDropdown;

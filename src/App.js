@@ -4,24 +4,23 @@ import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import Home from "./pages/Home";
 import LoginModal from './components/login/LoginModal';
-import { useNavigate } from 'react-router-dom';
-import { Route, Routes } from 'react-router-dom';
+import { useNavigate, Routes, Route, Outlet } from 'react-router-dom';
 import FormModePage from "./pages/FormModePage";
 import TextModePage from "./pages/TextModePage";
 import useToken from "./components/useToken";
 import StatsPage from "./pages/Stats";
-import { Outlet } from 'react-router-dom';
 import FeedbackPage from "./pages/Feedback";
 import ProfilePage from "./pages/ProfilePage";
 
 function App() {
   const navigate = useNavigate();
-  const { isAuth, login, logout } = useToken();
+  const { isAuth, isLoading, login, logout } = useToken();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
   const handleLogin = async (username, password) => {
     try {
       await login(username, password);
+      setShowLoginModal(false);
       return true;
     } catch (error) {
       console.error("Login error:", error);
@@ -35,29 +34,18 @@ function App() {
     localStorage.removeItem('pinnedSections');
     localStorage.removeItem('pinnedData');
     localStorage.removeItem('collapsedSections');
-    navigate("/");
   };
 
-  const handleClose = () => {
-    setShowLoginModal(false);
-    navigate("/");
-  };
-
-  const PrivateRoutes = ({ auth }) => {
-    const [initialCheckDone, setInitialCheckDone] = useState(false);
-
+  const PrivateRoutes = ({ auth, loading }) => {
     useEffect(() => {
-      if (auth !== null && !initialCheckDone) {
-        if (!auth) {
-          setShowLoginModal(true);
-          navigate("/", { state: { loginRedirect: true } });
-        }
-        setInitialCheckDone(true);
+      if (!loading && auth === false) {
+        setShowLoginModal(true);
+        navigate("/", { replace: true });
       }
-    }, [auth, initialCheckDone]);
+    }, [auth, loading, navigate]);
 
-    if (auth === false) {
-      return null;
+    if (loading) {
+      return <div>Загрузка...</div>; // Или ваш лоадер
     }
 
     return auth ? <Outlet /> : null;
@@ -67,14 +55,14 @@ function App() {
       <div className="App">
         <Navbar
             isAuthenticated={isAuth}
-            isLoading={isAuth === null}
+            isLoading={isLoading}
             onLoginClick={() => setShowLoginModal(true)}
             onLogoutClick={handleLogout}
         />
 
-        {showLoginModal && isAuth === false && (
+        {showLoginModal && (
             <LoginModal
-                onClose={handleClose}
+                onClose={() => setShowLoginModal(false)}
                 onLogin={handleLogin}
             />
         )}
@@ -86,14 +74,12 @@ function App() {
                 onLoginClick={() => setShowLoginModal(true)}
             />
           }/>
-          <Route path="/profile" element={<PrivateRoutes auth={isAuth} />}>
-            <Route index element={<ProfilePage />} />
-          </Route>
-          <Route path="/feedback" element={<FeedbackPage />} />
-          <Route element={<PrivateRoutes auth={isAuth} />}>
+          <Route element={<PrivateRoutes auth={isAuth} loading={isLoading} />}>
+            <Route path="/profile" element={<ProfilePage />} />
             <Route path="/form" element={<FormModePage />} />
             <Route path="/text" element={<TextModePage />} />
           </Route>
+          <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/stats" element={<StatsPage />} />
         </Routes>
 
