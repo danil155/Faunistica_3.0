@@ -231,7 +231,7 @@ def format_event_date(yy, mm, dd, yy_end, mm_end, dd_end) -> str:
     def fmt(y, m, d):
         parts = []
         if y:
-            parts.append(str(y)[-2:])
+            parts.append(str(y))
             if m:
                 parts.append(f"{m:02}")
                 if d:
