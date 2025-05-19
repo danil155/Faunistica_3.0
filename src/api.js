@@ -1,6 +1,9 @@
 import axios from 'axios';
 
+const API_URL = 'http://localhost:5001';
+
 const api = axios.create({
+		baseURL: API_URL,
     withCredentials: true
 });
 
@@ -170,7 +173,23 @@ const apiService = {
         } catch (error) {
             return null;
         }
-    }
+    },
+		
+		downloadRecords: async () => {
+				try {
+						const response = await api.post('/api/get_records_data', {}, {
+								responseType: 'blob'
+						});
+						return response;
+				} catch (error) {
+						if (error.response?.status === 429) {
+								throw new Error('Пожалуйста, подождите минуту перед следующей загрузкой');
+						} else if (error.response?.status === 404) {
+								throw new Error('Записи не найдены');
+						}
+						throw error;
+				}
+		},
 };
 
 api.interceptors.request.use((config) => {

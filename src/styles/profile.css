@@ -106,6 +106,51 @@
     gap: 30px;
 }
 
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.download-records-button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.download-records-button:hover {
+    background-color: #45a049;
+}
+
+.download-records-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.download-error {
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #ffebee;
+    color: #c62828;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.download-success {
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #e8f5e9;
+    color: #2e7d32;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
 .section-title {
     color: #2c3e50;
     margin-bottom: 20px;

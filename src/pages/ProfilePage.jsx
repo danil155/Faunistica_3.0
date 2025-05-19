@@ -57,6 +57,60 @@ const ProfilePage = () => {
 
         fetchProfile();
     }, []);
+		
+		const [downloadStatus, setDownloadStatus] = useState({
+        loading: false,
+        error: null,
+        success: false
+    });
+		
+		const handleDownloadRecords = async () => {
+        try {
+            setDownloadStatus({
+                loading: true,
+                error: null,
+                success: false
+            });
+
+            const response = await apiService.downloadRecords();
+            
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            
+            const contentDisposition = response.headers['content-disposition'];
+            let filename = 'records.xlsx';
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="?(.+)"?/);
+                if (filenameMatch && filenameMatch[1]) {
+                    filename = filenameMatch[1];
+                }
+            }
+            
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            setDownloadStatus({
+                loading: false,
+                error: null,
+                success: true
+            });
+
+            setTimeout(() => {
+                setDownloadStatus(prev => ({ ...prev, success: false }));
+            }, 3000);
+
+        } catch (error) {
+            console.error("Download error:", error);
+            setDownloadStatus({
+                loading: false,
+                error: error.message || "Ошибка при загрузке записей",
+                success: false
+            });
+        }
+    };
 
     const requestSort = (key) => {
         let direction = 'asc';
@@ -119,8 +173,28 @@ const ProfilePage = () => {
             {/* Основное содержимое */}
             <div className="profile-content">
                 <section className="stats-section">
-                    <h2 className="section-title">Основная статистика</h2>
-
+                    <div className="section-header">
+												<h2 className="section-title">Основная статистика</h2>
+												<button 
+														onClick={handleDownloadRecords}
+														disabled={downloadStatus.loading || profile.records.length === 0}
+														className="download-records-button"
+												>
+														{downloadStatus.loading ? 'Загрузка...' : 'Скачать все записи'}
+												</button>
+										</div>
+										
+										{downloadStatus.error && (
+												<div className="download-error">
+														{downloadStatus.error}
+												</div>
+										)}
+										{downloadStatus.success && (
+												<div className="download-success">
+														Файл успешно скачан!
+												</div>
+										)}
+										
                     <div className="stats-grid">
                         <div className="stat-card">
                             <h3>Публикаций обработано</h3>
