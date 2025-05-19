@@ -1,6 +1,7 @@
 .stats-container {
     margin: 25px auto;
     padding: 0 25px;
+    max-width: 100vw;
 }
 
 #stats {
@@ -73,4 +74,15 @@
 .stats-table th:not(:last-child),
 .stats-table td:not(:last-child) {
     border-right: 1px solid #dddddd;
+}
+
+@media (max-width: 561px) {
+    .info-container div svg {
+        max-width: 100%;
+    }
+
+    .stats-table {
+        display: block;
+        overflow-x: auto;
+    }
 }
