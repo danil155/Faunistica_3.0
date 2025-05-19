@@ -17,6 +17,11 @@ logs_dir.mkdir(exist_ok=True)
 
 log_format = "%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s"
 
+
+def only_warning(record):
+    return record.levelno == logging.WARNING
+
+
 main_handler = TimedRotatingFileHandler(
     filename=logs_dir / "service.log",
     when='midnight',
@@ -24,6 +29,7 @@ main_handler = TimedRotatingFileHandler(
     encoding='utf-8'
 )
 main_handler.setLevel(logging.WARNING)
+main_handler.addFilter(only_warning)
 main_handler.setFormatter(logging.Formatter(log_format))
 
 error_handler = TimedRotatingFileHandler(
@@ -47,7 +53,10 @@ with open('requirements.txt', 'r', encoding='utf-8') as file:
 
 for lib_name in lib_names:
     lib_logger = logging.getLogger(lib_name)
-    lib_logger.setLevel(logging.WARNING)
+    if lib_name == 'aiogram':
+        lib_logger.setLevel(logging.CRITICAL)
+    else:
+        lib_logger.setLevel(logging.WARNING)
     lib_logger.addHandler(main_handler)
     lib_logger.addHandler(error_handler)
     lib_logger.propagate = False
