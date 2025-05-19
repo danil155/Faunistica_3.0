@@ -1,9 +1,13 @@
 import { useFormContext } from "../pages/FormContext";
 import {useEffect, useState} from "react";
+import { apiService } from "../api";
 
 export const CoordinatesInput = () => {
     const { formState, setFormState } = useFormContext();
     const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+		
     let disabled = formState.geo_origin === "nothing";
     useEffect(() => {
         disabled = formState.geo_origin === "nothing"
@@ -91,6 +95,77 @@ export const CoordinatesInput = () => {
             return updatedState;
         });
     };
+		
+		const getLocationFromCoordinates = async () => {
+        if (coordFormat === "grads") {
+            if (!formState.grads_north || !formState.grads_east) {
+                setError("Пожалуйста, заполните координаты");
+                return;
+            }
+        } else if (coordFormat === "mins") {
+            if (!formState.grads_north || !formState.mins_north || 
+                !formState.grads_east || !formState.mins_east) {
+                setError("Пожалуйста, заполните координаты");
+                return;
+            }
+        } else if (coordFormat === "secs") {
+            if (!formState.grads_north || !formState.mins_north || !formState.secs_north ||
+                !formState.grads_east || !formState.mins_east || !formState.secs_east) {
+                setError("Пожалуйста, заполните координаты");
+                return;
+            }
+        }
+
+        setIsLoading(true);
+        setError(null);
+
+        try {
+            let requestData = {};
+            
+            if (coordFormat === "grads") {
+                requestData = {
+                    degrees_n: parseFloat(formState.grads_north),
+                    degrees_e: parseFloat(formState.grads_east)
+                };
+            } else if (coordFormat === "mins") {
+                requestData = {
+                    degrees_n: parseInt(formState.grads_north),
+                    minutes_n: parseFloat(formState.mins_north),
+                    degrees_e: parseInt(formState.grads_east),
+                    minutes_e: parseFloat(formState.mins_east)
+                };
+            } else if (coordFormat === "secs") {
+                requestData = {
+                    degrees_n: parseInt(formState.grads_north),
+                    minutes_n: parseInt(formState.mins_north),
+                    seconds_n: parseFloat(formState.secs_north),
+                    degrees_e: parseInt(formState.grads_east),
+                    minutes_e: parseInt(formState.mins_east),
+                    seconds_e: parseFloat(formState.secs_east)
+                };
+            }
+
+            const location = await apiService.getLocationFromCoordinates(requestData);
+            
+            if (!location.country && !location.region && !location.district) {
+                setError("Не удалось определить местоположение по координатам");
+                return;
+            }
+
+            setFormState(prev => ({
+                ...prev,
+                country: location.country || '',
+                region: location.region || '',
+                district: location.district || ''
+            }));
+
+        } catch (err) {
+            console.error("Error getting location:", err);
+            setError("Произошла ошибка при определении местоположения");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const renderInputField = (id, name, value, placeholder, pattern, inputMode, maxLength, unit) => (
         <>
@@ -167,6 +242,18 @@ export const CoordinatesInput = () => {
                     </div>
                 </div>
             )}
+						<div className="form-group">
+                <button 
+                    type="button" 
+                    onClick={getLocationFromCoordinates}
+                    disabled={isLoading || disabled}
+                    className="location-button"
+                >
+                    {isLoading ? "Определение..." : "Определить местоположение"}
+                </button>
+                
+                {error && <div className="location-error">{error}</div>}
+            </div>
         </>
     );
 };

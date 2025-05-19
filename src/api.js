@@ -1,6 +1,9 @@
 import axios from 'axios';
 
+const API_URL = 'http://localhost:5001';
+
 const api = axios.create({
+		baseURL: API_URL,
     withCredentials: true
 });
 
@@ -115,6 +118,16 @@ const apiService = {
             throw new Error(error);
         }
     },
+		
+		getLocationFromCoordinates: async (coordinates) => {
+				try {
+						const response = await api.post('/api/get_loc', coordinates);
+						return response.data;
+				} catch (error) {
+						console.error("Error getting location:", error);
+						throw error;
+				}
+		},
 
     postSupport: async (data) => {
         try {
