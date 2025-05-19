@@ -1,9 +1,12 @@
 from fastapi import APIRouter, Depends, Request, HTTPException
 from geopy.geocoders import Nominatim
 from geopy.exc import GeocoderTimedOut
+import logging
+
 from back_api.schemas import GetLocationResponse, GetLocationRequest
 from .token import get_current_user
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -23,9 +26,11 @@ def get_location_names(lat, lon):
             "region": region,
             "district": district
         }
-    except GeocoderTimedOut:
+    except GeocoderTimedOut as e:
+        logger.error(f' GeocoderTimedOut: {e}', exc_info=True)
         raise HTTPException(status_code=408, detail="Geocoding service timeout")
     except Exception as e:
+        logger.error(f' HTTP Error: {e}', exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 

@@ -1,6 +1,6 @@
 import httpx
+
 from config.config import BOT_TOKEN, ADMIN_CHAT_ID
-from typing import Optional
 
 
 async def send_support_message(data, user_id) -> None:

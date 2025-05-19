@@ -5,23 +5,27 @@ from sqlalchemy.future import select
 from datetime import datetime
 import functools
 import asyncio
-from .hash import check_pass
 from typing import List, Dict
+import logging
+
+from .hash import check_pass
 from .models import User, Action, Publ, Record
+
+logger = logging.getLogger(__name__)
 
 
 # === UTILS ===
-def handle_db_errors(func):
-    @functools.wraps(func)
+def handle_db_errors(function):
+    @functools.wraps(function)
     async def wrapper(session: AsyncSession, *args, **kwargs):
         try:
-            return await func(session, *args, **kwargs)
+            return await function(session, *args, **kwargs)
         except IntegrityError as e:
             await session.rollback()
-            print(f"IntegrityError in {func.__name__}: {e}")
+            logger.error(f' IntegrityError in {function.__name__}: {e}', exc_info=True)
         except SQLAlchemyError as e:
             await session.rollback()
-            print(f"SQLAlchemyError in {func.__name__}: {e}")
+            logger.error(f'SQLAlchemyError in {function.__name__}: {e}', exc_info=True)
     return wrapper
 
 

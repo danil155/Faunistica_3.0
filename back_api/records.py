@@ -1,14 +1,17 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
-from back_api.schemas import InsertRecordsRequest
 from datetime import datetime, UTC
 import re
 from typing import Optional
+import logging
+
 from database.database import get_session
 from database.crud import add_record_from_json, get_user
 from .rate_limiter import limiter
 from .token import get_current_user
+from back_api.schemas import InsertRecordsRequest
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -45,7 +48,6 @@ def specimen_parse(specimens):
         result = " | ".join(entries)
         return result, int(total) if all_whole else round(total, 6)
     return None, 0
-
 
 
 def num_of_specimen(specimens: Optional[dict]) -> Optional[int]:
@@ -89,6 +91,7 @@ def parse_coordinate(coord: str) -> float:
         decimal = degrees + (minutes / 60) + (seconds / 3600)
         return round(decimal, 6)
 
+    logger.warning(f' Invalid coordinate format: {coord}')
     raise ValueError(f"Invalid coordinate format: {coord}")
 
 
@@ -97,7 +100,8 @@ def safe_coord_parse(coord: Optional[str]) -> Optional[float]:
         return None
     try:
         return parse_coordinate(coord)
-    except ValueError:
+    except ValueError as e:
+        logger.error(f' Value error: {e}', exc_info=True)
         return None
 
 
@@ -160,4 +164,5 @@ async def insert_record(
         await add_record_from_json(session, record_json)
         return {"message": "OK"}
     except Exception as e:
+        logger.error(f' Server database error: {e}', exc_info=True)
         raise HTTPException(status_code=500, detail=f"Server database error: {str(e)}")

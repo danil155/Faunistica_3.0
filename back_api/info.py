@@ -1,9 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
+import logging
+
 from .schemas import InfoRequest, InfoResponse
 from text_processing.splitting import get_separated_parameters
 from .rate_limiter import limiter
 from .token import get_current_user
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -21,6 +24,7 @@ def get_info(
         _user_data: dict = Depends(get_current_user)
 ):
     if not data.text.strip():
+        logger.warning(f' HTTP error: Text cannot be empty')
         raise HTTPException(status_code=400, detail="Text cannot be empty")
     info = get_separated_parameters(data.text)
     coordinate_north = {

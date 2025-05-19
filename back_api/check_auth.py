@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+
 from .token import get_current_user
 
 router = APIRouter()

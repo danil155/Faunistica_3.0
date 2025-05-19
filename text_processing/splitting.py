@@ -104,6 +104,7 @@ def get_coordinates(text: str) -> list[dict]:
             coordinates.append(parsed_coord)
         except (ValueError, IndexError, re.error) as e:
             logger.error(f' Error when searching for coordinates: {e}', exc_info=True)
+            raise
             continue
 
     return coordinates
@@ -120,6 +121,7 @@ def get_region(text: str) -> str:
         return region_match.group(1) if region_match else str()
     except (AttributeError, IndexError, re.error) as e:
         logger.error(f' Error when searching for region: {e}', exc_info=True)
+        raise
         return str()
 
 
@@ -134,6 +136,7 @@ def get_district(text: str) -> str:
         return district_match.group(1) if district_match else str()
     except (AttributeError, IndexError, re.error) as e:
         logger.error(f' Error when searching for district: {e}', exc_info=True)
+        raise
         return str()
 
 
@@ -164,6 +167,7 @@ def get_date(text: str) -> str:
                     return str()
             except ValueError as e:
                 logger.error(f' Date error: {e}', exc_info=True)
+                raise
                 return str()
 
             date_current[0], date_current[2] = date_current[2], date_current[0]
@@ -172,6 +176,7 @@ def get_date(text: str) -> str:
         return str()
     except (AttributeError, IndexError, KeyError, ValueError, re.error) as e:
         logger.error(f' Error when searching for date: {e}', exc_info=True)
+        raise
         return str()
 
 
@@ -207,6 +212,7 @@ def get_collectors(text: str) -> list:
                     collectors += [collector]
     except (AttributeError, TypeError) as e:
         logger.error(f' Error when searching for collectors: {e}', exc_info=True)
+        raise
 
     return collectors
 
@@ -239,6 +245,7 @@ def get_numbers_species(text: str) -> dict:
                     species_count['female'] += count
             except (IndexError, ValueError) as e:
                 logger.error(f' Error parsing: {e}', exc_info=True)
+                raise
                 continue
 
         # Subadults
@@ -251,6 +258,7 @@ def get_numbers_species(text: str) -> dict:
                     species_count['sub_female'] += count
             except (IndexError, ValueError) as e:
                 logger.error(f' Error parsing: {e}', exc_info=True)
+                raise
                 continue
 
         # Juveniles
@@ -264,6 +272,7 @@ def get_numbers_species(text: str) -> dict:
                 species_count['juvenile'] += count
             except (IndexError, ValueError, TypeError) as e:
                 logger.error(f' Error parsing: {e}', exc_info=True)
+                raise
                 continue
 
         # Multiple adults
@@ -276,9 +285,11 @@ def get_numbers_species(text: str) -> dict:
                     species_count['male'] += count
             except (IndexError, ValueError) as e:
                 logger.error(f' Error parsing: {e}', exc_info=True)
+                raise
                 continue
     except re.error as e:
         logger.error(f' Error when searching for numbers species: {e}', exc_info=True)
+        raise
     return species_count
 
 
@@ -294,6 +305,7 @@ def check_full_location_data(data: Data) -> None:
             data.gathering_place = data.gathering_place or location_info.get('display_name', "")
     except Exception as e:
         logger.error(f' Error when checking full location data: {e}', exc_info=True)
+        raise
 
 
 def get_separated_parameters(text: str) -> Data:
@@ -329,6 +341,7 @@ def get_separated_parameters(text: str) -> Data:
         check_full_location_data(data)
     except Exception as e:
         logger.critical(f' Critical error in text processing: {e}', exc_info=True)
+        raise
 
     return data
 

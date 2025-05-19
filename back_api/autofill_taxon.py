@@ -1,10 +1,12 @@
+import logging
 from fastapi import APIRouter, HTTPException, Depends, Request
-from back_api.schemas import AutofillTaxonRequest, AutofillTaxonResponse
 import pandas as pd
 from pathlib import Path
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+
 from back_api.token import get_current_user
+from back_api.schemas import AutofillTaxonRequest, AutofillTaxonResponse
 
 router = APIRouter()
 
@@ -12,9 +14,12 @@ csv_path = Path(__file__).resolve().parent.parent / "species_export_20250503.csv
 df = pd.read_csv(csv_path, usecols=["family", "genus", "species"])
 executor = ThreadPoolExecutor()
 
+logger = logging.getLogger(__name__)
+
 
 def autofill_taxon(field: str, text: str) -> AutofillTaxonResponse:
     if field not in ["genus", "species"]:
+        logger.warning(" Invalid field. Must be 'genus' or 'species'.")
         raise ValueError("Invalid field. Must be 'genus' or 'species'.")
 
     query_df = df.copy()
@@ -43,4 +48,5 @@ async def autofill_taxon_endpoint(
         result = await async_autofill_taxon(data.field, data.text)
         return result
     except ValueError as e:
+        logger.error(f' Value error: {e}', exc_info=True)
         raise HTTPException(status_code=400, detail=str(e))
