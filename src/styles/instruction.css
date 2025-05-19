@@ -1,0 +1,78 @@
+.horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 3rem;
+}
+
+.horizontal p {
+    display: inline-block;
+    width: 50%;
+}
+
+.horizontal img {
+    width: 300px;
+    height: fit-content;
+}
+
+.horizontal img.publ {
+    width: 400px;
+}
+
+.instr-content {
+    padding: 0 50px;
+    margin-bottom: 50px;
+}
+
+.instr-content h1 {
+    padding: 20px 0;
+}
+
+.instr-content p {
+    color: black;
+}
+
+.instr-content ol, ul {
+    margin-left: 20px;
+}
+
+.instruction-content .section {
+    display: flex;
+    flex-direction: column;
+    row-gap: 2rem;
+    column-gap: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.img-box {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+img.full-width {
+    width: 100%;
+    margin: 0 auto;
+    display: block;
+}
+
+.section p {
+    margin: 0;
+}
+
+.section img.middle {
+    width: 600px;
+}
+
+.attention {
+    width: 60%;
+    padding: 10px;
+    margin: 0 auto;
+    border: 2px solid orangered;
+
+}
+
+.attention p {
+    color: orangered;
+}
