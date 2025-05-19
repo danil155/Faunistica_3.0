@@ -345,6 +345,7 @@ header a{
 .button_submit_text {
     background-color: var(--main-bg-color);
     color: white;
+    margin-bottom: 20px;
 }
 
 .content {
