@@ -15,7 +15,6 @@ const apiService = {
             console.log('response');
             return response.data;
         } catch (error) {
-            // Обрабатываем ошибку
             if (error.response?.status === 401) {
                 throw new Error('Неверный пароль');
             } else if (error.response?.status === 404) {
