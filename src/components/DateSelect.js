@@ -34,8 +34,9 @@ const DateSelect = () => {
     return (
         <>
             <div className="form-group">
-                <label>Тип даты:</label>
+                <label htmlFor="is_interval">Тип даты:</label>
                 <select
+                    id="is_interval"
                     value={isInterval.toString()}
                     onChange={(e) => { setIsInterval(e.target.value === "true"); resetForm(); }}
                     className="form-control"
@@ -44,8 +45,9 @@ const DateSelect = () => {
                     <option value={true}>Интервал дат</option>
                 </select>
 
-                <label>Точность:</label>
+                <label htmlFor="precision">Точность:</label>
                 <select
+                    id="precision"
                     value={precision}
                     onChange={(e) => {
                         setPrecision(e.target.value);
@@ -64,8 +66,9 @@ const DateSelect = () => {
                 {/* Точная дата */}
                 {precision === 'exact' && (
                     <>
-                        <label>Дата:</label>
+                        <label htmlFor="date">Дата:</label>
                         <input
+                            id="date"
                             type="date"
                             name="begin_date"
                             value={formState.begin_date}
@@ -79,8 +82,9 @@ const DateSelect = () => {
                 {/* До месяца */}
                 {precision === 'month' && (
                     <>
-                        <label>Месяц:</label>
+                        <label htmlFor="month">Месяц:</label>
                         <select
+                            id="month"
                             name="begin_month"
                             value={formState.begin_month || ''}
                             onChange={handleChange}
@@ -94,8 +98,9 @@ const DateSelect = () => {
                             ))}
                         </select>
 
-                        <label>Год:</label>
+                        <label htmlFor="year">Год:</label>
                         <input
+                            id="year"
                             className="text-input"
                             type="number"
                             name="begin_year"

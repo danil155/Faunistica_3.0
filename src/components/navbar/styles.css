@@ -1,5 +1,4 @@
 nav {
-    width: 100vw;
     background-color: #4CAF50;
     position: relative;
 }
@@ -138,7 +137,7 @@ nav {
         flex-direction: column;
         width: 100%;
         text-align: center;
-        margin: 10px 0px;
+        margin: 10px 0;
     }
 
     .nav-list li {

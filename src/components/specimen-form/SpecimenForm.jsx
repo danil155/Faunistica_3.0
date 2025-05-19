@@ -67,8 +67,9 @@ const SpecimenForm = ({ value = [], onChange }) => {
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Пол:</label>
-          <select 
+          <label htmlFor={"gender"} style={{ display: 'block', marginBottom: '5px' }}>Пол:</label>
+          <select
+              id="gender"
             value={currentSpecimen.gender} 
             onChange={handleGenderChange}
             style={{ width: '100%', padding: '8px' }}
@@ -80,8 +81,9 @@ const SpecimenForm = ({ value = [], onChange }) => {
         </div>
         
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Зрелость:</label>
-          <select 
+          <label htmlFor={"maturity"} style={{ display: 'block', marginBottom: '5px' }}>Зрелость:</label>
+          <select
+              id={"maturity"}
             value={currentSpecimen.maturity} 
             onChange={handleMaturityChange}
             style={{ width: '100%', padding: '8px' }}
@@ -93,10 +95,13 @@ const SpecimenForm = ({ value = [], onChange }) => {
         </div>
         
         <div>
-          <label style={{ display: 'block', marginBottom: '5px' }}>Количество:</label>
-          <input 
+          <label htmlFor={"count"} style={{ display: 'block', marginBottom: '5px' }}>Количество:</label>
+          <input
+              id={"count"}
             type="number" 
-            min="1" 
+            min="0"
+              step="0.01"
+              max="8000"
             value={count} 
             onChange={handleCountChange}
             style={{ width: '100%', padding: '8px' }}

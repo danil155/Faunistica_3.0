@@ -50,17 +50,17 @@ function App() {
       if (auth !== null && !initialCheckDone) {
         if (!auth) {
           setShowLoginModal(true);
+          navigate("/", { state: { loginRedirect: true } });
         }
         setInitialCheckDone(true);
       }
     }, [auth, initialCheckDone]);
 
     if (auth === false) {
-			navigate("/", { state: { loginRedirect: true } });
-			return null;
-		}
-		
-		return auth ? <Outlet /> : null;
+      return null;
+    }
+
+    return auth ? <Outlet /> : null;
   };
 
   return (

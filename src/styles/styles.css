@@ -31,6 +31,7 @@ main {
 }
 
 .App {
+    width: 100%;
     display: grid;
     grid-template-rows: auto 1fr auto;
     min-height: 100vh;
@@ -509,7 +510,6 @@ header a{
     }
 
     #article_info_container {
-        text-wrap: normal;
         max-width: 90%;
     }
 }

@@ -301,7 +301,7 @@ const FormModePage = () => {
                                     className="text-input"
                                     type="text"
                                     name={field.name}
-                                    value={formState[field.name]}
+                                    value={formState[field.name] || ""}
                                     onChange={handleInputChange}
                                 />
                             </div>
@@ -361,8 +361,9 @@ const FormModePage = () => {
                             />
                         </div>
                         <div className="form-group">
-                            <label>Коллектор:</label>
+                            <label htmlFor="collector">Коллектор:</label>
                             <input
+                                id="collector"
                                 className="text-input"
                                 type="text"
                                 name="collector"
@@ -372,8 +373,9 @@ const FormModePage = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Единицы измерения:</label>
+                            <label htmlFor="measurement_units">Единицы измерения:</label>
                             <input
+                                id="measurement_units"
                                 className="text-input"
                                 type="text"
                                 name="measurement_units"
@@ -386,8 +388,9 @@ const FormModePage = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Выборочное усиление:</label>
+                            <label htmlFor="selective_gain">Выборочное усиление:</label>
                             <input
+                                id="selective_gain"
                                 className="text-input"
                                 type="text"
                                 name="selective_gain"
@@ -512,8 +515,9 @@ const FormModePage = () => {
                         </div>
                         <TaxonDropdown isDefined={formState.tax_sp_def} isInList={formState.tax_nsp} />
                         <div className="form-group">
-                            <label>Таксономические примечания:</label>
+                            <label htmlFor={"tax_REM"}>Таксономические примечания:</label>
                             <textarea
+                                id={"tax_REM"}
                                 name="taxonomic_notes"
                                 value={formState.taxonomic_notes}
                                 onChange={handleInputChange}

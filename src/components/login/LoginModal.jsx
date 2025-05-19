@@ -67,11 +67,14 @@ const LoginModal = ({ onClose, onLogin }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Данные из Telegram:</label>
+            <label htmlFor="username">Данные из Telegram:</label>
             <input
+                id="username"
+                name="username"
                 className="text-input"
                 type="text"
                 value={username}
+                autoComplete="on"
                 onChange={(e) => {
                   setUsername(e.target.value);
                   setError('');
@@ -80,6 +83,8 @@ const LoginModal = ({ onClose, onLogin }) => {
                 required
             />
             <input
+                name="password"
+                autoComplete="on"
                 className="text-input"
               type="password"
               value={password}

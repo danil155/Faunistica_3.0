@@ -1,6 +1,4 @@
-import React, { useState } from "react";
-import closedLock from "../../img/lock-closed.svg";
-import openLock from "../../img/lock-open.svg";
+import React from "react";
 import "./toggleButton.css";
 
 const PinToggle = ({ isChecked = false, onChange }) => {
@@ -13,6 +11,7 @@ const PinToggle = ({ isChecked = false, onChange }) => {
     return (
       <label className="lock-toggle">
         <input
+            name="lock_toggle"
           type="checkbox"
           className="lock-toggle-input"
           checked={isChecked}

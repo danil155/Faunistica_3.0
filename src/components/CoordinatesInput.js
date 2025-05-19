@@ -1,7 +1,9 @@
 import { useFormContext } from "../pages/FormContext";
+import { useState } from "react";
 
 export const CoordinatesInput = () => {
     const { formState, setFormState } = useFormContext();
+    const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
 
     const clearCoordFields = () => {
         setFormState({
@@ -74,10 +76,10 @@ export const CoordinatesInput = () => {
             };
 
             // Формируем строку координат в зависимости от формата
-            if (formState.coordinate_format === "mins") {
+            if (coordFormat === "mins") {
                 updatedState.coordinate_north = `${updatedState.grads_north || ''}°${updatedState.mins_north || ''}'`;
                 updatedState.coordinate_east = `${updatedState.grads_east || ''}°${updatedState.mins_east || ''}'`;
-            } else if (formState.coordinate_format === "secs") {
+            } else if (coordFormat === "secs") {
                 updatedState.coordinate_north = `${updatedState.grads_north || ''}°${updatedState.mins_north || ''}'${updatedState.secs_north || ''}"`;
                 updatedState.coordinate_east = `${updatedState.grads_east || ''}°${updatedState.mins_east || ''}'${updatedState.secs_east || ''}"`;
             }
@@ -94,7 +96,7 @@ export const CoordinatesInput = () => {
                 className={`coord ${unit === '"' ? 'sec' : ''}`}
                 name={name}
                 value={value}
-                onChange={(e) => handleInputChange(formState.coordinate_format, e)}
+                onChange={(e) => handleInputChange(coordFormat, e)}
                 placeholder={placeholder}
                 pattern={pattern}
                 inputMode={inputMode}
@@ -112,11 +114,11 @@ export const CoordinatesInput = () => {
                     id="coord-format"
                     name="coordinate_format"
                     onChange={(e) => {
-                        setFormState(prev => ({...prev,
-                        [e.target.name]: e.target.value}));
+                        setCoordFormat(e.target.value);
+
                         clearCoordFields();
                     }}
-                    value={formState.coordinate_format}
+                    value={coordFormat}
                 >
                     <option value="grads">ГГ.гггг° (56.83777°)</option>
                     <option value="mins">ГГ°ММ.мм' (56° 50.266')</option>
@@ -124,34 +126,36 @@ export const CoordinatesInput = () => {
                 </select>
             </div>
 
-            {formState.coordinate_format === "grads" ? (
+            {coordFormat === "grads"  ? (
                 <div className="form-group">
-                    <label>Широта N°</label>
+                    <label htmlFor="latitude">Широта N°</label>
                     <input
+                        id="latitude"
                         className="text-input"
                         type="text"
                         name="coordinate_north"
                         value={formState.coordinate_north}
-                        onChange={(e) => handleInputChange(formState.coordinate_format, e)}
+                        onChange={(e) => handleInputChange(coordFormat, e)}
                         placeholder="00.00000"
                         pattern="\d{2}\.\d{1,5}"
                         inputMode="decimal"
                         maxLength="8"
                     />
-                    <label>Долгота E°</label>
+                    <label htmlFor="longitude">Долгота E°</label>
                     <input
+                        id="longitude"
                         className="text-input"
                         type="text"
                         name="coordinate_east"
                         value={formState.coordinate_east}
-                        onChange={(e) => handleInputChange(formState.coordinate_format, e)}
+                        onChange={(e) => handleInputChange(coordFormat, e)}
                         placeholder="00.00000"
                         pattern="\d{2}\.\d{1,5}"
                         inputMode="decimal"
                         maxLength="8"
                     />
                 </div>
-            ) : formState.coordinate_format === "mins" ? (
+            ) : coordFormat === "mins" ? (
                 <div className="form-group">
                     <label>Широта N°</label>
                     <div className="form-row">
