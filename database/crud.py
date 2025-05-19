@@ -206,7 +206,7 @@ async def get_user_stats(session: AsyncSession, user_id: int):
 
     stats.update({
         'rec_ok': rec_ok,
-        'check_ratio': round(rec_ok / total_records, 2) if total_records else 0,
+        'check_ratio': round(rec_check / rec_ok, 2) if total_records else 0,
     })
 
     # Species count
@@ -279,11 +279,26 @@ async def get_personal_stats(session: AsyncSession, user_id: int) -> List[Dict]:
     records = []
     for row in rows:
         date = format_event_date(row.eve_YY, row.eve_MM, row.eve_DD, row.eve_YY_end, row.eve_MM_end, row.eve_DD_end)
-        location = row.adm_district + ', ' + row.adm_region
+        location_parts = []
+        if row.adm_district is not None:
+            location_parts.append(row.adm_district)
+        if row.adm_region is not None:
+            location_parts.append(row.adm_region)
+
+        location = ", ".join(location_parts) if location_parts else "Не заполнено"
+
+        species_parts = []
+        if row.tax_gen is not None:
+            species_parts.append(row.tax_gen)
+        if row.tax_sp is not None:
+            species_parts.append(row.tax_sp)
+
+        species = " ".join(species_parts) if species_parts else "Не заполнено"
+
         records.append({
             "date": str(row.datetime),
             "author": row.author,
-            "species": row.tax_gen + ' ' + row.tax_sp,
+            "species": species,
             "abundance": row.abu,
             "locality": location,
             "even_date": date

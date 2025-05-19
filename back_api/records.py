@@ -119,7 +119,7 @@ async def insert_record(
         "datetime": datetime.now(UTC).replace(tzinfo=None),
         "ip": None,
         "errors": None,
-        "type": None,
+        "type": "rec_ok",
         "adm_country": clean_value(data.country),
         "adm_region": clean_value(data.region),
         "adm_district": clean_value(data.district),
