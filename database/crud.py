@@ -206,7 +206,7 @@ async def get_user_stats(session: AsyncSession, user_id: int):
 
     stats.update({
         'rec_ok': rec_ok,
-        'check_ratio': round(rec_ok / total_records, 1) if total_records else 0,
+        'check_ratio': round(rec_ok / total_records, 2) if total_records else 0,
     })
 
     # Species count
