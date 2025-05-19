@@ -187,13 +187,11 @@ async def get_user_stats(session: AsyncSession, user_id: int):
     # Publications processed
     publ_ids = set()
     recs_stmt = select(Record.publ_id).where(Record.user_id == user_id)
-    actions_stmt = select(Action.object).where(Action.user_id == user_id, Action.action.ilike('%end_publ%'))
 
-    for stmt in (recs_stmt, actions_stmt):
-        result = await session.execute(stmt)
-        publ_ids.update(result.scalars().all())
+    result = await session.execute(recs_stmt)
+    publ_ids.update(result.scalars().all())
 
-    stats['processed_publs'] = max(len(publ_ids) - 1, 0)
+    stats['processed_publs'] = max(len(publ_ids), 0)
 
     # Record stats
     result = await session.execute(select(Record.type).where(Record.user_id == user_id))
