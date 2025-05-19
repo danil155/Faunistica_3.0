@@ -297,6 +297,21 @@ class Messages:
     def response_from_support(reply_text: str) -> str:
         return f'🛠️ Ответ от поддержки:\n\n{reply_text}'
 
+    # ========== LOGS MESSAGE ========== #
+
+    @staticmethod
+    def incorrect_date() -> str:
+        return '❌ Неверный формат даты. Укажите дату в формате ГГГГ-ММ-ДД или "сегодня"'
+
+    @staticmethod
+    def available_log_dates(dates: set) -> str:
+        return '🥹 Доступные даты логов:\n' \
+               f'{"".join(dates)}'
+
+    @staticmethod
+    def logs_not_found(date_str: str) -> str:
+        return f'🤯 Лог-файлы за {date_str} не найдены'
+
     # ========== MENU MESSAGE ========== #
 
     @staticmethod

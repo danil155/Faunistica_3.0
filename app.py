@@ -1,7 +1,6 @@
 import asyncio
 import logging
 from logging.handlers import TimedRotatingFileHandler
-from pathlib import Path
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -11,8 +10,9 @@ from slowapi.middleware import SlowAPIMiddleware
 from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout, suggest_taxon, autofill_taxon, get_publ, support, pers_stats, user_image, get_localion
 from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
 from bot.bot_main import bot_start
+from config.config import LOGS_DIR
 
-logs_dir = Path("logs")
+logs_dir = LOGS_DIR
 logs_dir.mkdir(exist_ok=True)
 
 log_format = "%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s"

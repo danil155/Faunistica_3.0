@@ -1,8 +1,8 @@
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 from aiogram.fsm.context import FSMContext
-from datetime import datetime
+from datetime import datetime, timedelta
 from re import fullmatch
 
 from database.hash import register_user
@@ -12,7 +12,7 @@ from bot.button_markups import Keyboards
 from bot.generate_pass import generate_secure_password
 from database.crud import get_user, create_user, log_action, get_publication, update_user, get_user_stats, \
     get_general_stats, get_volunteers_achievements, count_users_with_name, get_publications_for_language, \
-    is_publ_filled, get_user_id_by_username
+    is_publ_filled
 from bot.states import (
     RegistrationStates,
     SupportStates,
@@ -41,6 +41,7 @@ class Handlers:
         self.router.message.register(self.sociology_command, Command("sociology"))
         self.router.message.register(self.cancel_command, Command("cancel"))
         self.router.message.register(self.reply_to_user_command, Command("reply"))
+        self.router.message.register(self.send_logs_command, Command("logs"))
 
         # Text message handlers
         self.router.message.register(
@@ -509,6 +510,60 @@ class Handlers:
 
         await self.bot.send_message(user_id, Messages.response_from_support(reply_text))
         await message.answer(Messages.response_sent())
+
+    async def send_logs_command(self, message: Message):
+        if message.chat.id != config.ADMIN_CHAT_ID:
+            await message.answer(Messages.no_access_to_command())
+            return
+
+        args = message.text.split(maxsplit=1)
+        if len(args) < 2:
+            await message.answer(Messages.incorrect_date())
+            return
+
+        date_str = args[1]
+        try:
+            if date_str.lower() == 'сегодня':
+                service_log = config.LOGS_DIR / f'service.log'
+                errors_log = config.LOGS_DIR / f'errors.log'
+            else:
+                date = datetime.strptime(date_str, '%Y-%m-%d')
+                date_str = date.strftime('%Y-%m-%d')
+
+                service_log = config.LOGS_DIR / f'service.log.{date_str}'
+                errors_log = config.LOGS_DIR / f'errors.log.{date_str}'
+
+            files_to_send = []
+            if service_log.exists():
+                files_to_send.append(('service.log', service_log))
+            if errors_log.exists():
+                files_to_send.append(('errors.log', errors_log))
+
+            if not files_to_send:
+                await message.answer(Messages.logs_not_found(date_str))
+
+                dates = set()
+                for file in config.LOGS_DIR.glob('*.log*'):
+                    try:
+                        date_part = file.name.split('.')[-1]
+                        datetime.strptime(date_part, "%Y-%m-%d")
+                        dates.add(f'\n{date_part}')
+                    except ValueError:
+                        continue
+
+                await message.answer(Messages.available_log_dates(dates))
+                return
+
+            for name, path in files_to_send:
+                await message.answer_document(
+                    document=FSInputFile(path, filename=f'{name}.{date_str}'),
+                    caption=f'{name} за {date_str}'
+                )
+
+        except ValueError:
+            await message.answer(Messages.incorrect_date())
+        except Exception:
+            await message.answer(Messages.unexpected_error())
 
     # ========== STATE HANDLERS ========== #
 
