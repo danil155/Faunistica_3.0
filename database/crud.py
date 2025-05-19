@@ -1,4 +1,4 @@
-from sqlalchemy import func, update, text
+from sqlalchemy import func, update, text, and_
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
@@ -186,12 +186,16 @@ async def get_user_stats(session: AsyncSession, user_id: int):
 
     # Publications processed
     publ_ids = set()
+    publs = []
     recs_stmt = select(Record.publ_id).where(Record.user_id == user_id)
 
     result = await session.execute(recs_stmt)
-    publ_ids.update(result.scalars().all())
+    for publ_id in result.scalars().all():
+        publs.append(publ_id)
+        publ_ids.add(publ_id)
 
     stats['processed_publs'] = max(len(publ_ids), 0)
+    total_records = len(publs)
 
     # Record stats
     result = await session.execute(select(Record.type).where(Record.user_id == user_id))
@@ -202,7 +206,7 @@ async def get_user_stats(session: AsyncSession, user_id: int):
 
     stats.update({
         'rec_ok': rec_ok,
-        'check_ratio': round(rec_check / rec_ok, 1) if rec_ok else 0,
+        'check_ratio': round(rec_ok / total_records, 1) if total_records else 0,
     })
 
     # Species count
@@ -260,7 +264,12 @@ async def get_personal_stats(session: AsyncSession, user_id: int) -> List[Dict]:
             Publ.author
         )
         .join(Publ, Publ.id == Record.publ_id)
-        .where(Record.user_id == user_id)
+        .where(
+            and_(
+                Record.user_id == user_id,
+                Record.type == "rec_ok"
+            )
+        )
         .order_by(Record.datetime.desc())
     )
 

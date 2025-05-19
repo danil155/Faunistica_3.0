@@ -4,3 +4,4 @@
 /logs
 /test.py
 /database/hash.py
+__pycache__/
