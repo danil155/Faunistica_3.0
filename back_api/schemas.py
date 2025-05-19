@@ -35,6 +35,7 @@ class InfoResponse(BaseModel):
 
 
 class InsertRecordsRequest(BaseModel):
+    abu_ind_rem: Optional[str] = None
     adm_verbatim: Optional[bool] = None
     begin_day: Optional[int] = None
     begin_month: Optional[int] = None
@@ -64,7 +65,7 @@ class InsertRecordsRequest(BaseModel):
     region: Optional[str] = None
     selective_gain: Optional[str] = None
     species: Optional[str] = None
-    specimens: Optional[Dict[str, Optional[int]]] = None
+    specimens: Optional[Dict[str, Optional[float]]] = None
     taxonomic_notes: Optional[str] = None
     type_status: Optional[str] = None
 

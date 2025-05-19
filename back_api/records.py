@@ -23,24 +23,29 @@ def specimen_parse(specimens):
         return None, 0
 
     entries = []
-    num = 0
+    total = 0
+    values = []
 
-    def add_entry(count, label, summ):
+    def add_entry(count, label):
+        nonlocal total
         if count is not None and count != 0:
-            entries.append(f"{count} {label}")
-            summ += count
-        return summ
+            values.append(count)
+            entries.append(f"{int(count) if isinstance(count, float) and count.is_integer() else count} {label}")
+            total += count
 
-    num = add_entry(specimens.get("male_adult"), "mmm", num)
-    num = add_entry(specimens.get("female_adult"), "fff", num)
-    num = add_entry(specimens.get("male_juvenile"), "ssm", num)
-    num = add_entry(specimens.get("female_juvenile"), "ssf", num)
-    num = add_entry(specimens.get("undefined_adult"), "adu", num)
-    num = add_entry(specimens.get("undefined_juvenile"), "juv", num)
+    add_entry(specimens.get("male_adult"), "mmm")
+    add_entry(specimens.get("female_adult"), "fff")
+    add_entry(specimens.get("male_juvenile"), "ssm")
+    add_entry(specimens.get("female_juvenile"), "ssf")
+    add_entry(specimens.get("undefined_adult"), "adu")
+    add_entry(specimens.get("undefined_juvenile"), "juv")
+
     if entries:
-        res = " | ".join(entries)
-        return res, num
+        all_whole = all((isinstance(v, int) or (isinstance(v, float) and v.is_integer())) for v in values)
+        result = " | ".join(entries)
+        return result, int(total) if all_whole else round(total, 6)
     return None, 0
+
 
 
 def num_of_specimen(specimens: Optional[dict]) -> Optional[int]:
@@ -142,7 +147,7 @@ async def insert_record(
         "tax_REM": clean_value(data.taxonomic_notes),
         "abu": num,
         "abu_details": specimen,
-        "abu_ind_rem": clean_value(data.taxonomic_notes),
+        "abu_ind_rem": clean_value(data.abu_ind_rem),
         "geo_uncert": clean_value(data.geo_uncert),
         "eve_YY_end": clean_value(data.end_year),
         "eve_MM_end": clean_value(data.end_month),
