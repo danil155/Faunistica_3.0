@@ -123,4 +123,18 @@ class SupportRequest(BaseModel):
     user_name: Optional[str] = None
     text: str
     issue_type: str
-    
+
+
+class GetLocationRequest(BaseModel):
+    degrees_n: float
+    minutes_n: Optional[float] = None
+    seconds_n: Optional[float] = None
+    degrees_e: float
+    minutes_e: Optional[float] = None
+    seconds_e: Optional[float] = None
+
+
+class GetLocationResponse(BaseModel):
+    country: Optional[str] = None
+    region: Optional[str] = None
+    district: Optional[str] = None
