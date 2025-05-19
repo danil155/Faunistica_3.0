@@ -14,7 +14,8 @@ const SpecimenForm = ({ value = [], onChange }) => {
 
   const [currentSpecimen, setCurrentSpecimen] = useState({
     gender: 'undefined',
-    maturity: 'adult'
+    maturity: 'adult',
+    comment: ''
   });
   const [count, setCount] = useState(1);
 
@@ -34,9 +35,6 @@ const SpecimenForm = ({ value = [], onChange }) => {
     setCurrentSpecimen({ ...currentSpecimen, maturity: e.target.value });
   };
 
-  const handleCountChange = (e) => {
-    setCount(Math.max(1, parseInt(e.target.value) || 1));
-  };
 
   const addSpecimen = () => {
     const newSpecimen = {
@@ -65,7 +63,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
   return (
     <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
         <div>
           <label htmlFor={"gender"} style={{ display: 'block', marginBottom: '5px' }}>Пол:</label>
           <select
@@ -98,13 +96,27 @@ const SpecimenForm = ({ value = [], onChange }) => {
           <label htmlFor={"count"} style={{ display: 'block', marginBottom: '5px' }}>Количество:</label>
           <input
               id={"count"}
-            type="number" 
-            min="0"
+              type="number"
+              min="0"
               step="0.01"
               max="8000"
             value={count} 
-            onChange={handleCountChange}
+            onChange={(e) => {
+              setCount(e.target.value)
+            }}
             style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
+        <div>
+          <label htmlFor={"comment"} style={{ display: 'block', marginBottom: '5px' }}>Комментарий:</label>
+          <input
+              id={"comment"}
+              type="text"
+              value={currentSpecimen.comment}
+              onChange={(e) => {
+                setCurrentSpecimen({ ...currentSpecimen, comment: e.target.value });
+              }}
+              style={{ width: '100%', padding: '8px' }}
           />
         </div>
       </div>
