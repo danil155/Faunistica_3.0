@@ -37,11 +37,11 @@ const ProfilePage = () => {
                     userId: per_stats.data[1],
                     avatar: avatarUrl,
                     stats: {
-                        processedPublications: per_stats.data.processed_publs || 0,
-                        correctRecords: per_stats.data.rec_ok || 0,
-                        checkRatio: per_stats.data.check_ratio || 0,
-                        speciesCount: per_stats.data.species_count || 0,
-                        mostCommonSpecies: per_stats.data.most_common_species || "Нет данных"
+                        processedPublications: per_stats.data[2].processed_publs || 0,
+                        correctRecords: per_stats.data[2].rec_ok || 0,
+                        checkRatio: per_stats.data[2].check_ratio || 0,
+                        speciesCount: per_stats.data[2].species_count || 0,
+                        mostCommonSpecies: per_stats.data[2].most_common_species || "Нет данных"
                     },
                     records: Array.isArray(per_stats.data[3]) ? per_stats.data[3] : []
                 };
@@ -143,6 +143,15 @@ const ProfilePage = () => {
                         </div>
                     </div>
                 </section>
+
+                <div className="detailed-stats">
+                    <section className="common-species">
+                        <h3 className="section-subtitle">Самый частый вид</h3>
+                        <div className="species-value">
+                            {profile.stats.mostCommonSpecies || "Нет данных"}
+                        </div>
+                    </section>
+                </div>
 
                 <section className="records-section">
                     <h2 className="section-title">Последние записи</h2>
