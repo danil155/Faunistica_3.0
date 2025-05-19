@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useFormContext } from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
@@ -9,6 +9,10 @@ import { apiService } from '../api'
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import TaxonDropdown from "../components/cascading-dropdown/TaxonDropdown";
 import {CoordinatesInput} from "../components/CoordinatesInput";
+import { ToastContainer,toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+
 
 const fieldsMap = {
     "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
@@ -57,7 +61,6 @@ const FormModePage = () => {
         setFormState((prev) => ({ ...prev, [name]: value }));
     };
 
-
     // Получение данных секции
     const getSectionData = (sectionName) => {
         return fieldsMap[sectionName].reduce((acc, field) => {
@@ -96,6 +99,7 @@ const FormModePage = () => {
 
         try {
             const recordData = {
+                abu_ind_rem: formState.abu_ind_rem,
                 adm_verbatim: formState.adm_verbatim,
                 begin_day: formState.begin_day || parseInt(formState.begin_date.split('-')[2]),
                 begin_month: formState.begin_month || parseInt(formState.begin_date.split('-')[1]),
@@ -132,10 +136,10 @@ const FormModePage = () => {
             console.log("Отправка данных:", recordData);
             await apiService.insertRecord(recordData);
             resetForm(resetMode === "soft");
-            alert("Данные успешно отправлены! Незакреплённые поля очищены.");
+            toast.success("Данные успешно отправлены! Незакреплённые поля очищены.", { autoClose: 3000, position: 'bottom-right'});
         } catch (error) {
             console.error("Ошибка при отправке данных:", error);
-            alert("Произошла ошибка при отправке данных");
+            toast.error("Произошла ошибка при отправке данных", { autoClose: 3000, position: 'bottom-right' });
         }
     };
 
@@ -232,7 +236,7 @@ const FormModePage = () => {
 
                             <div className="form-group">
                                 <label htmlFor="geo_REM">Примечания к расположению</label>
-                                <textarea id = "geo_REM" name="geo_REM" />
+                                <textarea id = "geo_REM" name="geo_REM" value={formState.geo_REM} onChange={handleInputChange} />
                             </div>
                         </div>
                     </div>
@@ -406,13 +410,13 @@ const FormModePage = () => {
 
                             <div className="form-group">
                                 <label htmlFor="eve_REM">Примечания к сбору материала</label>
-                                <textarea id = "eve_REM" name="eve_REM" />
+                                <textarea id = "eve_REM" name="eve_REM" value={formState.eve_REM} onChange={handleInputChange} />
                             </div>
                         </div>
                     </div>
 
                     {/* Секция: Таксономия */}
-                    <div className={`${getSectionClassName("Таксономия")} section`}>
+                    <div className={`section`}>
                         <div
                             className={`section-header ${
                                 collapsedSections["Таксономия"] ? "collapsed" : ""
@@ -535,6 +539,7 @@ const FormModePage = () => {
                     {/* Секция: Добавление особей (без возможности закрепления) */}
                     <div className="section">
                         <h4>Добавление особей</h4>
+                        <div className={"form-grid"}>
                         <SpecimenForm
                             value={
                                 Object.keys(formState.specimens).length > 0
@@ -561,6 +566,18 @@ const FormModePage = () => {
                                 }));
                             }}
                         />
+                        <div className={"form-group"}>
+                            <label htmlFor={"comment"} style={{ display: 'inline-block', marginBottom: '5px' }}>Комментарий:</label>
+                            <textarea
+                                id={"comment"}
+                                value={formState.abu_ind_rem}
+                                onChange={(e) => {
+                                    setFormState({ ...formState, abu_ind_rem: e.target.value });
+                                }}
+                                style={{ width: '100%', padding: '8px' }}
+                            />
+                        </div>
+                        </div>
                     </div>
 
                     {/* Кнопки действий */}
@@ -568,7 +585,7 @@ const FormModePage = () => {
                         <button type="submit" className="submit-button">
                             Отправить наблюдение
                         </button>
-
+                        <ToastContainer />
                         <div className="reset-buttons">
                             <button
                                 type="button"

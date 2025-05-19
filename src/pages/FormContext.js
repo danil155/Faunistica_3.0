@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const FormContext = createContext(undefined);
 
 export const defaultState = {
+  abu_ind_rem: '',
   country: '',
   region: '',
   district: '',
@@ -18,7 +19,7 @@ export const defaultState = {
   secs_east: '',
   coordinate_format: 'grads',
   geo_origin: '',
-  geo_uncert: null,
+  geo_uncert: '',
   adm_verbatim: null,
   geo_REM: '',
   place_notes: '',

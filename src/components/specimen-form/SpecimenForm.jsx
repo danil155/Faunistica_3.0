@@ -14,8 +14,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
 
   const [currentSpecimen, setCurrentSpecimen] = useState({
     gender: 'undefined',
-    maturity: 'adult',
-    comment: ''
+    maturity: 'adult'
   });
   const [count, setCount] = useState(1);
 
@@ -61,9 +60,9 @@ const SpecimenForm = ({ value = [], onChange }) => {
   };
 
   return (
-    <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px'}}>
+    <div style={{ border: '1px solid #ddd', padding: '15px', borderRadius: '5px', width: '70%' }}>
       
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
         <div>
           <label htmlFor={"gender"} style={{ display: 'block', marginBottom: '5px' }}>Пол:</label>
           <select
@@ -105,18 +104,6 @@ const SpecimenForm = ({ value = [], onChange }) => {
               setCount(e.target.value)
             }}
             style={{ width: '100%', padding: '8px' }}
-          />
-        </div>
-        <div>
-          <label htmlFor={"comment"} style={{ display: 'block', marginBottom: '5px' }}>Комментарий:</label>
-          <input
-              id={"comment"}
-              type="text"
-              value={currentSpecimen.comment}
-              onChange={(e) => {
-                setCurrentSpecimen({ ...currentSpecimen, comment: e.target.value });
-              }}
-              style={{ width: '100%', padding: '8px' }}
           />
         </div>
       </div>

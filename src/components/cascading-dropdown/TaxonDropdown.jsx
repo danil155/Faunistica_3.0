@@ -156,10 +156,9 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                         <TextField
                             size="small"
                             id={level.name}
-                            value={formState[level.name]?.name || ''}
+                            value={formState[level.name]}
                             onChange={(e) => {
-                                updateField(level.name, { name: e.target.value });
-                            }}
+                                updateField(level.name, e.target.value)}}
                             placeholder={`Введите ${level.heading.toLowerCase()}`}
                             disabled={isDefined}
                             fullWidth

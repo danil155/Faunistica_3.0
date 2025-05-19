@@ -1,6 +1,6 @@
 import "./navbar.css";
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useState } from "react";
 
 const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
@@ -31,7 +31,7 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
                   <NavLink to="/text" onClick={() => setIsMenuOpen(false)}>Форма</NavLink>
                 </li>
                 <li>
-                  <NavLink to="/" onClick={() => setIsMenuOpen(false)}>Инструкция</NavLink>
+                  <NavLink to="/instruction" onClick={() => setIsMenuOpen(false)}>Инструкция</NavLink>
                 </li>
                 <li>
                   <NavLink to="/stats" onClick={() => setIsMenuOpen(false)}>Статистика</NavLink>

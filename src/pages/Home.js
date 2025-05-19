@@ -59,7 +59,7 @@ const Home = ({isAuthenticated, onLoginClick}) => {
                   <h2>Роль волонтеров</h2>
                   <p>Нам нужна помощь волонтеров в распознавании и структурировании 
                     сведений о находках пауков из предложенных научных статей: кого, где, когда и кто нашел. </p>
-                  <Link className="join-button" to="/">Узнать больше</Link>
+                  <Link className="join-button" to="/instruction">Узнать больше</Link>
                 </div>
               </div>
             </section>

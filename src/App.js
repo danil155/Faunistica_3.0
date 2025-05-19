@@ -12,6 +12,7 @@ import useToken from "./components/useToken";
 import StatsPage from "./pages/Stats";
 import FeedbackPage from "./pages/Feedback";
 import ProfilePage from "./pages/ProfilePage";
+import {Introduction} from "./pages/Instruction";
 
 function App() {
   const navigate = useNavigate();
@@ -81,6 +82,7 @@ function App() {
             <Route path="/text" element={<TextModePage />} />
           </Route>
           <Route path="/feedback" element={<FeedbackPage />} />
+          <Route path="/instruction" element={<Introduction />} />
           <Route path="/stats" element={<StatsPage />} />
         </Routes>
 

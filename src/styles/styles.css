@@ -41,7 +41,6 @@ main {
 
 /* Контейнер */
 .main-container {
-    width: 100vw;
     margin: 0 auto; /* Центрирование */
 }
 
