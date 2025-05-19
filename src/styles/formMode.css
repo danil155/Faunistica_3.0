@@ -179,9 +179,6 @@ a {
   font-size: 14px;
   width: 100%;
   background-color: white;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
 
 .form-group input:focus,
@@ -367,19 +364,6 @@ a {
   align-items: center;
   gap: 5px; /* Отступы между элементами */
   width: 100%;
-}
-
-/* Стили для select */
-.form-group select {
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  background-color: white;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
 }
 
 .collapsed .form-group {
