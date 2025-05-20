@@ -130,7 +130,13 @@ const FormModePage = () => {
             if (newPinned) {
                 setPinnedData((prevData) => ({
                     ...prevData,
-                    [sectionName]: getSectionData(sectionName),
+                    [sectionName]: {
+                        ...getSectionData(sectionName),
+                        // Добавляем дополнительные поля, которые могут быть нужны
+                        ...(sectionName === "Географическое положение" && {
+                            coordinate_format: formState.coordinate_format
+                        })
+                    },
                 }));
             } else {
                 // Если открепляется, удаляем из pinnedData
@@ -233,7 +239,7 @@ const FormModePage = () => {
             };
             console.log("Отправка данных:", recordData);
             await apiService.insertRecord(recordData);
-            resetForm(resetMode === "soft");
+            resetForm();
             toast.success("Данные успешно отправлены! Незакреплённые поля очищены.", { autoClose: 3000, position: 'bottom-right'});
         } catch (error) {
             console.error("Ошибка при отправке данных:", error);

@@ -46,6 +46,27 @@ export const defaultState = {
   specimens: {}
 };
 
+export const fieldsMap = {
+  "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
+  "Географическое положение": ["east", "north", "coordinate_north", "coordinate_east", "grads_north", "grads_east", "mins_north", "mins_east", "secs_east", "secs_north", "geo_origin", "geo_REM", "geo_uncert"],
+  "Сбор материала": [
+    "begin_date",
+    "end_date",
+    "begin_year",
+    "end_year",
+    "begin_month",
+    "end_month",
+    "end_day",
+    "begin_day",
+    "biotope",
+    "collector",
+    "measurement_units",
+    "selective_gain",
+    "eve_REM"
+  ],
+  'Таксономия': ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
+};
+
 export const FormProvider = ({ children }) => {
   const [formState, setFormState] = useState(() => {
     const saved = localStorage.getItem('formData');
@@ -62,11 +83,6 @@ export const FormProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : {};
   });
 
-  const [pinnedData, setPinnedData] = useState(() => {
-    const saved = localStorage.getItem('pinnedData');
-    return saved ? JSON.parse(saved) : {};
-  });
-
   const [collapsedSections, setCollapsedSections] = useState(() => {
     const saved = localStorage.getItem('collapsedSections');
     return saved ? JSON.parse(saved) : {};
@@ -74,18 +90,31 @@ export const FormProvider = ({ children }) => {
 
   // Функция сброса формы
   const resetForm = (keepPinned = true) => {
-
     if (keepPinned) {
-      // Сохраняем закреплённые данные
-      const pinnedValues = Object.values(pinnedData).reduce((acc, section) => {
-        return { ...acc, ...section };
-      }, {});
-      setFormState({ ...defaultState, ...pinnedValues });
+      // Создаем объект с полями, которые нужно сохранить
+      const fieldsToKeep = Object.entries(pinnedSections)
+          .filter(([_, isPinned]) => isPinned) // Берем только закрепленные секции
+          .reduce((acc, [sectionName]) => {
+            // Добавляем все поля из закрепленной секции
+            const sectionFields = fieldsMap[sectionName] || [];
+            sectionFields.forEach(field => {
+              // Сохраняем текущее значение поля, если оно есть в formState
+              if (formState.hasOwnProperty(field)) {
+                acc[field] = formState[field];
+              }
+            });
+            return acc;
+          }, {});
+
+
+      setFormState({
+        ...defaultState, // Сначала берем значения по умолчанию
+        ...fieldsToKeep // Затем перезаписываем сохраненными полями
+      });
     } else {
       // Полный сброс
       setFormState(defaultState);
       setPinnedSections({});
-      setPinnedData({});
     }
   };
 
@@ -101,8 +130,7 @@ export const FormProvider = ({ children }) => {
   useEffect(() => {
     localStorage.setItem('formData', JSON.stringify(formState));
     localStorage.setItem('pinnedSections', JSON.stringify(pinnedSections));
-    localStorage.setItem('pinnedData', JSON.stringify(pinnedData));
-  }, [formState, pinnedSections, pinnedData]);
+  }, [formState, pinnedSections]);
 
   return (
       <FormContext.Provider
@@ -111,8 +139,6 @@ export const FormProvider = ({ children }) => {
             setFormState,
             pinnedSections,
             setPinnedSections,
-            pinnedData,
-            setPinnedData,
             resetForm,
             collapsedSections,
             toggleCollapseSection
