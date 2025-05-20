@@ -200,6 +200,31 @@ a {
   visibility: visible;
 }
 
+.move-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+	margin-right: 5px;
+}
+
+.move-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.move-button svg {
+  width: 14px;
+  height: 14px;
+}
+
 /* Форма */
 .specimen-form {
   background-color: #f8f9fa;
@@ -414,6 +439,31 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.section-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.section-controls h4 {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.section-buttons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.collapse-toggle {
+  margin-left: 10px;
 }
 
 .pin-status {
