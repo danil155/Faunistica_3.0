@@ -115,9 +115,9 @@ const FormModePage = () => {
                 eve_REM: formState.eve_REM,
                 family: formState.family,
                 genus: formState.genus,
-                geo_origin: formState.geo_origin,
+                geo_origin: formState.geo_origin === 0 ? 'original' : formState.geo_origin,
                 geo_REM: formState.geo_REM,
-                geo_uncert: formState.geo_uncert,
+                geo_uncert: !!formState.geo_uncert ?? 0.0,
                 is_defined_species: !formState.tax_sp_def,
                 is_in_wsc: formState.tax_nsp,
                 is_new_species: formState.is_new_species,
@@ -213,6 +213,7 @@ const FormModePage = () => {
                                 <select id="geo-origin"
                                         name="geo_origin"
                                         className="form-control"
+										value={formState.geo_origin}
                                         onChange={handleInputChange}
                                         required>
                                     <option value="original">Из статьи</option>
