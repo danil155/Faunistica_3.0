@@ -199,16 +199,30 @@ api.interceptors.response.use(
     response => response,
     async error => {
         const originalRequest = error.config;
+				
+				const currentPath = window.location.pathname;
+				const shouldRedirect = currentPath === '/text' || currentPath === '/form';
 
         if (error.response?.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
+						
+					 if (originalRequest.url.includes('/api/refresh_token')) {
+							console.error('Refresh token failed, logging out');
+							if (shouldRedirect) {
+								window.location.href = '/';
+							}
+							return Promise.reject(error);
+						}
 
             try {
                 await apiService.refreshToken();
                 return api(originalRequest);
             } catch (refreshError) {
                 console.error('Refresh token failed:', refreshError);
-                throw refreshError;
+								if (shouldRedirect) {
+									window.location.href = '/';
+								}
+                return Promise.reject(refreshError);
             }
         }
 
