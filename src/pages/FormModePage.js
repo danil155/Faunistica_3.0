@@ -16,7 +16,7 @@ import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
 
 const fieldsMap = {
     "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
-    "Географическое положение": ["coordinate_north", "coordinate_east", "geo_origin", "geo_REM", "geo_unsert"],
+    "Географическое положение": ["east", "north", "coordinate_north", "coordinate_east", "grads_north", "grads_east", "mins_north", "mins_east", "secs_east", "secs_north", "geo_origin", "geo_REM", "geo_uncert"],
     "Сбор материала": [
         "begin_date",
         "end_date",
@@ -24,6 +24,8 @@ const fieldsMap = {
         "end_year",
         "begin_month",
         "end_month",
+        "end_day",
+        "begin_day",
         "biotope",
         "collector",
         "measurement_units",
@@ -213,7 +215,7 @@ const FormModePage = () => {
                 genus: formState.genus,
                 geo_origin: formState.geo_origin === 0 ? 'original' : formState.geo_origin,
                 geo_REM: formState.geo_REM,
-                geo_uncert: formState.geo_uncert === '' ? null : 0.0,
+                geo_uncert: parseFloat(formState.geo_uncert),
                 is_defined_species: !formState.tax_sp_def,
                 is_in_wsc: formState.tax_nsp,
                 is_new_species: formState.is_new_species,
@@ -348,8 +350,8 @@ const FormModePage = () => {
 																		id="adm_verbatim"
 																		name="adm_verbatim"
 																		type="checkbox"
-																		checked={formState.adm_verbatim || false}
-																		onChange={(e) => setFormState(prev => ({...prev, adm_verbatim: e.target.checked}))}
+																		checked={formState.adm_verbatim ?? false}
+																		onChange={() => setFormState(prev => ({...prev, adm_verbatim: !formState.adm_verbatim}))}
 																	/>
 																	<label htmlFor="adm_verbatim">Местоположение относится к Уралу</label>
 																</div>
