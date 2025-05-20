@@ -142,11 +142,11 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                             id={level.name}
                             options={options[level.name]}
                             loading={loading}
-                            disabled={(isDefined || (formState.genus === "unknown")) && (level.name === "species")}
+                            disabled={level.name === "species" ? isDefined : false}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    placeholder={(isDefined || (formState.genus === "unknown")) && (level.name === "species") ? "Не определено" : level.placeholder}
+                                    placeholder={level.name === "species" && isDefined ? "Не определено" : level.placeholder}
                                     size="small"
                                     required={level.name !== "species" || !isDefined}
                                 />
@@ -160,9 +160,9 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                             onChange={(e) => {
                                 updateField(level.name, e.target.value)}}
                             placeholder={`Введите ${level.heading.toLowerCase()}`}
-                            disabled={isDefined}
+                            disabled={level.name === "species" ? isDefined : false}
                             fullWidth
-                            required={!isDefined}
+                            required={true}
                         />
                     )}
                 </div>
