@@ -92,7 +92,6 @@ const FormModePage = () => {
         setFormState,
         pinnedSections,
         setPinnedSections,
-        setPinnedData,
         resetForm,
         collapsedSections,
         toggleCollapseSection,
@@ -126,26 +125,6 @@ const FormModePage = () => {
         setPinnedSections((prev) => {
             const newPinned = !prev[sectionName];
 
-            // Если секция стала закреплённой, сохраняем её данные
-            if (newPinned) {
-                setPinnedData((prevData) => ({
-                    ...prevData,
-                    [sectionName]: {
-                        ...getSectionData(sectionName),
-                        // Добавляем дополнительные поля, которые могут быть нужны
-                        ...(sectionName === "Географическое положение" && {
-                            coordinate_format: formState.coordinate_format
-                        })
-                    },
-                }));
-            } else {
-                // Если открепляется, удаляем из pinnedData
-                setPinnedData((prevData) => {
-                    const newData = { ...prevData };
-                    delete newData[sectionName];
-                    return newData;
-                });
-            }
 
             return { ...prev, [sectionName]: newPinned };
         });
