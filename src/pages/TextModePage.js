@@ -27,6 +27,7 @@ const TextModePage = () => {
 
     try {
       const result = await apiService.getInfoFromText(text);
+
       const specimens = {};
       if (result.count_males) specimens.male_adult = result.count_males;
       if (result.count_females) specimens.female_adult = result.count_females;
@@ -83,26 +84,33 @@ const TextModePage = () => {
 
       // Обновление состояния формы
       setFormState(prev => {
-        const mergedResult = {
+        const newState = {
           ...prev,
-          ...Object.fromEntries(
-              Object.entries(result).filter(([_, value]) => value !== undefined && value !== null && value !== '')
-          ),
+          ...processResult,
           specimens: {
             ...prev.specimens,
             ...specimens
-          }
+          },
+          // Явно устанавливаем координатные поля
+          grads_north: processResult.grads_north || prev.grads_north || '',
+          mins_north: processResult.mins_north || prev.mins_north || '',
+          secs_north: processResult.secs_north || prev.secs_north || '',
+          grads_east: processResult.grads_east || prev.grads_east || '',
+          mins_east: processResult.mins_east || prev.mins_east || '',
+          secs_east: processResult.secs_east || prev.secs_east || '',
+          coordinate_format: processResult.coordinate_format || prev.coordinate_format || 'grads'
         };
 
+        // Сохраняем закрепленные данные
         Object.entries(pinnedData).forEach(([section, sectionData]) => {
           Object.entries(sectionData).forEach(([field, value]) => {
-            if (!(field in mergedResult)) {
-              mergedResult[field] = value;
+            if (!(field in newState)) {
+              newState[field] = value;
             }
           });
         });
 
-        return mergedResult;
+        return newState;
       });
 
       console.log(formState.genus)

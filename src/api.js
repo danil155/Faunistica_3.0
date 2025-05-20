@@ -1,9 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5001';
-
 const api = axios.create({
-		baseURL: API_URL,
     withCredentials: true
 });
 
@@ -14,7 +11,7 @@ const apiService = {
     login: async (username, password) => {
         console.log('login');
         try {
-            const response = await api.post('/api/get_user', { username, password });
+            const response = await api.post('/api/get_user', {username, password});
             console.log('response');
             return response.data;
         } catch (error) {
@@ -46,7 +43,7 @@ const apiService = {
 
     // Получение информации из текста
     getInfoFromText: async (text) => {
-        const response = await api.post('/api/get_info', { text });
+        const response = await api.post('/api/get_info', {text});
         return response.data;
     },
 
@@ -102,7 +99,7 @@ const apiService = {
 
     autofillTaxon: async (field, text) => {
         try {
-            const response = await api.post('/api/autofill_taxon', { field, text });
+            const response = await api.post('/api/autofill_taxon', {field, text});
             return response.data;
         } catch (error) {
             console.error("Autofill error:", error);
@@ -118,16 +115,16 @@ const apiService = {
             throw new Error(error);
         }
     },
-		
-		getLocationFromCoordinates: async (coordinates) => {
-				try {
-						const response = await api.post('/api/get_loc', coordinates);
-						return response.data;
-				} catch (error) {
-						console.error("Error getting location:", error);
-						throw error;
-				}
-		},
+
+    getLocationFromCoordinates: async (coordinates) => {
+        try {
+            const response = await api.post('/api/get_loc', coordinates);
+            return response.data;
+        } catch (error) {
+            console.error("Error getting location:", error);
+            throw error;
+        }
+    },
 
     postSupport: async (data) => {
         try {
@@ -146,7 +143,7 @@ const apiService = {
         }
     },
 
-    getProfile: async() => {
+    getProfile: async () => {
         try {
             const response = await api.get('/api/get_pers_stats');
             return response;
@@ -161,7 +158,7 @@ const apiService = {
         }
     },
 
-    getProfilePhoto: async(userId) => {
+    getProfilePhoto: async (userId) => {
         try {
             const response = await api.get('/api/user_photo', {
                 params: {
@@ -174,22 +171,22 @@ const apiService = {
             return null;
         }
     },
-		
-		downloadRecords: async () => {
-				try {
-						const response = await api.post('/api/get_records_data', {}, {
-								responseType: 'blob'
-						});
-						return response;
-				} catch (error) {
-						if (error.response?.status === 429) {
-								throw new Error('Пожалуйста, подождите минуту перед следующей загрузкой');
-						} else if (error.response?.status === 404) {
-								throw new Error('Записи не найдены');
-						}
-						throw error;
-				}
-		},
+
+    downloadRecords: async () => {
+        try {
+            const response = await api.post('/api/get_records_data', {}, {
+                responseType: 'blob'
+            });
+            return response;
+        } catch (error) {
+            if (error.response?.status === 429) {
+                throw new Error('Пожалуйста, подождите минуту перед следующей загрузкой');
+            } else if (error.response?.status === 404) {
+                throw new Error('Записи не найдены');
+            }
+            throw error;
+        }
+    },
 };
 
 api.interceptors.request.use((config) => {
@@ -219,4 +216,4 @@ api.interceptors.response.use(
     }
 );
 
-export { api, apiService };
+export {api, apiService};
