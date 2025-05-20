@@ -292,6 +292,53 @@
     font-style: italic;
 }
 
+@media (min-width: 769px) and (max-width: 1050px) {
+  .profile-container {
+    flex-direction: row;
+    overflow-x: hidden;
+  }
+
+  .profile-sidebar {
+    width: 250px;
+    min-width: 250px;
+    flex-shrink: 0;
+  }
+
+  .profile-content {
+    overflow-x: hidden;
+    padding: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detailed-stats {
+    flex-direction: column;
+  }
+
+  .records-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .records-table th,
+  .records-table td {
+    min-width: 120px;
+    box-sizing: border-box;
+  }
+
+  .section-header {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .download-records-button {
+    margin-left: auto;
+  }
+}
+
 @media (max-width: 768px) {
     .profile-container {
         flex-direction: column;

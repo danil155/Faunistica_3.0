@@ -76,3 +76,60 @@ img.full-width {
 .attention p {
     color: orangered;
 }
+
+@media (max-width: 410px) {
+  .instr-content {
+    padding: 0 15px;
+  }
+
+  .horizontal {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .horizontal p,
+  .horizontal img {
+    width: 100%;
+  }
+
+  .horizontal img.publ {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  img.full-width.middle {
+    width: 100%;
+  }
+
+  .attention {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .collapse-toggle {
+    align-self: flex-end;
+  }
+
+  .img-box {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .img-box img {
+    width: 100%;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.3rem;
+  }
+}
