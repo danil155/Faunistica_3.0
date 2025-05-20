@@ -70,8 +70,8 @@ def num_of_specimen(specimens: Optional[dict]) -> Optional[int]:
 def parse_coordinate(coord: str) -> float:
     coord = coord.strip()
 
-    # 1. Simple float number
-    if re.match(r'^-?\d+(\.\d+)?$', coord):
+    # 1. Degree: 59°
+    if re.match(r'^(-?\d+(?:\.\d+)?)°(?!\S)$', coord):
         return round(float(coord), 6)
 
     # 2. Degree + minutes: 59°29'
