@@ -188,6 +188,10 @@ const FormModePage = () => {
     // Обработчик отправки формы
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formState.specimen || Object.keys(formState.specimens).length === 0) {
+            toast.error("Добавьте особей!", { autoClose: 3000, position: 'bottom-right' });
+            return;
+        }
 
         try {
             const recordData = {

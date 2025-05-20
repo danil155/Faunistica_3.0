@@ -37,6 +37,8 @@ const ArticleInfo = () => {
     return (
         <>
         {showPublicationError && <PublicationErrorModal onRetry={handleRetry} />}
+            <>
+                <h4>Ваша статья</h4>
             <div className='article-card'>
                 <img src={publication?.year ? require(`../../img/publ-spider-${(publication?.year % 8)}.webp`) : "https://placehold.co/120x120"} style={{width:"120px"}} alt="Обложка статьи" />
                 <div id="article_info_container">
@@ -46,6 +48,7 @@ const ArticleInfo = () => {
                     <p>Ссылка на файл: <Link to={publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"} target="_blank">{publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}</Link></p>
                 </div>
             </div>
+            </>
         </>
     );
 };

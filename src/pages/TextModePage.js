@@ -92,6 +92,7 @@ const TextModePage = () => {
             ...specimens
           },
           // Явно устанавливаем координатные поля
+          begin_date: result.date,
           grads_north: processResult.grads_north || prev.grads_north || '',
           mins_north: processResult.mins_north || prev.mins_north || '',
           secs_north: processResult.secs_north || prev.secs_north || '',
@@ -102,7 +103,7 @@ const TextModePage = () => {
         };
 
         // Сохраняем закрепленные данные
-        Object.entries(pinnedData).forEach(([section, sectionData]) => {
+        Object.entries(pinnedData).forEach(([sectionData]) => {
           Object.entries(sectionData).forEach(([field, value]) => {
             if (!(field in newState)) {
               newState[field] = value;
@@ -134,11 +135,7 @@ const TextModePage = () => {
           Заполните форму вручную
         </Link>
       </header>
-
-      <div className="section article">
-          <h4>Ваша статья:</h4>
-          <ArticleInfo />
-      </div>
+      <ArticleInfo />
       
       <div className="content">
         <textarea
