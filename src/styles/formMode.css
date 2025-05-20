@@ -275,6 +275,10 @@ a {
           transform 0.3s ease 0.1s;
 }
 
+.telegram-login-modal form .form-group {
+	width: auto;
+}
+
 .form-group label {
   font-size: 14px;
   color: #555;
@@ -364,6 +368,8 @@ a {
     min-width: 100%;
     max-width: 100%;
   }
+  
+  
   
   .form-actions {
     flex-direction: column-reverse;
