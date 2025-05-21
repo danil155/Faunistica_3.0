@@ -1,7 +1,7 @@
 import React from "react";
 import {Link, NavLink} from 'react-router-dom';
 
-import spider from "../img/main_spider.webp";
+import spider from "../img/main-baby.webp";
 import icon1 from "../img/about-proj-icon-1.svg";
 import icon2 from "../img/about-proj-icon-2.svg";
 import icon3 from "../img/about-proj-icon-3.svg";

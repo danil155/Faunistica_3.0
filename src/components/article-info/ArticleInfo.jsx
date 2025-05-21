@@ -40,7 +40,7 @@ const ArticleInfo = () => {
             <>
                 <h4>Ваша статья</h4>
             <div className='article-card'>
-                <img src={publication?.year ? require(`../../img/publ-spider-${(publication?.year % 8)}.webp`) : "https://placehold.co/120x120"} alt="Обложка статьи" />
+                <img src={publication?.year ? require(`../../img/publ-spider-${(publication?.year % 8)}.jpg`) : "https://placehold.co/120x120"} alt="Обложка статьи" />
                 <div id="article_info_container">
                     <p>Название: {publication?.name ?? "Все рассказы (сборник)"}</p>
                     <p>Авторы: {publication?.author ?? "Эдгар Аллан По"}</p>
