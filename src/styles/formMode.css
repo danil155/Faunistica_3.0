@@ -23,6 +23,13 @@
   max-width: 100%;
 }
 
+.article-card img {
+  height: fit-content;
+  width: 150px;
+  border-radius: 8px;
+  margin: 10px;
+}
+
 h3, h4 {
   color: #2c3e50;
   margin: 10px;
@@ -373,13 +380,11 @@ a {
   .form-grid {
     grid-template-columns: 1fr;
     gap: 15px;
+    justify-content: center;
   }
-  
   .form-group {
-    min-width: 100%;
-    max-width: 100%;
+    width: min(100%, 400px);
   }
-  
   
   
   .form-actions {
@@ -544,7 +549,6 @@ a {
 
 .form-grid {
   display: flex;
-  opacity: 1;
   padding: 15px 0;
 }
 

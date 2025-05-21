@@ -360,10 +360,6 @@ header a{
     gap: 15px
 }
 
-.article-card img {
-    border-radius: 8px;
-}
-
 .form-mode-container {
     padding: 0 50px;
 }
@@ -376,6 +372,7 @@ header a{
 }
 
 .feedback form {
+    width: 100%;
     margin: 10px 0;
 }
 
