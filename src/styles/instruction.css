@@ -6,8 +6,8 @@
 }
 
 .horizontal p {
-    display: inline-block;
-    width: 50%;
+    display: block;
+    width: min(calc(100% - 400px), 800px);
 }
 
 .horizontal img {
@@ -42,7 +42,8 @@
     row-gap: 2rem;
     column-gap: 2rem;
     max-width: 1400px;
-    margin: 0 auto;
+    padding: 100px;
+    margin: 0  auto 10px auto ;
 }
 
 .img-box {
@@ -62,7 +63,11 @@ img.full-width {
 }
 
 .section img.middle {
-    width: 600px;
+    width: 100%;
+}
+
+.section img.small {
+    width: 50%;
 }
 
 .attention {
@@ -75,6 +80,15 @@ img.full-width {
 
 .attention p {
     color: orangered;
+}
+
+@media (max-width: 1000px) {
+    .instruction-content .section {
+        padding: 50px;
+    }
+    .horizontal p {
+        width: 100%;
+    }
 }
 
 @media (max-width: 410px) {

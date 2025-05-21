@@ -61,7 +61,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.requirements ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, requirements: !collapsed.requirements}
+                             )
+                         }>
                         <h2>Технические требования для участия в проекте</h2>
                         <button
                             className={`collapse-toggle ${
@@ -90,7 +95,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.registration ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, registration: !collapsed.registration}
+                             )
+                         }>
                         <h2>Регистрация и авторизация</h2>
                         <button
                             className={`collapse-toggle ${
@@ -139,7 +149,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.publ_structure ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, publ_structure: !collapsed.publ_structure}
+                             )
+                         }>
                         <h2>Структура научной публикации</h2>
                         <button
                             className={`collapse-toggle ${
@@ -272,7 +287,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.beginning_work ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, beginning_work: !collapsed.beginning_work}
+                             )
+                         }>
                         <h2>Начало работы</h2>
                         <button
                             className={`collapse-toggle ${
@@ -333,7 +353,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.geo ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, geo: !collapsed.geo}
+                             )
+                         }>
                         <h2>Географическое положение</h2>
                         <button
                             className={`collapse-toggle ${
@@ -394,7 +419,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.adm ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, adm: !collapsed.adm}
+                             )
+                         }>
                         <h2>Административное положение</h2>
                         <button
                             className={`collapse-toggle ${
@@ -484,7 +514,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.eve ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, eve: !collapsed.eve}
+                             )
+                         }>
                         <h2>Сбор материала:</h2>
                         <button
                             className={`collapse-toggle ${
@@ -529,7 +564,7 @@ export const Introduction = () => {
                                 <br/>
                                 <br/>
                             Текст, выделенный желтым, целиком вносим в поле Биотоп.</p>
-                        <img src={image25} alt={"Article example"}/>
+                        <img className={"small"} src={image25} alt={"Article example"}/>
                     </div>
                     <p>В Примере 2 биотоп такой: “вейниково-малиново-кипрейная гарь на границе пожара 2010 г. на ветровальном участке пихто-ельника
                         высокотравно-папоротникового коренного; квартал 112; 560 м над у. м.”</p>
@@ -563,7 +598,12 @@ export const Introduction = () => {
                 <div className="section">
                     <div className={`section-header ${
                         !collapsed.tax ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, tax: !collapsed.tax}
+                             )
+                         }>
                         <h2>Таксономия</h2>
                         <button
                             className={`collapse-toggle ${
@@ -606,7 +646,7 @@ export const Introduction = () => {
                         Вот так таксономия выглядит в статье из Примера 1:
                     </p>
                     <div className={"horizontal"}>
-                        <img src={tax2} alt={"Tax article example"}/>
+                        <img className="small" src={tax2} alt={"Tax article example"}/>
                         <img className={"middle"} src={tax3} alt={"Tax form filling example"}/>
                     </div>
                     <p>
@@ -627,7 +667,12 @@ export const Introduction = () => {
                 <div className={"section"}>
                     <div className={`section-header ${
                         !collapsed.count ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, count: !collapsed.count}
+                             )
+                         }>
                         <h2>Количество</h2>
                         <button
                             className={`collapse-toggle ${
@@ -683,7 +728,12 @@ export const Introduction = () => {
                 <div className={"section"}>
                     <div className={`section-header ${
                         !collapsed.extra ? "collapsed" : ""
-                    }`}>
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, extra: !collapsed.extra}
+                             )
+                         }>
                         <h2>Дополнительные возможности</h2>
                         <button
                             className={`collapse-toggle ${
