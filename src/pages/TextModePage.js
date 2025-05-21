@@ -9,7 +9,7 @@ const TextModePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { formState, setFormState, pinnedData } = useFormContext();
+  const { formState, setFormState } = useFormContext();
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -101,15 +101,6 @@ const TextModePage = () => {
           secs_east: processResult.secs_east || prev.secs_east || '',
           coordinate_format: processResult.coordinate_format || prev.coordinate_format || 'grads'
         };
-
-        // Сохраняем закрепленные данные
-        Object.entries(pinnedData).forEach(([sectionData]) => {
-          Object.entries(sectionData).forEach(([field, value]) => {
-            if (!(field in newState)) {
-              newState[field] = value;
-            }
-          });
-        });
 
         return newState;
       });
