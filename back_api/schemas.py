@@ -57,7 +57,6 @@ class InsertRecordsRequest(BaseModel):
     is_defined_species: Optional[bool] = None
     is_in_wsc: Optional[bool] = None
     is_new_species: Optional[bool] = None
-    matherial_notes: Optional[str] = None
     measurement_units: Optional[str] = None
     north: Optional[str] = None
     place: Optional[str] = None
@@ -138,3 +137,81 @@ class GetLocationResponse(BaseModel):
     country: Optional[str] = None
     region: Optional[str] = None
     district: Optional[str] = None
+
+
+class RemoveRecordRequest(BaseModel):
+    hash: str
+
+
+class GetRecordRequest(BaseModel):
+    hash: str
+
+
+class GetRecordResponse(BaseModel):
+    hash: str
+    type: Optional[str] = None
+    adm_country: Optional[str] = None
+    adm_region: Optional[str] = None
+    adm_district: Optional[str] = None
+    adm_loc: Optional[str] = None
+    geo_nn_raw: Optional[str] = None
+    geo_ee_raw: Optional[str] = None
+    geo_origin: Optional[str] = None
+    geo_REM: Optional[str] = None
+    eve_YY: Optional[int] = None
+    eve_MM: Optional[int] = None
+    eve_DD: Optional[int] = None
+    eve_day_def: Optional[bool] = None
+    eve_habitat: Optional[str] = None
+    eve_effort: Optional[str] = None
+    abu_coll: Optional[str] = None
+    eve_REM: Optional[str] = None
+    tax_fam: Optional[str] = None
+    tax_gen: Optional[str] = None
+    tax_sp: Optional[str] = None
+    tax_sp_def: Optional[bool] = None
+    tax_nsp: Optional[bool] = None
+    type_status: Optional[str] = None
+    tax_REM: Optional[str] = None
+    abu: Optional[int] = None
+    abu_details: Optional[str] = None
+    abu_ind_rem: Optional[str] = None
+    geo_uncert: Optional[float] = None
+    eve_YY_end: Optional[int] = None
+    eve_MM_end: Optional[int] = None
+    eve_DD_end: Optional[int] = None
+
+
+class EditRecordRequest(BaseModel):
+    hash: str
+    type: Optional[str] = None
+    adm_country: Optional[str] = None
+    adm_region: Optional[str] = None
+    adm_district: Optional[str] = None
+    adm_loc: Optional[str] = None
+    geo_nn_raw: Optional[str] = None
+    geo_ee_raw: Optional[str] = None
+    geo_origin: Optional[str] = None
+    geo_REM: Optional[str] = None
+    eve_YY: Optional[int] = None
+    eve_MM: Optional[int] = None
+    eve_DD: Optional[int] = None
+    eve_day_def: Optional[bool] = None
+    eve_habitat: Optional[str] = None
+    eve_effort: Optional[str] = None
+    abu_coll: Optional[str] = None
+    eve_REM: Optional[str] = None
+    tax_fam: Optional[str] = None
+    tax_gen: Optional[str] = None
+    tax_sp: Optional[str] = None
+    tax_sp_def: Optional[bool] = None
+    tax_nsp: Optional[bool] = None
+    type_status: Optional[str] = None
+    tax_REM: Optional[str] = None
+    abu: Optional[int] = None
+    abu_details: Optional[str] = None
+    abu_ind_rem: Optional[str] = None
+    geo_uncert: Optional[float] = None
+    eve_YY_end: Optional[int] = None
+    eve_MM_end: Optional[int] = None
+    eve_DD_end: Optional[int] = None

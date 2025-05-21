@@ -6,6 +6,7 @@ sqlalchemy
 dotenv
 asyncpg
 aiogram
+cryptography
 argon2-cffi
 python-jose[cryptography]
 pandas

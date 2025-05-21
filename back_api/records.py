@@ -120,7 +120,7 @@ async def insert_record(
     record_json = {
         "publ_id": user_info.publ_id,
         "user_id": user_info.id,
-        "datetime": datetime.now(UTC).replace(tzinfo=None),
+        "datetime": datetime.now(UTC).replace(tzinfo=None, microsecond=0),
         "ip": None,
         "errors": None,
         "type": "rec_ok",

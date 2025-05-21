@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .schemas import StatisticsResponse
 from database.crud import get_user_stats, get_user, get_personal_stats
 from database.database import get_session
 from .token import get_current_user

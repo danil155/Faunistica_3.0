@@ -8,7 +8,7 @@ import asyncio
 from typing import List, Dict
 import logging
 
-from .hash import check_pass
+from .hash import check_pass, encrypt_id
 from .models import User, Action, Publ, Record
 
 logger = logging.getLogger(__name__)
@@ -252,6 +252,7 @@ def format_event_date(yy, mm, dd, yy_end, mm_end, dd_end) -> str:
 async def get_personal_stats(session: AsyncSession, user_id: int) -> List[Dict]:
     stmt = (
         select(
+            Record.id,
             Record.publ_id,
             Record.datetime,
             Record.adm_district,
@@ -300,6 +301,7 @@ async def get_personal_stats(session: AsyncSession, user_id: int) -> List[Dict]:
         species = " ".join(species_parts) if species_parts else "Не заполнено"
 
         records.append({
+            "hash": encrypt_id(row.id, user_id),
             "date": str(row.datetime),
             "author": row.author,
             "species": species,
@@ -407,3 +409,39 @@ async def get_user_records(session: AsyncSession, user_id: int):
     stmt = select(Record).where(Record.user_id == user_id)
     result = await session.execute(stmt)
     return result.scalars().all()
+
+
+# === DEL/EDIT RECORD ===
+@handle_db_errors
+async def remove_record_row_by_id(session: AsyncSession, record_id: int, user_id: int) -> bool:
+    stmt = select(Record).where(and_(Record.id == record_id, Record.user_id == user_id))
+    result = await session.execute(stmt)
+    record = result.scalar_one_or_none()
+
+    if record is not None:
+        await session.delete(record)
+        await session.commit()
+        return True
+    return False
+
+
+@handle_db_errors
+async def get_record_by_id(session: AsyncSession, record_id: int, user_id: int):
+    stmt = select(Record).where(and_(Record.id == record_id, Record.user_id == user_id))
+    result = await session.execute(stmt)
+    return result.scalar_one_or_none()
+
+
+@handle_db_errors
+async def edit_record_by_id(session: AsyncSession, record_id: int, user_id: int, new_data: dict) -> bool:
+    stmt = select(Record).where(and_(Record.id == record_id, Record.user_id == user_id))
+    result = await session.execute(stmt)
+    record = result.scalar_one_or_none()
+
+    if record is not None:
+        for key, value in new_data.items():
+            if hasattr(record, key) and key != "hash":
+                setattr(record, key, value)
+        await session.commit()
+        return True
+    return False
