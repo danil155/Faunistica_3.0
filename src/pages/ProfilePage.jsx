@@ -1,5 +1,7 @@
 import { apiService } from "../api";
 import React, { useState, useEffect } from "react";
+import { FaPen, FaTimes } from 'react-icons/fa';
+import { Modal, ConfirmationModal } from "../components/confirmModal/confirmModal"
 import '../styles/profile.css';
 
 const ProfilePage = () => {
@@ -19,42 +21,129 @@ const ProfilePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
+		
+		const [modal, setModal] = useState({
+			isOpen: false,
+			type: 'info',
+			message: '',
+		});
+		
+		const [confirmationModal, setConfirmationModal] = useState({
+			isOpen: false,
+			action: null,
+			hash: null,
+			title: '',
+			message: ''
+		});
+		
+		const [actionStatus, setActionStatus] = useState({
+			loading: false,
+			error: null,
+			success: null
+		});
+		
+		const handleEdit = (hash) => {
+			setConfirmationModal({
+				isOpen: true,
+				action: 'edit',
+				hash,
+				title: 'Редактирование записи',
+				message: 'Вы уверены, что хотите редактировать эту запись?'
+			});
+		};
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                setLoading(true);
-                const per_stats = await apiService.getProfile();
+		const handleDelete = (hash) => {
+			setConfirmationModal({
+				isOpen: true,
+				action: 'delete',
+				hash,
+				title: 'Удаление записи',
+				message: 'Вы уверены, что хотите удалить эту запись? Это действие нельзя отменить.'
+			});
+		};
+		const confirmAction = async () => {
+			const { action, hash } = confirmationModal;
+			setConfirmationModal({ ...confirmationModal, isOpen: false });
+			
+			setActionStatus({ loading: true, error: null, success: null });
+			
+			try {
+				if (action === 'edit') {
+					await apiService.editRecord(hash);
+					setModal({
+						isOpen: true,
+						type: 'success',
+						message: 'Запись отправлена на редактирование'
+					});
+					setTimeout(() => fetchProfile(), 1000);
+				} else if (action === 'delete') {
+					await apiService.deleteRecord(hash);
+					setModal({
+						isOpen: true,
+						type: 'success',
+						message: 'Запись успешно удалена'
+					});
+					setProfile(prev => ({
+						...prev,
+						records: prev.records.filter(r => r.hash !== hash)
+					}));
+				}
+			} catch (error) {
+				setModal({
+					isOpen: true,
+					type: 'error',
+					message: error.message || 'Произошла ошибка'
+				});
+			}
+		};
 
-                let avatarUrl = null;
+		const cancelAction = () => {
+			setConfirmationModal({ ...confirmationModal, isOpen: false });
+		};
 
-                if (per_stats.data[1]) {
-                    avatarUrl = await apiService.getProfilePhoto(per_stats.data[1]);
-                }
+		const closeModal = () => {
+			setModal({ ...modal, isOpen: false });
+		};
 
-                const profileData = {
-                    username: per_stats.data[0] || "Не указан",
-                    userId: per_stats.data[1],
-                    avatar: avatarUrl,
-                    stats: {
-                        processedPublications: per_stats.data[2].processed_publs || 0,
-                        correctRecords: per_stats.data[2].rec_ok || 0,
-                        checkRatio: per_stats.data[2].check_ratio || 0,
-                        speciesCount: per_stats.data[2].species_count || 0,
-                        mostCommonSpecies: per_stats.data[2].most_common_species || "Нет данных"
-                    },
-                    records: Array.isArray(per_stats.data[3]) ? per_stats.data[3] : []
-                };
+    
+		const fetchProfile = async () => {
+				try {
+						setLoading(true);
+						const per_stats = await apiService.getProfile();
 
-                setProfile(profileData);
-            } catch (error) {
-                console.error("Ошибка при загрузке профиля:", error);
-                setError(error.message || "Произошла ошибка при загрузке данных");
-            } finally {
-                setLoading(false);
-            }
-        };
+						let avatarUrl = null;
 
+						if (per_stats.data[1]) {
+								avatarUrl = await apiService.getProfilePhoto(per_stats.data[1]);
+						}
+
+						const profileData = {
+								username: per_stats.data[0] || "Не указан",
+								userId: per_stats.data[1],
+								avatar: avatarUrl,
+								stats: {
+										processedPublications: per_stats.data[2].processed_publs || 0,
+										correctRecords: per_stats.data[2].rec_ok || 0,
+										checkRatio: per_stats.data[2].check_ratio || 0,
+										speciesCount: per_stats.data[2].species_count || 0,
+										mostCommonSpecies: per_stats.data[2].most_common_species || "Нет данных"
+								},
+								records: Array.isArray(per_stats.data[3]) ? per_stats.data[3] : [].map(record => ({
+										...record,
+										hash: record.hash || ""
+								}))
+						};
+
+						setProfile(profileData);
+				} catch (error) {
+						console.error("Ошибка при загрузке профиля:", error);
+						setError(error.message || "Произошла ошибка при загрузке данных");
+				} finally {
+						setLoading(false);
+				}
+		};
+		
+		useEffect(() => {
         fetchProfile();
     }, []);
 		
@@ -142,6 +231,21 @@ const ProfilePage = () => {
 
     return (
         <div className="profile-container">
+						<ConfirmationModal
+							isOpen={confirmationModal.isOpen}
+							onConfirm={confirmAction}
+							onCancel={cancelAction}
+							title={confirmationModal.title}
+							message={confirmationModal.message}
+						/>
+						
+						<Modal
+							isOpen={modal.isOpen}
+							onClose={closeModal}
+							type={modal.type}
+						>
+							<p>{modal.message}</p>
+						</Modal>
             {/* Боковая панель с профилем */}
             <div className="profile-sidebar">
                 <div className="profile-card">
@@ -193,6 +297,17 @@ const ProfilePage = () => {
 												<div className="download-success">
 														Файл успешно скачан!
 												</div>
+										)}
+										
+										{actionStatus.error && (
+											<div className="action-error">
+												{actionStatus.error}
+											</div>
+										)}
+										{actionStatus.success && (
+											<div className="action-success">
+												{actionStatus.success}
+											</div>
 										)}
 										
                     <div className="stats-grid">
@@ -286,17 +401,26 @@ const ProfilePage = () => {
                                                 </span>
                                         )}
                                     </th>
+																		<th>Действия</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {sortedRecords.map((record, index) => (
-                                    <tr key={index}>
+                                {sortedRecords.map((record) => (
+                                    <tr key={record.hash} data-record-hash={record.hash}>
                                         <td>{new Date(record.date).toLocaleString()}</td>
                                         <td>{record.author}</td>
                                         <td>{record.species}</td>
                                         <td>{record.abundance}</td>
                                         <td>{record.locality}</td>
                                         <td>{record.even_date}</td>
+																				<td className="actions-cell">
+																						<button onClick={() => handleEdit(record.hash)} className="edit-button" aria-label="Редактировать запись">
+																								<FaPen />
+																						</button>
+																						<button onClick={() => handleDelete(record.hash)} className="delete-button" aria-label="Удалить запись">
+																								<FaTimes />
+																						</button>
+																				</td>
                                     </tr>
                                 ))}
                                 </tbody>

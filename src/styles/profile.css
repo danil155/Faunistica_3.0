@@ -292,7 +292,7 @@
     font-style: italic;
 }
 
-@media (min-width: 769px) and (max-width: 1050px) {
+@media (min-width: 769px) and (max-width: 1179px) {
   .profile-container {
     flex-direction: row;
     overflow-x: hidden;
@@ -413,4 +413,34 @@
     height: auto !important;
     min-height: auto !important;
     align-self: flex-start;
+}
+
+.actions-cell {
+  text-align: center;
+  width: 100px;
+}
+
+.edit-button, .delete-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 0 3px;
+  font-size: 16px;
+}
+
+.edit-button {
+  color: #3498db;
+}
+
+.edit-button:hover {
+  color: #2980b9;
+}
+
+.delete-button {
+  color: #e74c3c;
+}
+
+.delete-button:hover {
+  color: #c0392b;
 }

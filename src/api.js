@@ -187,6 +187,31 @@ const apiService = {
             throw error;
         }
     },
+		
+		editRecord: async (hash) => {
+			try {
+				const response = await api.post('/api/get_record', { hash });
+				return response.data;
+			} catch (error) {
+				if (error.response?.status === 404) {
+					throw new Error('Запись не найдена');
+				}
+				throw error;
+			}
+		},
+		
+		deleteRecord: async (hash) => {
+			try {
+				const response = await api.post('/api/del_record', { hash });
+				return response.data;
+			} catch (error) {
+				if (error.response?.status === 404) {
+					throw new Error('Запись не найдена');
+				}
+				throw error;
+			}
+		},
+
 };
 
 api.interceptors.request.use((config) => {
