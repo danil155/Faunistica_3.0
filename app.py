@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.middleware import SlowAPIMiddleware
 
-from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout, suggest_taxon, autofill_taxon, get_publ, support, pers_stats, user_image, get_localion, get_records_file, get_record, del_record, edit_record
+from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout, suggest_taxon, autofill_taxon, get_publ, support, pers_stats, user_image, get_localion, get_records_file, get_record, del_record, edit_record, next_publ
 from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
 from bot.bot_main import bot_start
 from config.config import LOGS_DIR
@@ -82,8 +82,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=['http://localhost:3000'],    # Replace to origins later on
     allow_credentials=True,
-    allow_methods=['GET', 'POST', 'PUT', 'DELETE'],
-    allow_headers=["*"],
+    allow_methods=['GET', 'POST'],
+    allow_headers=["Content-Type", "Authorization"],
     expose_headers=["set-cookie", "Content-Disposition"]
 )
 
@@ -107,6 +107,7 @@ app.include_router(get_records_file.router, prefix="/api")
 app.include_router(get_record.router, prefix="/api")
 app.include_router(del_record.router, prefix="/api")
 app.include_router(edit_record.router, prefix="/api")
+app.include_router(next_publ.router, prefix="/api")
 
 if __name__ == '__main__':
     asyncio.run(bot_start())

@@ -18,10 +18,10 @@ def clean_value(value):
 
 @router.post("/get_info", response_model=InfoResponse)
 @limiter.limit("10/minute")
-def get_info(
+async def get_info(
         request: Request,
         data: InfoRequest,
-        _user_data: dict = Depends(get_current_user)
+        user_data: dict = Depends(get_current_user)
 ):
     if not data.text.strip():
         logger.warning(f' HTTP error: Text cannot be empty')
