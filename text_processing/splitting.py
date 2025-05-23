@@ -140,44 +140,109 @@ def get_district(text: str) -> str:
         return str()
 
 
+ROMAN_MONTHS = {
+    "I": "01", "II": "02", "III": "03", "IV": "04", "V": "05", "VI": "06",
+    "VII": "07", "VIII": "08", "IX": "09", "X": "10", "XI": "11", "XII": "12",
+    "i": "01", "ii": "02", "iii": "03", "iv": "04", "v": "05", "vi": "06",
+    "vii": "07", "viii": "08", "ix": "09", "x": "10", "xi": "11", "xii": "12"
+}
+
 def get_date(text: str) -> str:
     if not isinstance(text, str):
-        logger.warning(f' A parameter with the str type was expected, not {type(text)}')
+        logger.warning(f'A parameter with the str type was expected, not {type(text)}')
         return str()
 
     try:
-        date_pattern = r'(\d{1,2}[.-][IVXLCDM\d]+[.-]\d{4})'
-        date_match = re.search(date_pattern, text)
-        if date_match:
-            roman_months = {"I": "01", "II": "02", "III": "03", "IV": "04", "V": "05", "VI": "06",
-                            "VII": "07", "VIII": "08", "IX": "09", "X": "10", "XI": "11", "XII": "12"}
+        # Сначала пробуем найти шаблон с 6 блоками (DD.MM.YYYY-DD.MM.YYYY)
+        pattern_6 = r'\b(\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})[.-](\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
+        match = re.search(pattern_6, text)
+        if match:
+            blocks = list(match.groups())
+            return process_6_blocks(blocks)
 
-            if date_match.group(0).find('.') != -1:
-                date_current = date_match.group(0).split('.')
-            else:
-                date_current = date_match.group(0).split('-')
+        # Затем пробуем шаблон с 5 блоками (DD.MM-DD.MM.YYYY)
+        pattern_5 = r'\b(\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
+        match = re.search(pattern_5, text)
+        if match:
+            blocks = list(match.groups())
+            return process_5_blocks(blocks)
 
-            if date_current[1].isalpha():
-                date_current[1] = roman_months[date_current[1]]
+        # Затем пробуем шаблон с 4 блоками (DD-DD.MM.YYYY)
+        pattern_4 = r'\b(\d{1,2})[.-](\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
+        match = re.search(pattern_4, text)
+        if match:
+            blocks = list(match.groups())
+            return process_4_blocks(blocks)
 
-            try:
-                day_int = int(date_current[0])
-                year_int = int(date_current[2])
-                if not (1 <= day_int <= 31) or not (1000 <= year_int <= 9999):
-                    return str()
-            except ValueError as e:
-                logger.error(f' Date error: {e}', exc_info=True)
-                raise
-                return str()
+        # Наконец пробуем шаблон с 3 блоками (DD.MM.YYYY)
+        pattern_3 = r'\b(\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
+        match = re.search(pattern_3, text)
+        if match:
+            blocks = list(match.groups())
+            return process_3_blocks(blocks)
 
-            date_current[0], date_current[2] = date_current[2], date_current[0]
-            date_current = '-'.join(date_current)
-            return date_current
         return str()
+
     except (AttributeError, IndexError, KeyError, ValueError, re.error) as e:
-        logger.error(f' Error when searching for date: {e}', exc_info=True)
-        raise
+        logger.error(f'Error when searching for date: {e}', exc_info=True)
         return str()
+
+def process_6_blocks(blocks):
+    """Обработка формата DD.MM.YYYY-DD.MM.YYYY (6 блоков)"""
+    for i in [1, 4]:  # Индексы месяцев
+        if blocks[i].isalpha():
+            blocks[i] = ROMAN_MONTHS.get(blocks[i], blocks[i])
+        elif blocks[i].isdigit():
+            blocks[i] = blocks[i].zfill(2)
+    
+    if not all(b.isdigit() for b in blocks):
+        return str()
+    
+    start_date = f"{blocks[2]}-{blocks[1]}-{blocks[0].zfill(2)}"
+    end_date = f"{blocks[5]}-{blocks[4]}-{blocks[3].zfill(2)}"
+    return f"{start_date}:{end_date}"
+
+def process_5_blocks(blocks):
+    """Обработка формата DD.MM-DD.MM.YYYY (5 блоков)"""
+    for i in [1, 3]:  # Индексы месяцев
+        if blocks[i].isalpha():
+            blocks[i] = ROMAN_MONTHS.get(blocks[i], blocks[i])
+        elif blocks[i].isdigit():
+            blocks[i] = blocks[i].zfill(2)
+    
+    if not all(b.isdigit() for b in blocks):
+        return str()
+    
+    start_date = f"{blocks[4]}-{blocks[1]}-{blocks[0].zfill(2)}"
+    end_date = f"{blocks[4]}-{blocks[3]}-{blocks[2].zfill(2)}"
+    return f"{start_date}:{end_date}"
+
+def process_4_blocks(blocks):
+    """Обработка формата DD-DD.MM.YYYY (4 блока)"""
+    # Обрабатываем римские цифры (только для месяца)
+    if blocks[2].isalpha():
+        blocks[2] = ROMAN_MONTHS.get(blocks[2], blocks[2])
+    elif blocks[2].isdigit():
+        blocks[2] = blocks[2].zfill(2)
+    
+    if not all(b.isdigit() for b in blocks):
+        return str()
+    
+    start_date = f"{blocks[3]}-{blocks[2]}-{blocks[0].zfill(2)}"
+    end_date = f"{blocks[3]}-{blocks[2]}-{blocks[1].zfill(2)}"
+    return f"{start_date}:{end_date}"
+
+def process_3_blocks(blocks):
+    """Обработка формата DD.MM.YYYY (3 блока)"""
+    if blocks[1].isalpha():
+        blocks[1] = ROMAN_MONTHS.get(blocks[1], blocks[1])
+    elif blocks[1].isdigit():
+        blocks[1] = blocks[1].zfill(2)
+    
+    if not all(b.isdigit() for b in blocks):
+        return str()
+    
+    return f"{blocks[2]}-{blocks[1]}-{blocks[0].zfill(2)}"
 
 
 def get_collectors(text: str) -> list:
