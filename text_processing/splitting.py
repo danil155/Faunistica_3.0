@@ -4,6 +4,7 @@ import re
 from text_processing.data import Data
 from text_processing.geodecoder import get_location_info
 from text_processing.gbif_parser import find_species_in_text
+from config.config_vars import ROMAN_MONTHS
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
 
 def get_coordinates(text: str) -> list[dict]:
     if not isinstance(text, str):
-        logger.warning(f' A parameter with the str type was expected, not {type(text)}')
+        logger.warning(f'A parameter with the str type was expected, not {type(text)}')
         return list()
 
     coords_pattern = r'''
@@ -103,7 +104,7 @@ def get_coordinates(text: str) -> list[dict]:
             parsed_coord = parse_single_coordinate(coord_str)
             coordinates.append(parsed_coord)
         except (ValueError, IndexError, re.error) as e:
-            logger.error(f' Error when searching for coordinates: {e}', exc_info=True)
+            logger.error(f'Error when searching for coordinates: {e}', exc_info=True)
             raise
             continue
 
@@ -112,7 +113,7 @@ def get_coordinates(text: str) -> list[dict]:
 
 def get_region(text: str) -> str:
     if not isinstance(text, str):
-        logger.warning(f' A parameter with the str type was expected, not {type(text)}')
+        logger.warning(f'A parameter with the str type was expected, not {type(text)}')
         return str()
 
     try:
@@ -120,14 +121,14 @@ def get_region(text: str) -> str:
         region_match = re.search(region_pattern, text)
         return region_match.group(1) if region_match else str()
     except (AttributeError, IndexError, re.error) as e:
-        logger.error(f' Error when searching for region: {e}', exc_info=True)
+        logger.error(f'Error when searching for region: {e}', exc_info=True)
         raise
         return str()
 
 
 def get_district(text: str) -> str:
     if not isinstance(text, str):
-        logger.warning(f' A parameter with the str type was expected, not {type(text)}')
+        logger.warning(f'A parameter with the str type was expected, not {type(text)}')
         return str()
 
     try:
@@ -135,17 +136,10 @@ def get_district(text: str) -> str:
         district_match = re.search(district_pattern, text)
         return district_match.group(1) if district_match else str()
     except (AttributeError, IndexError, re.error) as e:
-        logger.error(f' Error when searching for district: {e}', exc_info=True)
+        logger.error(f'Error when searching for district: {e}', exc_info=True)
         raise
         return str()
 
-
-ROMAN_MONTHS = {
-    "I": "01", "II": "02", "III": "03", "IV": "04", "V": "05", "VI": "06",
-    "VII": "07", "VIII": "08", "IX": "09", "X": "10", "XI": "11", "XII": "12",
-    "i": "01", "ii": "02", "iii": "03", "iv": "04", "v": "05", "vi": "06",
-    "vii": "07", "viii": "08", "ix": "09", "x": "10", "xi": "11", "xii": "12"
-}
 
 def get_date(text: str) -> str:
     if not isinstance(text, str):
@@ -153,28 +147,28 @@ def get_date(text: str) -> str:
         return str()
 
     try:
-        # Сначала пробуем найти шаблон с 6 блоками (DD.MM.YYYY-DD.MM.YYYY)
+        # template with 6 blocks (DD.MM.YYYY-DD.MM.YYYY)
         pattern_6 = r'\b(\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})[.-](\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
         match = re.search(pattern_6, text)
         if match:
             blocks = list(match.groups())
             return process_6_blocks(blocks)
 
-        # Затем пробуем шаблон с 5 блоками (DD.MM-DD.MM.YYYY)
+        # template with 5 blocks (DD.MM-DD.MM.YYYY)
         pattern_5 = r'\b(\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
         match = re.search(pattern_5, text)
         if match:
             blocks = list(match.groups())
             return process_5_blocks(blocks)
 
-        # Затем пробуем шаблон с 4 блоками (DD-DD.MM.YYYY)
+        # template with 4 blocks (DD-DD.MM.YYYY)
         pattern_4 = r'\b(\d{1,2})[.-](\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
         match = re.search(pattern_4, text)
         if match:
             blocks = list(match.groups())
             return process_4_blocks(blocks)
 
-        # Наконец пробуем шаблон с 3 блоками (DD.MM.YYYY)
+        # template with 3 blocks (DD.MM.YYYY)
         pattern_3 = r'\b(\d{1,2})[.-](\d{1,2}|[IVXLCDMivxlcdm]+)[.-](\d{4})\b'
         match = re.search(pattern_3, text)
         if match:
@@ -187,11 +181,10 @@ def get_date(text: str) -> str:
         logger.error(f'Error when searching for date: {e}', exc_info=True)
         return str()
 
-def process_6_blocks(blocks):
-    """Обработка формата DD.MM.YYYY-DD.MM.YYYY (6 блоков)"""
-    for i in [1, 4]:  # Индексы месяцев
+def process_6_blocks(blocks) -> str:
+    for i in [1, 4]:
         if blocks[i].isalpha():
-            blocks[i] = ROMAN_MONTHS.get(blocks[i], blocks[i])
+            blocks[i] = ROMAN_MONTHS.get(blocks[i].lower(), blocks[i])
         elif blocks[i].isdigit():
             blocks[i] = blocks[i].zfill(2)
     
@@ -202,11 +195,10 @@ def process_6_blocks(blocks):
     end_date = f"{blocks[5]}-{blocks[4]}-{blocks[3].zfill(2)}"
     return f"{start_date}:{end_date}"
 
-def process_5_blocks(blocks):
-    """Обработка формата DD.MM-DD.MM.YYYY (5 блоков)"""
-    for i in [1, 3]:  # Индексы месяцев
+def process_5_blocks(blocks) -> str:
+    for i in [1, 3]:
         if blocks[i].isalpha():
-            blocks[i] = ROMAN_MONTHS.get(blocks[i], blocks[i])
+            blocks[i] = ROMAN_MONTHS.get(blocks[i].lower(), blocks[i])
         elif blocks[i].isdigit():
             blocks[i] = blocks[i].zfill(2)
     
@@ -217,11 +209,9 @@ def process_5_blocks(blocks):
     end_date = f"{blocks[4]}-{blocks[3]}-{blocks[2].zfill(2)}"
     return f"{start_date}:{end_date}"
 
-def process_4_blocks(blocks):
-    """Обработка формата DD-DD.MM.YYYY (4 блока)"""
-    # Обрабатываем римские цифры (только для месяца)
+def process_4_blocks(blocks) -> str:
     if blocks[2].isalpha():
-        blocks[2] = ROMAN_MONTHS.get(blocks[2], blocks[2])
+        blocks[2] = ROMAN_MONTHS.get(blocks[2].lower(), blocks[2])
     elif blocks[2].isdigit():
         blocks[2] = blocks[2].zfill(2)
     
@@ -232,10 +222,9 @@ def process_4_blocks(blocks):
     end_date = f"{blocks[3]}-{blocks[2]}-{blocks[1].zfill(2)}"
     return f"{start_date}:{end_date}"
 
-def process_3_blocks(blocks):
-    """Обработка формата DD.MM.YYYY (3 блока)"""
+def process_3_blocks(blocks) -> str:
     if blocks[1].isalpha():
-        blocks[1] = ROMAN_MONTHS.get(blocks[1], blocks[1])
+        blocks[1] = ROMAN_MONTHS.get(blocks[1].lower(), blocks[1])
     elif blocks[1].isdigit():
         blocks[1] = blocks[1].zfill(2)
     
@@ -247,7 +236,7 @@ def process_3_blocks(blocks):
 
 def get_collectors(text: str) -> list:
     if not isinstance(text, str):
-        logger.warning(f' A parameter with the str type was expected, not {type(text)}')
+        logger.warning(f'A parameter with the str type was expected, not {type(text)}')
         return list()
 
     # Pattern: Нестеров А. А.
@@ -276,7 +265,7 @@ def get_collectors(text: str) -> list:
                 if collector not in ' '.join(collectors):
                     collectors += [collector]
     except (AttributeError, TypeError) as e:
-        logger.error(f' Error when searching for collectors: {e}', exc_info=True)
+        logger.error(f'Error when searching for collectors: {e}', exc_info=True)
         raise
 
     return collectors
@@ -290,7 +279,7 @@ def get_numbers_species(text: str) -> dict:
     }
 
     if not isinstance(text, str):
-        logger.warning(f' A parameter with the str type was expected, not {type(text)}')
+        logger.warning(f'A parameter with the str type was expected, not {type(text)}')
         return species_count
 
     # Patterns
@@ -309,7 +298,7 @@ def get_numbers_species(text: str) -> dict:
                 elif gender in ["♀", "female", "f", "F", "самка"]:
                     species_count['female'] += count
             except (IndexError, ValueError) as e:
-                logger.error(f' Error parsing: {e}', exc_info=True)
+                logger.error(f'Error parsing: {e}', exc_info=True)
                 raise
                 continue
 
@@ -322,7 +311,7 @@ def get_numbers_species(text: str) -> dict:
                 elif gender in ["sub♀", "subfemale", "subf", "subF", "sF", "субсамка"]:
                     species_count['sub_female'] += count
             except (IndexError, ValueError) as e:
-                logger.error(f' Error parsing: {e}', exc_info=True)
+                logger.error(f'Error parsing: {e}', exc_info=True)
                 raise
                 continue
 
@@ -336,7 +325,7 @@ def get_numbers_species(text: str) -> dict:
                 count = int(match[0])
                 species_count['juvenile'] += count
             except (IndexError, ValueError, TypeError) as e:
-                logger.error(f' Error parsing: {e}', exc_info=True)
+                logger.error(f'Error parsing: {e}', exc_info=True)
                 raise
                 continue
 
@@ -349,11 +338,11 @@ def get_numbers_species(text: str) -> dict:
                 elif "♂" in match[1]:
                     species_count['male'] += count
             except (IndexError, ValueError) as e:
-                logger.error(f' Error parsing: {e}', exc_info=True)
+                logger.error(f'Error parsing: {e}', exc_info=True)
                 raise
                 continue
     except re.error as e:
-        logger.error(f' Error when searching for numbers species: {e}', exc_info=True)
+        logger.error(f'Error when searching for numbers species: {e}', exc_info=True)
         raise
     return species_count
 
@@ -369,7 +358,7 @@ def check_full_location_data(data: Data) -> None:
             data.district = data.district or address.get('district', "")
             data.gathering_place = data.gathering_place or location_info.get('display_name', "")
     except Exception as e:
-        logger.error(f' Error when checking full location data: {e}', exc_info=True)
+        logger.error(f'Error when checking full location data: {e}', exc_info=True)
         raise
 
 
@@ -377,7 +366,7 @@ def get_separated_parameters(text: str) -> Data:
     data = Data()
 
     if not isinstance(text, str) or not text.strip():
-        logger.warning(f' A parameter with the str type was expected, not {type(text)} or parameter is empty')
+        logger.warning(f'A parameter with the str type was expected, not {type(text)} or parameter is empty')
         return data
 
     try:
@@ -405,7 +394,7 @@ def get_separated_parameters(text: str) -> Data:
 
         check_full_location_data(data)
     except Exception as e:
-        logger.critical(f' Critical error in text processing: {e}', exc_info=True)
+        logger.critical(f'Critical error in text processing: {e}', exc_info=True)
         raise
 
     return data
@@ -413,4 +402,4 @@ def get_separated_parameters(text: str) -> Data:
 
 if __name__ == '__main__':
     get_separated_parameters(
-        "Семейство Linyphiidae Agyneta suecica Holm, 1950 Рис. 1, 2А Материал. 5 ♂, Свердловская обл., Первоуральский р-н, окр. Среднеуральского медеплавильного завода (СУМЗ),  лес елово-пихтовый, 6-11.VI.2019, Золотарев М.; 1 ♀, Свердловская обл. Первоуральский р-н, окр. СУМЗ, , лес елово-пихтовый, 6-11.VI.2019, Золотарев М. З").print()
+        "Gnaphosa steppica Ovtsharenko, Platnick et Song 1992 (pro parte; the specimens from Azerbaijan only): 37. Holotype # (ZMMU), Azerbaijan, Gyandzha (=Kirovobad) Distr., ca 2 km S of Khanlar ( 40°41N, 46°21E ), 8.V.1986, leg. P.M. Dunin.").print()
