@@ -1,8 +1,8 @@
 import { useFormContext } from "../pages/FormContext";
-import {useEffect, useState} from "react";
+import { useState} from "react";
 import { apiService } from "../api";
 
-export const CoordinatesInput = () => {
+export const CoordinatesInput = (isDisabled) => {
     const { formState, setFormState } = useFormContext();
     const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
     const [isLoading, setIsLoading] = useState(false);
@@ -180,7 +180,7 @@ export const CoordinatesInput = () => {
                 className="coord"
                 name={name}
                 value={value}
-                disabled={disabled}
+                disabled={disabled || isDisabled}
                 onChange={handleInputChange}
                 placeholder={placeholder}
                 inputMode={inputMode}
@@ -202,6 +202,7 @@ export const CoordinatesInput = () => {
                         clearCoordFields();
                     }}
                     value={coordFormat}
+                    disabled={disabled || isDisabled}
                 >
                     <option value="grads">ГГ.гггг° (56.83777°)</option>
                     <option value="mins">ГГ°ММ.мм' (56° 50.266')</option>
@@ -334,7 +335,7 @@ export const CoordinatesInput = () => {
                 <button
                     type="button"
                     onClick={getLocationFromCoordinates}
-                    disabled={isLoading || disabled}
+                    disabled={isLoading || disabled || isDisabled}
                     className="location-pin-button"
                     title="Определить местоположение"
                 >

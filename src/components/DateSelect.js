@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const DateSelect = () => {
+const DateSelect = (disabled) => {
     const { formState, setFormState } = useFormContext();
 
     const [isInterval, setIsInterval] = useState(false);
@@ -36,6 +36,7 @@ const DateSelect = () => {
             <div className="form-group">
                 <label htmlFor="is_interval">Тип даты:</label>
                 <select
+                    disabled={disabled}
                     id="is_interval"
                     value={isInterval.toString()}
                     onChange={(e) => { setIsInterval(e.target.value === "true"); resetForm(); }}
@@ -47,6 +48,7 @@ const DateSelect = () => {
 
                 <label htmlFor="precision">Точность:</label>
                 <select
+                    disabled={disabled}
                     id="precision"
                     value={precision}
                     onChange={(e) => {
@@ -68,6 +70,7 @@ const DateSelect = () => {
                     <>
                         <label htmlFor="date">Дата:</label>
                         <input
+                            disabled={disabled}
                             id="date"
                             type="date"
                             name="begin_date"
@@ -84,6 +87,7 @@ const DateSelect = () => {
                     <>
                         <label htmlFor="month">Месяц:</label>
                         <select
+                            disabled={disabled}
                             id="month"
                             name="begin_month"
                             value={formState.begin_month || ''}
@@ -100,6 +104,7 @@ const DateSelect = () => {
 
                         <label htmlFor="year">Год:</label>
                         <input
+                            disabled={disabled}
                             id="year"
                             className="text-input"
                             type="number"
@@ -118,6 +123,7 @@ const DateSelect = () => {
                     <>
                         <label>Год:</label>
                         <input
+                            disabled={disabled}
                             className="text-input"
                             type="number"
                             name="begin_year"
@@ -138,6 +144,7 @@ const DateSelect = () => {
                             <>
                                 <label>Конечная дата:</label>
                                 <input
+                                    disabled={disabled}
                                     className="text-input"
                                     type="date"
                                     name="end_date"
@@ -153,6 +160,7 @@ const DateSelect = () => {
                             <>
                                 <label>Конечный месяц:</label>
                                 <select
+                                    disabled={disabled}
                                     name="end_month"
                                     value={formState.end_month || ''}
                                     onChange={handleChange}
@@ -168,6 +176,7 @@ const DateSelect = () => {
 
                                 <label>Конечный год:</label>
                                 <input
+                                    disabled={disabled}
                                     className="text-input"
                                     type="number"
                                     name="end_year"
@@ -185,6 +194,7 @@ const DateSelect = () => {
                             <>
                                 <label>Конечный год:</label>
                                 <input
+                                    disabled={disabled}
                                     className="text-input"
                                     type="number"
                                     name="end_year"

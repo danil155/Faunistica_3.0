@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
 
-const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }) => {
+const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, isDisabled=false }) => {
     const { formState, setFormState } = useFormContext();
     const [loading, setLoading] = useState(false);
 
@@ -142,7 +142,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                             id={level.name}
                             options={options[level.name]}
                             loading={loading}
-                            disabled={level.name === "species" ? isDefined : false}
+                            disabled={level.name === "species" || isDisabled? isDefined || isDisabled : false}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
@@ -160,7 +160,6 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                             onChange={(e) => {
                                 updateField(level.name, e.target.value)}}
                             placeholder={`Введите ${level.heading.toLowerCase()}`}
-                            disabled={level.name === "species" ? isDefined : false}
                             fullWidth
                             required={true}
                         />

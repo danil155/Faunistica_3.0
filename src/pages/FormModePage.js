@@ -85,7 +85,7 @@ const SectionControls = ({
 
 );
 
-const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
+const FormModePage = ({ isEditMode = false, onCancel }) => {
     // Получение контекста формы
     const {
         formState,
@@ -318,10 +318,11 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 										</div>
 
 										<div className={`form-grid ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
-											<CoordinatesInput />
+											<CoordinatesInput isDisabled={pinnedSections[sectionName] || false} />
 											<div className="form-group">
 												<label htmlFor="geo-origin">Происхождение координат:</label>
-												<select 
+												<select
+                                                    disabled={pinnedSections[sectionName] || false}
 													id="geo-origin"
 													name="geo_origin"
 													className="form-control"
@@ -338,6 +339,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											<div className="form-group">
 												<label htmlFor="geo_uncert">Радиус неточности координат, м:</label>
 												<input
+                                                    disabled={pinnedSections[sectionName] || false}
 													className="text-input"
 													id="geo_uncert"
 													type="number"
@@ -350,7 +352,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 
 											<div className="form-group">
 												<label htmlFor="geo_REM">Примечания к расположению</label>
-												<textarea id="geo_REM" name="geo_REM" value={formState.geo_REM} onChange={handleInputChange} />
+												<textarea disabled={pinnedSections[sectionName] || false} id="geo_REM" name="geo_REM" value={formState.geo_REM} onChange={handleInputChange} />
 											</div>
 										</div>
 									</div>
@@ -375,7 +377,9 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 										<div className={`form-grid section-content ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<div className="form-group">
 												<div className="form-row">
-													<input 
+													<input
+
+                                                        disabled={pinnedSections[sectionName] || false}
 														id="adm_verbatim"
 														name="adm_verbatim"
 														type="checkbox"
@@ -390,6 +394,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 												<div key={field.name} className="form-group">
 													<label htmlFor={field.name}>{field.heading}:</label>
 													<input
+                                                        disabled={pinnedSections[sectionName] || false}
 														id={field.name}
 														className="text-input"
 														type="text"
@@ -422,10 +427,11 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 										</div>
 
 										<div className={`form-grid section-content ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
-											<DateSelect getSectionData={getSectionData} />
+											<DateSelect getSectionData={getSectionData} disabled={pinnedSections[sectionName] || false} />
 											<div className="form-group">
 												<label htmlFor="biotope">Биотоп:</label>
 												<input
+                                                    disabled={pinnedSections[sectionName] || false}
 													id="biotope"
 													className="text-input"
 													type="text"
@@ -437,6 +443,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											<div className="form-group">
 												<label htmlFor="collector">Коллектор:</label>
 												<input
+                                                    disabled={pinnedSections[sectionName] || false}
 													id="collector"
 													className="text-input"
 													type="text"
@@ -450,6 +457,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											<div className="form-group">
 												<label htmlFor="measurement_units">Единицы измерения:</label>
 												<input
+                                                    disabled={pinnedSections[sectionName] || false}
 													id="measurement_units"
 													className="text-input"
 													type="text"
@@ -463,6 +471,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											<div className="form-group">
 												<label htmlFor="selective_gain">Выборочное усиление:</label>
 												<input
+                                                    disabled={pinnedSections[sectionName] || false}
 													id="selective_gain"
 													className="text-input"
 													type="text"
@@ -474,7 +483,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 
 											<div className="form-group">
 												<label htmlFor="eve_REM">Примечания к сбору материала</label>
-												<textarea id="eve_REM" name="eve_REM" value={formState.eve_REM} onChange={handleInputChange} />
+												<textarea disabled={pinnedSections[sectionName] || false} id="eve_REM" name="eve_REM" value={formState.eve_REM} onChange={handleInputChange} />
 											</div>
 										</div>
 									</div>
@@ -501,6 +510,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											<div className="form-group">
 												<div className="form-row">
 													<input
+                                                        disabled={pinnedSections[sectionName] || false}
 														id="tax_sp_def"
 														name="tax_sp_def"
 														type="checkbox"
@@ -520,6 +530,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 
 												<div className="form-row">
 													<input
+                                                        disabled={pinnedSections[sectionName] || false}
 														id="tax_nsp"
 														name="tax_nsp"
 														type="checkbox"
@@ -544,6 +555,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 
 												<div className="form-row">
 													<input
+                                                        disabled={pinnedSections[sectionName] || false}
 														id="is_new_species"
 														name="is_new_species"
 														type="checkbox"
@@ -557,6 +569,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 													<div className='form-group'>
 														<label htmlFor="type_status">Типовой статус:</label>
 														<select
+                                                            disabled={pinnedSections[sectionName] || false}
 															id="type_status"
 															name="type_status"
 															value={formState.type_status ?? ''}
@@ -570,10 +583,11 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 													</div>
 												)}
 											</div>
-											<TaxonDropdown isDefined={formState.tax_sp_def} isInList={formState.tax_nsp} />
+											<TaxonDropdown isDisabled={pinnedSections[sectionName] || false} isDefined={formState.tax_sp_def} isInList={formState.tax_nsp} />
 											<div className="form-group">
 												<label htmlFor="tax_REM">Таксономические примечания:</label>
 												<textarea
+                                                    disabled={pinnedSections[sectionName] || false}
 													id="tax_REM"
 													name="taxonomic_notes"
 													value={formState.taxonomic_notes}

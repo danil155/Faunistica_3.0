@@ -246,6 +246,13 @@ a {
   background-color: #f1f8fe;
 }
 
+.section.pinned label{
+  color: #7f8c8d;
+}
+.section.pinned input {
+  color: #aaa;
+}
+
 .section-header {
   display: flex;
   gap: 15px;
@@ -311,7 +318,7 @@ a {
   border-radius: 4px;
   font-size: 14px;
   width: 100%;
-  background-color: white;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .form-group input:focus,
@@ -535,6 +542,7 @@ a {
   flex: 1;
   min-width: 0;
   margin: 0 2px;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 /* Контейнер для строк с полями ввода */
