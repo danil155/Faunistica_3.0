@@ -3,8 +3,8 @@ import { useState } from "react";
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const DateSelect = (disabled) => {
-    const { formState, setFormState } = useFormContext();
+const DateSelect = () => {
+    const { formState, setFormState, pinnedSections } = useFormContext();
 
     const [isInterval, setIsInterval] = useState(false);
     const [precision, setPrecision] = useState('exact');
@@ -36,7 +36,7 @@ const DateSelect = (disabled) => {
             <div className="form-group">
                 <label htmlFor="is_interval">Тип даты:</label>
                 <select
-                    disabled={disabled}
+                    disabled={pinnedSections["Сбор материала"] || false}
                     id="is_interval"
                     value={isInterval.toString()}
                     onChange={(e) => { setIsInterval(e.target.value === "true"); resetForm(); }}
@@ -48,7 +48,7 @@ const DateSelect = (disabled) => {
 
                 <label htmlFor="precision">Точность:</label>
                 <select
-                    disabled={disabled}
+                    disabled={pinnedSections["Сбор материала"] || false}
                     id="precision"
                     value={precision}
                     onChange={(e) => {
@@ -70,7 +70,7 @@ const DateSelect = (disabled) => {
                     <>
                         <label htmlFor="date">Дата:</label>
                         <input
-                            disabled={disabled}
+                            disabled={pinnedSections["Сбор материала"] || false}
                             id="date"
                             type="date"
                             name="begin_date"
@@ -87,7 +87,7 @@ const DateSelect = (disabled) => {
                     <>
                         <label htmlFor="month">Месяц:</label>
                         <select
-                            disabled={disabled}
+                            disabled={pinnedSections["Сбор материала"] || false}
                             id="month"
                             name="begin_month"
                             value={formState.begin_month || ''}
@@ -104,7 +104,7 @@ const DateSelect = (disabled) => {
 
                         <label htmlFor="year">Год:</label>
                         <input
-                            disabled={disabled}
+                            disabled={pinnedSections["Сбор материала"] || false}
                             id="year"
                             className="text-input"
                             type="number"
@@ -123,7 +123,7 @@ const DateSelect = (disabled) => {
                     <>
                         <label>Год:</label>
                         <input
-                            disabled={disabled}
+                            disabled={pinnedSections["Сбор материала"] || false}
                             className="text-input"
                             type="number"
                             name="begin_year"
@@ -144,7 +144,7 @@ const DateSelect = (disabled) => {
                             <>
                                 <label>Конечная дата:</label>
                                 <input
-                                    disabled={disabled}
+                                    disabled={pinnedSections["Сбор материала"] || false}
                                     className="text-input"
                                     type="date"
                                     name="end_date"
@@ -160,7 +160,7 @@ const DateSelect = (disabled) => {
                             <>
                                 <label>Конечный месяц:</label>
                                 <select
-                                    disabled={disabled}
+                                    disabled={pinnedSections["Сбор материала"] || false}
                                     name="end_month"
                                     value={formState.end_month || ''}
                                     onChange={handleChange}
@@ -176,7 +176,7 @@ const DateSelect = (disabled) => {
 
                                 <label>Конечный год:</label>
                                 <input
-                                    disabled={disabled}
+                                    disabled={pinnedSections["Сбор материала"] || false}
                                     className="text-input"
                                     type="number"
                                     name="end_year"
@@ -194,7 +194,7 @@ const DateSelect = (disabled) => {
                             <>
                                 <label>Конечный год:</label>
                                 <input
-                                    disabled={disabled}
+                                    disabled={pinnedSections["Сбор материала"] || false}
                                     className="text-input"
                                     type="number"
                                     name="end_year"

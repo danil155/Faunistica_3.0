@@ -3,8 +3,8 @@ import React, { useMemo, useState } from "react";
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
 
-const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, isDisabled=false }) => {
-    const { formState, setFormState } = useFormContext();
+const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }) => {
+    const { formState, setFormState, pinnedSections } = useFormContext();
     const [loading, setLoading] = useState(false);
 
     const levels = [
@@ -142,7 +142,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                             id={level.name}
                             options={options[level.name]}
                             loading={loading}
-                            disabled={level.name === "species" || isDisabled? isDefined || isDisabled : false}
+                            disabled={level.name === "species" || pinnedSections["Сбор материала"] ? isDefined || pinnedSections["Сбор материала"] : false}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}

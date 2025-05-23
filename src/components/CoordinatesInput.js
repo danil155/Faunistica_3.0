@@ -2,8 +2,8 @@ import { useFormContext } from "../pages/FormContext";
 import { useState} from "react";
 import { apiService } from "../api";
 
-export const CoordinatesInput = (isDisabled) => {
-    const { formState, setFormState } = useFormContext();
+export const CoordinatesInput = () => {
+    const { formState, setFormState, pinnedSections } = useFormContext();
     const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -180,7 +180,7 @@ export const CoordinatesInput = (isDisabled) => {
                 className="coord"
                 name={name}
                 value={value}
-                disabled={disabled || isDisabled}
+                disabled={disabled || pinnedSections["Географическое положение"]}
                 onChange={handleInputChange}
                 placeholder={placeholder}
                 inputMode={inputMode}
@@ -202,7 +202,7 @@ export const CoordinatesInput = (isDisabled) => {
                         clearCoordFields();
                     }}
                     value={coordFormat}
-                    disabled={disabled || isDisabled}
+                    disabled={disabled || pinnedSections["Географическое положение"]}
                 >
                     <option value="grads">ГГ.гггг° (56.83777°)</option>
                     <option value="mins">ГГ°ММ.мм' (56° 50.266')</option>
@@ -335,7 +335,7 @@ export const CoordinatesInput = (isDisabled) => {
                 <button
                     type="button"
                     onClick={getLocationFromCoordinates}
-                    disabled={isLoading || disabled || isDisabled}
+                    disabled={isLoading || disabled || pinnedSections["Географическое положение"]}
                     className="location-pin-button"
                     title="Определить местоположение"
                 >
