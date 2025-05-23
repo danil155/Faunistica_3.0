@@ -22,7 +22,7 @@ def handle_db_errors(function):
             return await function(session, *args, **kwargs)
         except IntegrityError as e:
             await session.rollback()
-            logger.error(f' IntegrityError in {function.__name__}: {e}', exc_info=True)
+            logger.error(f'IntegrityError in {function.__name__}: {e}', exc_info=True)
         except SQLAlchemyError as e:
             await session.rollback()
             logger.error(f'SQLAlchemyError in {function.__name__}: {e}', exc_info=True)

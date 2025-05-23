@@ -19,6 +19,7 @@ executor = ThreadPoolExecutor()
 
 def suggestion(field: str, text: str, filters: Dict[str, Optional[str]]) -> List[str]:
     if field not in ["species", "genus", "family"]:
+        logger.warning("Invalid field. Must be 'species', 'genus', or 'family'")
         raise ValueError("Invalid field. Must be 'species', 'genus', or 'family'.")
 
     query_df = df.copy()
@@ -53,5 +54,5 @@ async def suggest_taxon(
         suggestions = await async_suggestion(data.field, data.text, data.filters)
         return {"suggestions": suggestions}
     except ValueError as e:
-        logger.error(f' Value error: {e}', exc_info=True)
+        logger.error(f'Value error: {e}', exc_info=True)
         raise HTTPException(status_code=400, detail=str(e))

@@ -30,5 +30,5 @@ async def insert_record(
             pdf_file=base_url + data["publication"]["pdf_file"]
         )
     except Exception as e:
-        logger.error(f' HTTP Error: {e}', exc_info=True)
+        logger.error(f'HTTP Error: {e}', exc_info=True)
         raise HTTPException(status_code=500, detail=f"Server database error: {str(e)}")

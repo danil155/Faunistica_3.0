@@ -23,11 +23,11 @@ async def handle_user_data(
 ):
     user_id = await get_user_id_by_username(session, data.username)
     if user_id == -1:
-        logger.warning(' User not found for this username')
+        logger.warning('User not found for this username')
         raise HTTPException(status_code=404, detail="User not found for this username")
 
     if not await is_pass_correct(session, user_id, data.password):
-        logger.warning(' Wrong password')
+        logger.warning('Wrong password')
         raise HTTPException(status_code=401, detail="Wrong password")
 
     token_payload = {"sub": str(user_id), "username": data.username}

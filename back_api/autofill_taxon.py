@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def autofill_taxon(field: str, text: str) -> AutofillTaxonResponse:
     if field not in ["genus", "species"]:
-        logger.warning(" Invalid field. Must be 'genus' or 'species'.")
+        logger.warning("Invalid field. Must be 'genus' or 'species'.")
         raise ValueError("Invalid field. Must be 'genus' or 'species'.")
 
     query_df = df.copy()
@@ -48,5 +48,5 @@ async def autofill_taxon_endpoint(
         result = await async_autofill_taxon(data.field, data.text)
         return result
     except ValueError as e:
-        logger.error(f' Value error: {e}', exc_info=True)
+        logger.error(f'Value error: {e}', exc_info=True)
         raise HTTPException(status_code=400, detail=str(e))

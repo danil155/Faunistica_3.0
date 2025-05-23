@@ -24,7 +24,7 @@ async def get_info(
         user_data: dict = Depends(get_current_user)
 ):
     if not data.text.strip():
-        logger.warning(f' HTTP error: Text cannot be empty')
+        logger.warning(f'HTTP error: Text cannot be empty')
         raise HTTPException(status_code=400, detail="Text cannot be empty")
     info = get_separated_parameters(data.text)
     coordinate_north = {

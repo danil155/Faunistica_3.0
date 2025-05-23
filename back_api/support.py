@@ -24,5 +24,5 @@ async def suggest_taxon(
         await send_support_message(data, user_id)
         return {"message": "Support request received"}
     except Exception as e:
-        logger.error(f' Failed to process support request: {e}', exc_info=True)
+        logger.error(f'Failed to process support request: {e}', exc_info=True)
         raise HTTPException(status_code=500, detail=f"Failed to process support request: {str(e)}")

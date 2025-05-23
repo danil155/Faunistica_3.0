@@ -91,7 +91,7 @@ def parse_coordinate(coord: str) -> float:
         decimal = degrees + (minutes / 60) + (seconds / 3600)
         return round(decimal, 6)
 
-    logger.warning(f' Invalid coordinate format: {coord}')
+    logger.warning(f'Invalid coordinate format: {coord}')
     raise ValueError(f"Invalid coordinate format: {coord}")
 
 
@@ -101,7 +101,7 @@ def safe_coord_parse(coord: Optional[str]) -> Optional[float]:
     try:
         return parse_coordinate(coord)
     except ValueError as e:
-        logger.error(f' Value error: {e}', exc_info=True)
+        logger.error(f'Value error: {e}', exc_info=True)
         return None
 
 
@@ -164,5 +164,5 @@ async def insert_record(
         await add_record_from_json(session, record_json)
         return {"message": "OK"}
     except Exception as e:
-        logger.error(f' Server database error: {e}', exc_info=True)
+        logger.error(f'Server database error: {e}', exc_info=True)
         raise HTTPException(status_code=500, detail=f"Server database error: {str(e)}")

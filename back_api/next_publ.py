@@ -23,9 +23,11 @@ async def get_info(
     user_info = await get_user(session, user_id)
 
     if not await is_publ_filled(session, user_id, user_info.publ_id):
+        logger.warning('Publication is not filled')
         raise HTTPException(status_code=409, detail="Publication is not filled")
 
     if not user_info.items:
+        logger.warning('No publications available')
         raise HTTPException(status_code=404, detail="No publications available")
 
     items = user_info.items.split("|")

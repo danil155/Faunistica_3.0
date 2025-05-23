@@ -17,6 +17,7 @@ def get_location_names(lat, lon):
         location = geolocator.reverse((lat, lon), language='ru')
 
         if location is None:
+            logger.warning('Location not found for the given coordinates')
             raise HTTPException(status_code=404, detail="Location not found for the given coordinates")
 
         address = location.raw.get('address', {})
@@ -31,10 +32,10 @@ def get_location_names(lat, lon):
             "district": district
         }
     except GeocoderTimedOut as e:
-        logger.error(f' GeocoderTimedOut: {e}', exc_info=True)
+        logger.error(f'GeocoderTimedOut: {e}', exc_info=True)
         raise HTTPException(status_code=408, detail="Geocoding service timeout")
     except Exception as e:
-        logger.error(f' HTTP Error: {e}', exc_info=True)
+        logger.error(f'HTTP Error: {e}', exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 

@@ -25,13 +25,13 @@ def verify_token(token: str) -> dict:
         payload = jwt.decode(token, PUBLIC_KEY, algorithms=[ALGORITHM])
         return payload
     except ExpiredSignatureError:
-        logger.warning(' Token expired')
+        logger.warning('Token expired')
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='Token expired'
         )
     except JWTError:
-        logger.warning(' Invalid token')
+        logger.warning('Invalid token')
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail='Invalid token'
@@ -41,10 +41,10 @@ def verify_token(token: str) -> dict:
 def get_current_user(request: Request) -> dict:
     token = request.cookies.get("access_token")
     if not token:
-        logger.warning(' Missing access token')
+        logger.warning('Missing access token')
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Missing access token")
     payload = verify_token(token)
     if payload.get("type") != "access":
-        logger.warning(' Invalid token type')
+        logger.warning('Invalid token type')
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid token type")
     return payload
