@@ -101,8 +101,9 @@ class Messages:
                '<a href="https://sozontov.cc/vol_manual/vol_manual.pdf">пдф-файл</a>.'
 
     @staticmethod
-    def new_password(temp: str) -> str:
+    def new_password(temp: str, username) -> str:
         return 'Ваш **новый пароль** для [сервиса](https://faunistica.ru/) 🥳\n\n' \
+               f'P.S. ваш никнейм 🤫: {username}\n\n' \
                'Действует бессрочно (пока не забудете):\n' \
                f'```{temp}```'
 

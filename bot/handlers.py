@@ -243,7 +243,7 @@ class Handlers:
                     )
 
                     await message.answer(
-                        Messages.new_password(password),
+                        Messages.new_password(password, user.name),
                         parse_mode="Markdown",
                         disable_web_page_preview=True
                     )
@@ -640,9 +640,9 @@ class Handlers:
                 await message.answer(Messages.name_already_exists())
             elif len(name_msg) < 3:
                 await message.answer(Messages.message_too_short())
-            elif len(name_msg) > 20:
+            elif len(name_msg) > 40:
                 await message.answer(Messages.message_too_long())
-            elif not fullmatch(r'^[а-яА-ЯёЁa-zA-Z0-9]+$', name_msg):
+            elif not fullmatch(r"^[а-яА-ЯёЁa-zA-Z0-9\s\-'.]+$", name_msg):
                 await message.answer(Messages.invalid_characters())
             else:
                 await update_user(
@@ -790,7 +790,7 @@ class Handlers:
                 await message.answer(Messages.message_too_short())
             elif len(name_msg) > 40:
                 await message.answer(Messages.message_too_long())
-            elif not fullmatch(r'^[а-яА-ЯёЁa-zA-Z0-9]+$', name_msg):
+            elif not fullmatch(r"^[а-яА-ЯёЁa-zA-Z0-9\s\-'.]+$", name_msg):
                 await message.answer(Messages.invalid_characters())
             else:
                 old_name = (await get_user(session, message.from_user.id)).name
