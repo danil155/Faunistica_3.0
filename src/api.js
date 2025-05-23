@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios from 'axios'; 
 
 const api = axios.create({
+    baseURL: "http://localhost:5001",
     withCredentials: true
 });
 
@@ -188,29 +189,59 @@ const apiService = {
         }
     },
 		
-		editRecord: async (hash) => {
-			try {
-				const response = await api.post('/api/get_record', { hash });
-				return response.data;
-			} catch (error) {
-				if (error.response?.status === 404) {
-					throw new Error('Запись не найдена');
-				}
-				throw error;
-			}
-		},
-		
-		deleteRecord: async (hash) => {
-			try {
-				const response = await api.post('/api/del_record', { hash });
-				return response.data;
-			} catch (error) {
-				if (error.response?.status === 404) {
-					throw new Error('Запись не найдена');
-				}
-				throw error;
-			}
-		},
+	getRecord: async (hash) => {
+		try {
+			const response = await api.post('/api/get_record', { hash });
+			return response.data;
+		} catch (error) {
+            if (error.response?.status === 400) {
+                throw new Error('Некорректный токен записи. Возможно, ссылка устарела или повреждена.');
+            }
+            if (error.response?.status === 404) {
+                throw new Error('Запись не найдена или вы не имеете к ней доступа.');
+            }
+            if (error.response?.status === 500) {
+                throw new Error('Произошла ошибка на сервере. Попробуйте позже.');
+            }
+            throw new Error('Не удалось получить данные записи. Проверьте подключение к сети.');
+        }
+	},
+	
+	deleteRecord: async (hash) => {
+		try {
+			const response = await api.post('/api/del_record', { hash });
+			return response.data;
+		} catch (error) {
+            if (error.response?.status === 400) {
+                throw new Error('Некорректный токен записи. Возможно, ссылка устарела или повреждена.');
+            }
+            if (error.response?.status === 404) {
+                throw new Error('Запись не найдена или вы не имеете к ней доступа.');
+            }
+            if (error.response?.status === 500) {
+                throw new Error('Произошла ошибка на сервере. Попробуйте позже.');
+            }
+            throw new Error('Не удалось получить данные записи. Проверьте подключение к сети.');
+        }
+	},
+        
+    editRecord: async (hash, recordData) => {
+        try {
+            const response = await api.post('/api/edit_record', { hash, ...recordData });
+            return response.data;
+        } catch (error) {
+            if (error.response?.status === 400) {
+                throw new Error('Некорректный токен записи. Возможно, ссылка устарела или повреждена.');
+            }
+            if (error.response?.status === 404) {
+                throw new Error('Запись не найдена или вы не имеете к ней доступа.');
+            }
+            if (error.response?.status === 500) {
+                throw new Error('Произошла ошибка на сервере. Попробуйте позже.');
+            }
+            throw new Error('Не удалось получить данные записи. Проверьте подключение к сети.');
+        }
+    },
 
 };
 

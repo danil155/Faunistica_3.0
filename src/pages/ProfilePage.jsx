@@ -1,10 +1,13 @@
 import { apiService } from "../api";
+import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import { FaPen, FaTimes } from 'react-icons/fa';
-import { Modal, ConfirmationModal } from "../components/confirmModal/confirmModal"
+import { Modal, ConfirmationModal } from "../components/modal/confirmModal"
+import EditRecordModal from '../components/modal/editModal';
 import '../styles/profile.css';
 
 const ProfilePage = () => {
+    const navigate = useNavigate();
     const [profile, setProfile] = useState({
         username: "",
         userId: "",
@@ -35,6 +38,13 @@ const ProfilePage = () => {
 			title: '',
 			message: ''
 		});
+
+        const [editModal, setEditModal] = useState({
+          isOpen: false,
+          record: null,
+          loading: false,
+          error: null
+        });
 		
 		const [actionStatus, setActionStatus] = useState({
 			loading: false,
@@ -69,13 +79,7 @@ const ProfilePage = () => {
 			
 			try {
 				if (action === 'edit') {
-					await apiService.editRecord(hash);
-					setModal({
-						isOpen: true,
-						type: 'success',
-						message: 'Запись отправлена на редактирование'
-					});
-					setTimeout(() => fetchProfile(), 1000);
+					navigate(`/edit/${hash}`);
 				} else if (action === 'delete') {
 					await apiService.deleteRecord(hash);
 					setModal({
@@ -94,8 +98,31 @@ const ProfilePage = () => {
 					type: 'error',
 					message: error.message || 'Произошла ошибка'
 				});
-			}
+			} finally {
+                setActionStatus({ loading: false, error: null, success: null });
+            }
 		};
+
+        const handleSaveRecord = async (updatedRecord) => {
+        setEditModal(prev => ({ ...prev, loading: true, error: null }));
+          
+        try {
+            await apiService.editRecord(updatedRecord.hash, updatedRecord);
+            setEditModal({ isOpen: false, record: null, loading: false, error: null });
+            setModal({
+                isOpen: true,
+                type: 'success',
+                message: 'Запись успешно обновлена'
+            });
+            fetchProfile();
+        } catch (error) {
+            setEditModal(prev => ({
+                ...prev,
+                loading: false,
+                error: error.message || 'Ошибка при сохранении'
+            }));
+        }
+        };
 
 		const cancelAction = () => {
 			setConfirmationModal({ ...confirmationModal, isOpen: false });
@@ -231,21 +258,29 @@ const ProfilePage = () => {
 
     return (
         <div className="profile-container">
-						<ConfirmationModal
-							isOpen={confirmationModal.isOpen}
-							onConfirm={confirmAction}
-							onCancel={cancelAction}
-							title={confirmationModal.title}
-							message={confirmationModal.message}
-						/>
-						
-						<Modal
-							isOpen={modal.isOpen}
-							onClose={closeModal}
-							type={modal.type}
-						>
-							<p>{modal.message}</p>
-						</Modal>
+			<ConfirmationModal
+				isOpen={confirmationModal.isOpen}
+				onConfirm={confirmAction}
+				onCancel={cancelAction}
+				title={confirmationModal.title}
+				message={confirmationModal.message}
+			/>
+			
+			<Modal
+				isOpen={modal.isOpen}
+				onClose={closeModal}
+				type={modal.type}
+			>
+				<p>{modal.message}</p>
+			</Modal>
+            <EditRecordModal
+                isOpen={editModal.isOpen}
+                record={editModal.record}
+                onSave={handleSaveRecord}
+                onCancel={() => setEditModal({ isOpen: false, record: null })}
+                loading={editModal.loading}
+                error={editModal.error}
+            />
             {/* Боковая панель с профилем */}
             <div className="profile-sidebar">
                 <div className="profile-card">

@@ -13,6 +13,7 @@ import StatsPage from "./pages/Stats";
 import FeedbackPage from "./pages/Feedback";
 import ProfilePage from "./pages/ProfilePage";
 import {Introduction} from "./pages/Instruction";
+import EditRecordPage from './pages/EditRecordPage';
 
 function App() {
   const navigate = useNavigate();
@@ -84,6 +85,7 @@ function App() {
           <Route path="/feedback" element={<FeedbackPage />} />
           <Route path="/instruction" element={<Introduction />} />
           <Route path="/stats" element={<StatsPage />} />
+          <Route path="/edit/:hash" element={<EditRecordPage />} />
         </Routes>
 
         <Footer />

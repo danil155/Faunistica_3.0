@@ -67,10 +67,10 @@ export const fieldsMap = {
   'Таксономия': ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
 };
 
-export const FormProvider = ({ children }) => {
+export const FormProvider = ({ children, initialState }) => {
   const [formState, setFormState] = useState(() => {
     const saved = localStorage.getItem('formData');
-    const parsed = saved ? JSON.parse(saved) : defaultState;
+    const parsed = saved ? JSON.parse(saved) : (initialState || defaultState);
     return {
       ...defaultState,
       ...parsed,
