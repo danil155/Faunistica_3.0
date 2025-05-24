@@ -126,6 +126,17 @@ main {
     background-color: #45a049;
 }
 
+.change-publ-btn {
+    max-width: 170px;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    background-color: var(--main-bg-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
 /* Попап */
 .popup {
     position: fixed;

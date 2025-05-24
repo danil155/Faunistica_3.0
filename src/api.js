@@ -117,6 +117,30 @@ const apiService = {
         }
     },
 
+    getPublicationFromHash: async (hash) => {
+        try {
+            const response = await api.post('/api/publ_from_hash', hash);
+            return response.data;
+        } catch (error) {
+            throw new Error(error);
+        }
+    },
+
+    ChangePublication: async () => {
+        try {
+            const response = await api.get('/api/next_publ');
+            return response.data;
+        }  catch (error) {
+            if (error.response?.status === 409) {
+                throw new Error('Текущая публикация ещё не заполнена.');
+            }
+            if (error.response?.status === 404) {
+                throw new Error('Нет доступных публикаций.');
+            }
+            throw new Error('Не удалось получить данные по публикациям.');
+        }
+    },
+
     getLocationFromCoordinates: async (coordinates) => {
         try {
             const response = await api.post('/api/get_loc', coordinates);
@@ -256,28 +280,28 @@ api.interceptors.response.use(
     async error => {
         const originalRequest = error.config;
 				
-				const currentPath = window.location.pathname;
-				const shouldRedirect = currentPath === '/text' || currentPath === '/form';
+		const currentPath = window.location.pathname;
+		const shouldRedirect = currentPath === '/text' || currentPath === '/form';
 
         if (error.response?.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
 						
-					 if (originalRequest.url.includes('/api/refresh_token')) {
-							console.error('Refresh token failed, logging out');
-							if (shouldRedirect) {
-								window.location.href = '/';
-							}
-							return Promise.reject(error);
-						}
+			if (originalRequest.url.includes('/api/refresh_token')) {
+				console.error('Refresh token failed, logging out');
+				if (shouldRedirect) {
+					window.location.href = '/';
+				}
+				return Promise.reject(error);
+			}
 
             try {
                 await apiService.refreshToken();
                 return api(originalRequest);
             } catch (refreshError) {
                 console.error('Refresh token failed:', refreshError);
-								if (shouldRedirect) {
-									window.location.href = '/';
-								}
+					if (shouldRedirect) {
+						window.location.href = '/';
+					}
                 return Promise.reject(refreshError);
             }
         }

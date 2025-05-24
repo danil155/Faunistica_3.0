@@ -32,6 +32,8 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
             timeoutId = setTimeout(() => func(...args), delay);
         };
     };
+    
+    const toArray = (val) => Array.isArray(val) ? val : [val];
 
     const fetchWithFilters = useMemo(() => debounce(async (fieldName, searchText) => {
         if (searchText.length < 2) {
@@ -59,9 +61,12 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                 filters: filters
             });
             if (fieldName === 'family') {
-                setOptions(prev => ({ ...prev, [fieldName]: data?.suggestions || [] }));
+                setOptions(prev => ({
+                    ...prev,
+                    [fieldName]: (data?.suggestions || []).filter(Boolean)
+                }));
             } else {
-                const opt = ["Не определено"].concat(Array.from(data?.suggestions));
+                const opt = ["Не определено"].concat((data?.suggestions || []).filter(Boolean));
                 setOptions(prev => ({ ...prev, [fieldName]: opt }));
             }
         } finally {
@@ -99,12 +104,12 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                 if (formState.genus || formState.species) {
                     updateField('genus', '');
                     updateField('species', '');
-                    setOptions({ family: autofillResult.family, genus: [], species: [] });
+                    setOptions({ family: toArray(autofillResult.family), genus: [], species: [] });
                 }
             } else if (fieldName === 'genus') {
                 if (formState.species) {
                     updateField('species', '');
-                    setOptions(prev => ({ ...prev, genus: autofillResult.genus, species: [] }));
+                    setOptions(prev => ({ ...prev, genus: toArray(autofillResult.genus), species: [] }));
                 }
             }
         } catch (e) {
@@ -128,6 +133,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                                 }
                                 updateField(level.name, newValue);
                             }}
+                            getOptionLabel={(option) => (option ? option.toString() : "")}
                             onInputChange={(_, input, reason) => {
                                 if (reason === "clear" || reason === "removeOption" || reason === "reset") {
                                     setInputValues({ ...inputValues, [level.name]: "" });
@@ -157,6 +163,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                             size="small"
                             id={level.name}
                             value={formState[level.name]}
+                            disabled={level.name === "species" || pinnedSections["Сбор материала"] ? isDefined || pinnedSections["Сбор материала"] : false}
                             onChange={(e) => {
                                 updateField(level.name, e.target.value)}}
                             placeholder={`Введите ${level.heading.toLowerCase()}`}

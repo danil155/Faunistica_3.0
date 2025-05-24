@@ -67,15 +67,14 @@ export const fieldsMap = {
   'Таксономия': ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
 };
 
-export const FormProvider = ({ children, initialState }) => {
+export const FormProvider = ({ children, initialState, isEditMode = false }) => {
   const [formState, setFormState] = useState(() => {
-    const saved = localStorage.getItem('formData');
-    const parsed = saved ? JSON.parse(saved) : (initialState || defaultState);
-    return {
-      ...defaultState,
-      ...parsed,
-      specimens: parsed.specimens || {}
-    };
+    if (initialState) return initialState;
+    if (!isEditMode) {
+      const saved = localStorage.getItem('formData');
+      return saved ? JSON.parse(saved) : defaultState;
+    }
+    return defaultState;
   });
 
   const [pinnedSections, setPinnedSections] = useState(() => {
@@ -128,9 +127,11 @@ export const FormProvider = ({ children, initialState }) => {
 
   // Сохранение в localStorage
   useEffect(() => {
-    localStorage.setItem('formData', JSON.stringify(formState));
+    if (!isEditMode) {
+      localStorage.setItem('formData', JSON.stringify(formState));
+    }
     localStorage.setItem('pinnedSections', JSON.stringify(pinnedSections));
-  }, [formState, pinnedSections]);
+  }, [formState, pinnedSections, collapsedSections, isEditMode]);
 
   return (
       <FormContext.Provider

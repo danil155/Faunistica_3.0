@@ -85,7 +85,7 @@ const SectionControls = ({
 
 );
 
-const FormModePage = ({ isEditMode = false, onCancel }) => {
+const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
     // Получение контекста формы
     const {
         formState,
@@ -216,10 +216,13 @@ const FormModePage = ({ isEditMode = false, onCancel }) => {
                 taxonomic_notes: formState.taxonomic_notes,
                 type_status: formState.type_status
             };
-            console.log("Отправка данных:", recordData);
-            await apiService.insertRecord(recordData);
-            resetForm();
-            toast.success("Данные успешно отправлены! Незакреплённые поля очищены.", { autoClose: 3000, position: 'bottom-right'});
+            if (isEditMode && onSubmit) {
+            	await onSubmit(recordData)
+            } else {
+	            await apiService.insertRecord(recordData);
+	            resetForm();
+	            toast.success("Данные успешно отправлены! Незакреплённые поля очищены.", { autoClose: 3000, position: 'bottom-right'});
+	        }
         } catch (error) {
             console.error("Ошибка при отправке данных:", error);
             toast.error("Произошла ошибка при отправке данных", { autoClose: 3000, position: 'bottom-right' });
@@ -293,7 +296,7 @@ const FormModePage = ({ isEditMode = false, onCancel }) => {
 	            )}
 
                 <form onSubmit={handleSubmit} className="specimen-form">
-					<ArticleInfo />
+					<ArticleInfo isEditMode={isEditMode} />
 					
 					{sectionOrder.map((sectionName, index) => {
 						const isFirst = index === 0;
