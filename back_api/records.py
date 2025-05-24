@@ -50,7 +50,7 @@ def specimen_parse(specimens):
     return None, 0
 
 
-def num_of_specimen(specimens: Optional[dict]) -> Optional[int]:
+def num_of_specimen(specimens: Optional[dict]) -> Optional[float]:
     if not specimens:
         return 0
     count = 0

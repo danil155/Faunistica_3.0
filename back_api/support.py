@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 @router.post("/support")
-@limiter.limit("60/minute")
+@limiter.limit("1/minute")
 async def support(
         request: Request,
         data: SupportRequest,

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.post("/next_publ", response_model=InfoResponse)
+@router.get("/next_publ")
 @limiter.limit("10/minute")
 async def next_publ(
         request: Request,
@@ -21,12 +21,14 @@ async def next_publ(
 ):
     user_id = int(user_data["sub"])
     user_info = await get_user(session, user_id)
+    print(user_info)
 
     if not await is_publ_filled(session, user_id, user_info.publ_id):
         logger.warning('Publication is not filled')
         raise HTTPException(status_code=409, detail="Publication is not filled")
 
     if not user_info.items:
+        print(user_info.items)
         logger.warning('No publications available')
         raise HTTPException(status_code=404, detail="No publications available")
 
@@ -35,6 +37,6 @@ async def next_publ(
 
     if (num_publ != -1) and (num_publ != len(items) - 1):
         publ_id = int(items[num_publ + 1])
-        await update_user(session, user_id, publ_id)
+        await update_user(session=session, user_id=user_id, publ_id=publ_id)
         return True
     return False

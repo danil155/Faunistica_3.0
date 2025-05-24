@@ -437,14 +437,14 @@ async def edit_record_by_id(session: AsyncSession, record_id: int, user_id: int,
     stmt = select(Record).where(and_(Record.id == record_id, Record.user_id == user_id))
     result = await session.execute(stmt)
     record = result.scalar_one_or_none()
-
-    if record is not None:
-        for key, value in new_data.items():
-            if hasattr(record, key) and key != "hash":
-                setattr(record, key, value)
-        await session.commit()
-        return True
-    return False
+    print(record)
+    if record is None:
+        return False
+    for key, value in new_data.items():
+        if key != "hash":
+            setattr(record, key, value)
+    await session.commit()
+    return True
 
 
 @handle_db_errors

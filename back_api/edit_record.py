@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, UTC
 import logging
 
 from database.database import get_session
@@ -28,6 +29,9 @@ async def edit_record(
         raise HTTPException(status_code=400, detail="Invalid record token.")
 
     try:
+        data.model_dump()
+        data["datetime"] = datetime.now(UTC).replace(tzinfo=None, microsecond=0),
+        data["type"] = "rec_ok"
         is_success = await edit_record_by_id(session, record_id, user_id, data)
     except Exception as e:
         logger.error(f'Server database error: {e}', exc_info=True)
