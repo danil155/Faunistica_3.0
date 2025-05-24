@@ -16,14 +16,6 @@ def dms_to_decimal(degrees: float, minutes: float = 0, seconds: float = 0, direc
     return decimal
 
 def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
-    coord_str = (
-        coord_str.strip()
-        .replace(" ", "")
-        .replace(",", ".")
-        .replace("′", "'")
-        .replace("″", '"')
-        .replace("⁰", "°")
-    )
     coord_dict = {
         "degrees": None,
         "minutes": None,
@@ -31,50 +23,63 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
         "decimal": None,
     }
 
-    match = re.match(
-        r"([-+]?\d{1,3})°(\d{1,2})'(\d{1,2}(?:\.\d+)?)\"([NSWE])",
-        coord_str,
-        re.IGNORECASE,
-    )
-    if match:
-        degrees, minutes, seconds, direction = match.groups()
-        coord_dict.update({
-            "degrees": float(degrees),
-            "minutes": float(minutes),
-            "seconds": float(seconds),
-            "decimal": dms_to_decimal(degrees, minutes, seconds, direction),
-        })
-        return coord_dict
+    try:
+        normalized = (
+            coord_str.strip()
+            .replace(" ", "")
+            .replace(",", ".")
+            .replace("′", "'")
+            .replace("″", '"')
+            .replace("⁰", "°")
+            .upper()
+        )
 
-    match = re.match(
-        r"([-+]?\d{1,3})°(\d{1,2}(?:\.\d+)?)'([NSWE])",
-        coord_str,
-        re.IGNORECASE,
-    )
-    if match:
-        degrees, minutes, direction = match.groups()
-        coord_dict.update({
-            "degrees": float(degrees),
-            "minutes": float(minutes),
-            "seconds": None,
-            "decimal": dms_to_decimal(degrees, minutes, 0, direction),
-        })
-        return coord_dict
+        # DD°MM'SS.SS"N/S/E/W or DD°MM'SS.SSN/S/E/W
+        match = re.fullmatch(
+            r"([-+]?\d{1,3})°(\d{1,2})'(\d{1,2}(?:\.\d+)?)\"?([NSWE])",
+            normalized,
+        )
+        if match:
+            degrees, minutes, seconds, direction = match.groups()
+            coord_dict.update({
+                "degrees": float(degrees),
+                "minutes": float(minutes),
+                "seconds": float(seconds),
+                "decimal": dms_to_decimal(degrees, minutes, seconds, direction),
+            })
+            return coord_dict
 
-    match = re.match(
-        r"([-+]?\d{1,3}(?:\.\d+)?)°?([NSWE])",
-        coord_str,
-        re.IGNORECASE,
-    )
-    if match:
-        degrees, direction = match.groups()
-        coord_dict.update({
-            "degrees": float(degrees),
-            "minutes": None,
-            "seconds": None,
-            "decimal": dms_to_decimal(degrees, 0, 0, direction),
-        })
-        return coord_dict
+        # DD°MM.MM'N/S/E/W or DD°MM.MMN/S/E/W
+        match = re.fullmatch(
+            r"([-+]?\d{1,3})°(\d{1,2}(?:\.\d+)?)'?([NSWE])",
+            normalized,
+        )
+        if match:
+            degrees, minutes, direction = match.groups()
+            coord_dict.update({
+                "degrees": float(degrees),
+                "minutes": float(minutes),
+                "seconds": None,
+                "decimal": dms_to_decimal(degrees, minutes, 0, direction),
+            })
+            return coord_dict
+
+        # DD.DD°N/S/E/W or DD.DDN/S/E/W
+        match = re.fullmatch(
+            r"([-+]?\d{1,3}(?:\.\d+)?)°?([NSWE])",
+            normalized
+        )
+        if match:
+            degrees, direction = match.groups()
+            coord_dict.update({
+                "degrees": float(degrees),
+                "minutes": None,
+                "seconds": None,
+                "decimal": dms_to_decimal(degrees, 0, 0, direction),
+            })
+            return coord_dict
+    except Exception as e:
+        logger.error(f'Error parsing coordinate "{coord_str}": {e}', exc_info=True)
 
     return coord_dict
 
@@ -82,22 +87,26 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
 def get_coordinates(text: str) -> list[dict]:
     if not isinstance(text, str):
         logger.warning(f'A parameter with the str type was expected, not {type(text)}')
-        return list()
+        return []
 
     coords_pattern = r'''
-         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}['′]\s*\d{1,2}(?:[.,]\d+)?[\"″]?\s*[NS])|   # DD° MM' SS.SS" N/S
-         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}(?:[.,]\d+)?['′]?\s*[NS])|                  # DD° MM.MM' N/S
-         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[⁰°]?\s*[NS])|                             # DD.DD N/S or DD.DD° N/S
-         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}['′]\s*\d{1,2}(?:[.,]\d+)?[\"″]?\s*[WE])|   # DD° MM' SS.SS" E/W
-         ([-+]?\d{1,3}[⁰°]\s*\d{1,2}(?:[.,]\d+)?['′]?\s*[WE])|                  # DD° MM.MM' E/W
-         ([-+]?\d{1,3}(?:[.,]\d+)?\s*[⁰°]?\s*[WE])|                             # DD.DD E/W or DD.DD° E/W
-     '''
+            (?:^|\s|\(|\[)  # Начало
+            (
+                [-+]?\d{1,3}[⁰°˚]?          # Градусы
+                (?:\s*\d{1,2}(?:[.,]\d+)?)? # Минуты (опционально)
+                ['′ʼ`]?                     # Символ минут (опционально)
+                (?:\s*\d{1,2}(?:[.,]\d+)?)? # Секунды (опционально)
+                ["″˝]?                      # Символ секунд (опционально)
+                \s*[NSWE]                   # Направление
+            )
+            (?=\s|$|\)|\]|[,;])            # Конец
+        '''
 
-    coords_match = re.findall(coords_pattern, text, re.VERBOSE)
-    coordinates = list()
+    coords_match = re.finditer(coords_pattern, text, re.VERBOSE)
+    coordinates = []
 
-    for match_group in coords_match:
-        coord_str = next((x for x in match_group if x), '').strip()
+    for match in coords_match:
+        coord_str = match.group(1).strip()
         if not coord_str:
             continue
         try:
@@ -283,7 +292,7 @@ def get_numbers_species(text: str) -> dict:
         return species_count
 
     # Patterns
-    adult_pattern = r'(\d+)\s+(?<![♀♂])([♂♀]|male|female|m|f|M|F|самец|самка)(?![♀♂])'
+    adult_pattern = r'(\d+)\s+(?<![♀♂])([♂♀]|male|female|m|f|M|F|самец|самца|самцов|самка|самки|самок)(?![♀♂])'
     subadult_pattern = r'(\d+)\s+(sub♀|sub♂|submale|subfemale|subm|subf|subM|subF|sM|sF|субсамец|субсамка)'
     juvenile_pattern = r'(\d+)\s+(?:juv|juvenile|j|ювенил)'
     double_sign_pattern = r'(\d+)?\s*([♀♂]{2,})'
@@ -293,9 +302,9 @@ def get_numbers_species(text: str) -> dict:
         for count, gender in re.findall(adult_pattern, text):
             try:
                 count = int(count)
-                if gender in ["♂", "male", "m", "M", "самец"]:
+                if gender in ["♂", "male", "m", "M", "самец", "самца", "самцов"]:
                     species_count['male'] += count
-                elif gender in ["♀", "female", "f", "F", "самка"]:
+                elif gender in ["♀", "female", "f", "F", "самка", "самки", "самок"]:
                     species_count['female'] += count
             except (IndexError, ValueError) as e:
                 logger.error(f'Error parsing: {e}', exc_info=True)
@@ -402,4 +411,4 @@ def get_separated_parameters(text: str) -> Data:
 
 if __name__ == '__main__':
     get_separated_parameters(
-        "Gnaphosa steppica Ovtsharenko, Platnick et Song 1992 (pro parte; the specimens from Azerbaijan only): 37. Holotype # (ZMMU), Azerbaijan, Gyandzha (=Kirovobad) Distr., ca 2 km S of Khanlar ( 40°41N, 46°21E ), 8.V.1986, leg. P.M. Dunin.").print()
+        "Gnaphosa steppica Ovtsharenko, Platnick et Song 1992 (pro parte; the specimens from Azerbaijan only): 37. Holotype # (ZMMU), Azerbaijan, Gyandzha (=Kirovobad) Distr., ca 2 km S of Khanlar (40°41N, 46°21E), 8.V.1986, leg. P.M. Dunin.").print()

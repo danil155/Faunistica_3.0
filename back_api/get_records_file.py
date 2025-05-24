@@ -99,7 +99,7 @@ async def get_records_data(
 
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         headers = {
-            "Content-Disposition": f"attachment; filename=user_{username}_records_{timestamp}.xlsx",
+            "Content-Disposition": f"attachment; filename=records_{timestamp}.xlsx",
             "Access-Control-Expose-Headers": "Content-Disposition"
         }
 
