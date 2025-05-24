@@ -18,6 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 def autofill_taxon(field: str, text: str) -> AutofillTaxonResponse:
+    if field == "family":
+        return AutofillTaxonResponse(family=text, genus=None)
     if field not in ["genus", "species"]:
         logger.warning("Invalid field. Must be 'genus' or 'species'.")
         raise ValueError("Invalid field. Must be 'genus' or 'species'.")

@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.post("/next_publ", response_model=InfoResponse)
 @limiter.limit("10/minute")
-async def get_info(
+async def next_publ(
         request: Request,
         user_data: dict = Depends(get_current_user),
         session: AsyncSession = Depends(get_session)

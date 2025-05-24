@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post("/edit_record")
 @limiter.limit("20/minute")
-async def insert_record(
+async def edit_record(
         request: Request,
         data: EditRecordRequest,
         user_data: dict = Depends(get_current_user),

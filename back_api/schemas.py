@@ -215,3 +215,7 @@ class EditRecordRequest(BaseModel):
     eve_YY_end: Optional[int] = None
     eve_MM_end: Optional[int] = None
     eve_DD_end: Optional[int] = None
+
+
+class RecordHashRequest(BaseModel):
+    hash: str

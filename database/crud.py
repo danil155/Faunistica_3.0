@@ -445,3 +445,21 @@ async def edit_record_by_id(session: AsyncSession, record_id: int, user_id: int,
         await session.commit()
         return True
     return False
+
+
+@handle_db_errors
+async def publ_by_hash(session: AsyncSession, record_id: int, user_id: int) -> dict:
+    record = await get_record_by_id(session, record_id, user_id)
+    data = {}
+    if record is not None:
+        stmt = select(Publ).filter_by(id=record.publ_id)
+        result = await session.execute(stmt)
+        publication = result.scalar_one_or_none()
+        if publication:
+            data = {
+                "author": publication.author,
+                "year": str(publication.year),
+                "name": publication.name,
+                "pdf_file": publication.pdf_file
+            }
+    return data

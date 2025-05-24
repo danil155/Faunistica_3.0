@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.post("/del_record")
 @limiter.limit("20/minute")
-async def insert_record(
+async def del_record(
         request: Request,
         data: RemoveRecordRequest,
         user_data: dict = Depends(get_current_user),

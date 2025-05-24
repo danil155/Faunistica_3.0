@@ -14,7 +14,7 @@ router = APIRouter()
 
 @router.post("/support")
 @limiter.limit("60/minute")
-async def suggest_taxon(
+async def support(
         request: Request,
         data: SupportRequest,
         session: AsyncSession = Depends(get_session)

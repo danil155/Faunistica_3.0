@@ -15,7 +15,7 @@ base_url = "https://faunistica.ru/files/"
 
 @router.get("/get_publ")
 @limiter.limit("666/minute")
-async def insert_record(
+async def get_publ(
         request: Request,
         user_data: dict = Depends(get_current_user),
         session: AsyncSession = Depends(get_session),
