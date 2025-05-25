@@ -11,7 +11,8 @@
     "profile": "Account"
   },
   "auth": {
-    "login": "Login / <1>Register</1>",
+    "login": "Login",
+    "reg": "Register",
     "logout": "Logout"
   }
 }

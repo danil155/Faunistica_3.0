@@ -98,13 +98,6 @@ const SectionControls = ({
 const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 	const { t } = useTranslation('formPage');
 
-	const fieldsMap = {
-	    administrative: FIELD_GROUPS.administrative,
-	    geographical: FIELD_GROUPS.geographical,
-	    material_collection: FIELD_GROUPS.material_collection,
-	    taxonomy: FIELD_GROUPS.taxonomy
-	  };
-
     // Получение контекста формы
     const {
         formState,
@@ -118,12 +111,6 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 
     const [showResetModal, setShowResetModal] = useState(false);
     const [resetMode, setResetMode] = useState("soft");
-    const adm = [
-        {name: "country", heading: t('adm.country') },
-        {name: "region", heading: t('adm.region') },
-        {name: "district", heading: t('adm.district') },
-        {name: "gathering_place", heading: t('adm.gathering_place') },
-    ]
 
     // Обработчик изменений для текстовых полей
     const handleInputChange = (e) => {
@@ -679,7 +666,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 												}}
 											/>
 											<div className="form-group">
-												<label htmlFor="comment" style={{ display: 'inline-block', marginBottom: '5px' }}>Комментарий:</label>
+												<label htmlFor="comment" style={{ display: 'inline-block', marginBottom: '5px' }}>{t("comment")}</label>
 												<textarea
 													id="comment"
 													value={formState.abu_ind_rem}

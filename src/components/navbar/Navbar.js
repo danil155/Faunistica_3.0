@@ -3,7 +3,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import LanguageSwitcher from "../LanguageSwitcher";
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -66,9 +66,7 @@ const Navbar = ({ isAuthenticated, onLoginClick, onLogoutClick }) => {
                     }} 
                     className="mobile-auth-button"
                   >
-                    <Trans i18nKey="navbar.auth.login">
-                      Войти / <b>Зарегистрироваться</b>
-                    </Trans>
+                    {t('auth.login')} / <b>{t('auth.reg')}</b>
                   </button>
                 )}
               </div>

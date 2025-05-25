@@ -77,5 +77,7 @@
     "canc": "Cancel",
     "clear": "Are you sure you want to clear all fields that are not pinned?",
     "obliterate": "Are you sure you want to clear the form completely, including the pinned sections?"
-  }
+  },
+
+  "comment": "Comment:"
 }

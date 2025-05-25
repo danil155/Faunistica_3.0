@@ -2,7 +2,7 @@ import axios from 'axios';
 import i18n from 'i18next';
 
 const api = axios.create({
-    // baseURL: "http://localhost:5001",
+    baseURL: "http://localhost:5001",
     withCredentials: true
 });
 
@@ -99,24 +99,18 @@ const apiService = {
         }
     },
 
-    suggestGeo: async (data) => {
-        if (!data || data.query.length < 2) {
-            return [];
+    suggestGeo: async (filters) => {
+        if (!filters || filters.text.length < 1) {
+            return { suggestions: [] };
         }
         try {
-            console.log(data)
-
-            const response = await api.post('/api/geo_search', {
-                query: data.query,
-                location_type: data.location_type,
-                parent_id: data.parent_id
-            });
-
+            console.log(filters)
+            const response = await api.post('/api/geo_search', filters);
             console.log(response)
             return response.data;
         } catch (error) {
             console.error(error);
-            return [];
+            return { suggestions: [] };
         }
     },
 
