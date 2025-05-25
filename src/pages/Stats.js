@@ -5,7 +5,7 @@ import { BarChart } from '@mui/x-charts';
 import { apiService } from "../api";
 
 const StatsPage = () => {
-    const { t } = useTranslation('stats');
+    const {t} = useTranslation('stats');
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -26,13 +26,18 @@ const StatsPage = () => {
         fetchStats();
     }, []);
 
-    if (loading) return <div className="loading-message">
-        {t("messages.loading")}<span className="loading-dots"></span>
-    </div>;
-    if (error) return <div className="error-message">{error}</div>;
-    if (!stats) return <div className="no-data">{t("messages.no_data")}</div>;
+    if (loading) {
+        return <div className="loading-message">
+            {t("messages.loading")}<span className="loading-dots"></span>
+        </div>;
+    }
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
+    if (!stats) {
+        return <div className="no-data">{t("messages.no_data")}</div>;
+    }
 
-    // Подготовка данных для графика
     const chartData = {
         series: [
             {
@@ -52,24 +57,24 @@ const StatsPage = () => {
             <h2>{t("stats.title")}</h2>
             <div id="stats">
                 <div>
-                <div className="info-container">
-                    <p>{t("stats.basic.publ_all")}</p>
-                    <h3>{stats.total_publications}</h3>
-                </div>
-                <div className="info-container">
-                    <p>{t("stats.basic.publ_processed")}</p>
-                    <h3>{stats.processed_publications}</h3>
-                </div>
+                    <div className="info-container">
+                        <p>{t("stats.basic.publ_all")}</p>
+                        <h3>{stats.total_publications}</h3>
+                    </div>
+                    <div className="info-container">
+                        <p>{t("stats.basic.publ_processed")}</p>
+                        <h3>{stats.processed_publications}</h3>
+                    </div>
                 </div>
                 <div>
-                <div className="info-container">
-                    <p>{t("stats.basic.species_all")}</p>
-                    <h3>{stats.total_species}</h3>
-                </div>
-                <div className="info-container">
-                    <p>{t("stats.basic.species_unique")}</p>
-                    <h3>{stats.unique_species}</h3>
-                </div>
+                    <div className="info-container">
+                        <p>{t("stats.basic.species_all")}</p>
+                        <h3>{stats.total_species}</h3>
+                    </div>
+                    <div className="info-container">
+                        <p>{t("stats.basic.species_unique")}</p>
+                        <h3>{stats.unique_species}</h3>
+                    </div>
                 </div>
                 <div className='info-container'>
                     <p>{t("stats.hysto_title")}</p>

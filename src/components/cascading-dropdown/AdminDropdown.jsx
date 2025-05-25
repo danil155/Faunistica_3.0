@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
 
-const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, isDisabled }) => {
-    const { t } = useTranslation('adminDropdown');
-    const { formState, setFormState } = useFormContext();
+const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, isDisabled}) => {
+    const {t} = useTranslation('adminDropdown');
+    const {formState, setFormState} = useFormContext();
     const [loading, setLoading] = useState(false);
 
     const levels = [
-        { name: 'country', placeholder: t("placehold_cou"), heading: t("country") },
-        { name: 'region', placeholder: t("placehold_reg"), heading: t("region") },
-        { name: 'district', placeholder: t("placehold_dis"), heading: t("district") }
+        {name: 'country', placeholder: t("placehold_cou"), heading: t("country")},
+        {name: 'region', placeholder: t("placehold_reg"), heading: t("region")},
+        {name: 'district', placeholder: t("placehold_dis"), heading: t("district")}
     ];
 
     const [options, setOptions] = useState({
@@ -37,7 +37,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
 
     const fetchWithFilters = useMemo(() => debounce(async (fieldName, searchText) => {
         if (searchText.length < 1) {
-            setOptions(prev => ({ ...prev, [fieldName]: [] }));
+            setOptions(prev => ({...prev, [fieldName]: []}));
             return;
         }
 
@@ -67,7 +67,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
         } finally {
             setLoading(false);
         }
-    }, debounceTime), [debounceTime, formState.country, formState.region]);
+    }, debounceTime), [debounceTime, formState.region]);
 
     const updateField = (fieldName, value) => {
         setFormState(prev => ({
@@ -82,7 +82,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                 <div key={level.name} className="input-group">
                     <label htmlFor={level.name}>
                         {level.heading}:
-                    </label>                    
+                    </label>
                     <Autocomplete
                         freeSolo
                         filterOptions={(x) => x}
@@ -92,9 +92,9 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                         }}
                         onInputChange={(_, input, reason) => {
                             if (reason === "clear" || reason === "removeOption" || reason === "reset") {
-                                setInputValues({ ...inputValues, [level.name]: "" });
+                                setInputValues({...inputValues, [level.name]: ""});
                             } else if (!options[level.name].includes(input) && level.name !== "country") {
-                                setInputValues({ ...inputValues, [level.name]: input });
+                                setInputValues({...inputValues, [level.name]: input});
                                 fetchWithFilters(level.name, input);
                             }
                         }}
@@ -114,7 +114,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                             />
                         )}
                     />
-                    
+
                 </div>
             ))}
         </div>

@@ -1,8 +1,8 @@
-import {useState, useCallback, useEffect} from 'react';
-import {apiService} from '../api';
+import { useState, useCallback, useEffect } from 'react';
+import { apiService } from '../api';
 
 export default function useToken() {
-    const [isAuth, setIsAuth] = useState(null); // null - начальное состояние (загрузка)
+    const [isAuth, setIsAuth] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const checkAuth = useCallback(async () => {

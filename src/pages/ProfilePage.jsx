@@ -7,7 +7,7 @@ import { Modal, ConfirmationModal } from "../components/modal/confirmModal"
 import '../styles/profile.css';
 
 const ProfilePage = () => {
-    const { t } = useTranslation('profile');
+    const {t} = useTranslation('profile');
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
         username: "",
@@ -24,130 +24,129 @@ const ProfilePage = () => {
     });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' })
-		
-		const [modal, setModal] = useState({
-			isOpen: false,
-			type: 'info',
-			message: '',
-		});
-		
-		const [confirmationModal, setConfirmationModal] = useState({
-			isOpen: false,
-			action: null,
-			hash: null,
-			title: '',
-			message: ''
-		});
-		
-		const [actionStatus, setActionStatus] = useState({
-			loading: false,
-			error: null,
-			success: null
-		});
-		
-		const handleEdit = (hash) => {
-            navigate(`/edit/${hash}`);
-        };
+    const [sortConfig, setSortConfig] = useState({key: null, direction: 'asc'});
 
-		const handleDelete = (hash) => {
-			setConfirmationModal({
-				isOpen: true,
-				action: 'delete',
-				hash,
-				title: t("del.title"),
-				message: t("del.message")
-			});
-		};
-		const confirmAction = async () => {
-			const { action, hash } = confirmationModal;
-			setConfirmationModal({ ...confirmationModal, isOpen: false });
-			
-			setActionStatus({ loading: true, error: null, success: null });
-			
-			try {
-				if (action === 'edit') {
-					navigate(`/edit/${hash}`);
-				} else if (action === 'delete') {
-					await apiService.deleteRecord(hash);
-					setModal({
-						isOpen: true,
-						type: 'success',
-						message: t("del.success")
-					});
-					setProfile(prev => ({
-						...prev,
-						records: prev.records.filter(r => r.hash !== hash)
-					}));
-				}
-			} catch (error) {
-				setModal({
-					isOpen: true,
-					type: 'error',
-					message: error.message || t("errors.del")
-				});
-			} finally {
-                setActionStatus({ loading: false, error: null, success: null });
+    const [modal, setModal] = useState({
+        isOpen: false,
+        type: 'info',
+        message: '',
+    });
+
+    const [confirmationModal, setConfirmationModal] = useState({
+        isOpen: false,
+        action: null,
+        hash: null,
+        title: '',
+        message: ''
+    });
+
+    const [actionStatus, setActionStatus] = useState({
+        loading: false,
+        error: null,
+        success: null
+    });
+
+    const handleEdit = (hash) => {
+        navigate(`/edit/${hash}`);
+    };
+
+    const handleDelete = (hash) => {
+        setConfirmationModal({
+            isOpen: true,
+            action: 'delete',
+            hash,
+            title: t("del.title"),
+            message: t("del.message")
+        });
+    };
+    const confirmAction = async () => {
+        const {action, hash} = confirmationModal;
+        setConfirmationModal({...confirmationModal, isOpen: false});
+
+        setActionStatus({loading: true, error: null, success: null});
+
+        try {
+            if (action === 'edit') {
+                navigate(`/edit/${hash}`);
+            } else if (action === 'delete') {
+                await apiService.deleteRecord(hash);
+                setModal({
+                    isOpen: true,
+                    type: 'success',
+                    message: t("del.success")
+                });
+                setProfile(prev => ({
+                    ...prev,
+                    records: prev.records.filter(r => r.hash !== hash)
+                }));
             }
-		};
+        } catch (error) {
+            setModal({
+                isOpen: true,
+                type: 'error',
+                message: error.message || t("errors.del")
+            });
+        } finally {
+            setActionStatus({loading: false, error: null, success: null});
+        }
+    };
 
-		const cancelAction = () => {
-			setConfirmationModal({ ...confirmationModal, isOpen: false });
-		};
+    const cancelAction = () => {
+        setConfirmationModal({...confirmationModal, isOpen: false});
+    };
 
-		const closeModal = () => {
-			setModal({ ...modal, isOpen: false });
-		};
+    const closeModal = () => {
+        setModal({...modal, isOpen: false});
+    };
 
-    
-		const fetchProfile = async () => {
-				try {
-						setLoading(true);
-						const per_stats = await apiService.getProfile();
+    const fetchProfile = async () => {
+        try {
+            setLoading(true);
+            const per_stats = await apiService.getProfile();
 
-						let avatarUrl = null;
+            let avatarUrl = null;
 
-						if (per_stats.data[1]) {
-								avatarUrl = await apiService.getProfilePhoto(per_stats.data[1]);
-						}
+            if (per_stats.data[1]) {
+                avatarUrl = await apiService.getProfilePhoto(per_stats.data[1]);
+            }
 
-						const profileData = {
-								username: per_stats.data[0] || t("user.no_username"),
-								userId: per_stats.data[1],
-								avatar: avatarUrl,
-								stats: {
-										processedPublications: per_stats.data[2].processed_publs || 0,
-										correctRecords: per_stats.data[2].rec_ok || 0,
-										checkRatio: per_stats.data[2].check_ratio || 0,
-										speciesCount: per_stats.data[2].species_count || 0,
-										mostCommonSpecies: per_stats.data[2].most_common_species || t("errors.MVSpecies")
-								},
-								records: Array.isArray(per_stats.data[3]) ? per_stats.data[3] : [].map(record => ({
-										...record,
-										hash: record.hash || ""
-								}))
-						};
+            const profileData = {
+                username: per_stats.data[0] || t("user.no_username"),
+                userId: per_stats.data[1],
+                avatar: avatarUrl,
+                stats: {
+                    processedPublications: per_stats.data[2].processed_publs || 0,
+                    correctRecords: per_stats.data[2].rec_ok || 0,
+                    checkRatio: per_stats.data[2].check_ratio || 0,
+                    speciesCount: per_stats.data[2].species_count || 0,
+                    mostCommonSpecies: per_stats.data[2].most_common_species || t("errors.MVSpecies")
+                },
+                records: Array.isArray(per_stats.data[3]) ? per_stats.data[3] : [].map(record => ({
+                    ...record,
+                    hash: record.hash || ""
+                }))
+            };
 
-						setProfile(profileData);
-				} catch (error) {
-						console.error("Error while loading profile:", error);
-						setError(error.message || t("errors.user"));
-				} finally {
-						setLoading(false);
-				}
-		};
-		
-		useEffect(() => {
+            setProfile(profileData);
+        } catch (error) {
+            console.error("Error while loading profile:", error);
+            setError(error.message || t("errors.user"));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchProfile();
     }, []);
-		
-		const [downloadStatus, setDownloadStatus] = useState({
+
+    const [downloadStatus, setDownloadStatus] = useState({
         loading: false,
         error: null,
         success: false
     });
-		
-		const handleDownloadRecords = async () => {
+
+    const handleDownloadRecords = async () => {
         try {
             setDownloadStatus({
                 loading: true,
@@ -156,11 +155,11 @@ const ProfilePage = () => {
             });
 
             const response = await apiService.downloadRecords();
-            
+
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');
             link.href = url;
-            
+
             const contentDisposition = response.headers['content-disposition'];
             let filename = 'records.xlsx';
             if (contentDisposition) {
@@ -169,7 +168,7 @@ const ProfilePage = () => {
                     filename = filenameMatch[1];
                 }
             }
-            
+
             link.setAttribute('download', filename);
             document.body.appendChild(link);
             link.click();
@@ -182,11 +181,10 @@ const ProfilePage = () => {
             });
 
             setTimeout(() => {
-                setDownloadStatus(prev => ({ ...prev, success: false }));
+                setDownloadStatus(prev => ({...prev, success: false}));
             }, 3000);
 
         } catch (error) {
-            console.error("Download error:", error);
             setDownloadStatus({
                 loading: false,
                 error: error.message || t("errors.user"),
@@ -200,7 +198,7 @@ const ProfilePage = () => {
         if (sortConfig.key === key && sortConfig.direction === 'asc') {
             direction = 'desc';
         }
-        setSortConfig({ key, direction });
+        setSortConfig({key, direction});
     };
 
     const sortedRecords = React.useMemo(() => {
@@ -217,35 +215,38 @@ const ProfilePage = () => {
         });
     }, [profile.records, sortConfig]);
 
-    if (loading) return <div className="loading-message">
-        {t("user.loading")}<span className="loading-dots"></span>
-    </div>;
+    if (loading) {
+        return <div className="loading-message">
+            {t("user.loading")}<span className="loading-dots"></span>
+        </div>;
+    }
 
-    if (error) return <div className="error-message">{error}</div>;
+    if (error) {
+        return <div className="error-message">{error}</div>;
+    }
 
     return (
         <div className="profile-container">
-			<ConfirmationModal
-				isOpen={confirmationModal.isOpen}
-				onConfirm={confirmAction}
-				onCancel={cancelAction}
-				title={confirmationModal.title}
-				message={confirmationModal.message}
-			/>
-			
-			<Modal
-				isOpen={modal.isOpen}
-				onClose={closeModal}
-				type={modal.type}
-			>
-				<p>{modal.message}</p>
-			</Modal>
-            {/* Боковая панель с профилем */}
+            <ConfirmationModal
+                isOpen={confirmationModal.isOpen}
+                onConfirm={confirmAction}
+                onCancel={cancelAction}
+                title={confirmationModal.title}
+                message={confirmationModal.message}
+            />
+
+            <Modal
+                isOpen={modal.isOpen}
+                onClose={closeModal}
+                type={modal.type}
+            >
+                <p>{modal.message}</p>
+            </Modal>
             <div className="profile-sidebar">
                 <div className="profile-card">
                     <div className="profile-avatar">
                         {profile.avatar ? (
-                            <img src={profile.avatar} alt={t("user.pfp")} />
+                            <img src={profile.avatar} alt={t("user.pfp")}/>
                         ) : (
                             <div className="avatar-fallback">
                                 {profile.username.charAt(0).toUpperCase()}
@@ -268,42 +269,41 @@ const ProfilePage = () => {
                 </div>
             </div>
 
-            {/* Основное содержимое */}
             <div className="profile-content">
                 <section className="stats-section">
                     <div className="section-header">
-												<h2 className="section-title">{t("summary.title")}</h2>
-												<button 
-														onClick={handleDownloadRecords}
-														disabled={downloadStatus.loading || profile.records.length === 0}
-														className="download-records-button"
-												>
-														{downloadStatus.loading ? t("download.downloading") : t("download.button")}
-												</button>
-										</div>
-										
-										{downloadStatus.error && (
-												<div className="download-error">
-														{downloadStatus.error}
-												</div>
-										)}
-										{downloadStatus.success && (
-												<div className="download-success">
-														{t("download.success")}
-												</div>
-										)}
-										
-										{actionStatus.error && (
-											<div className="action-error">
-												{actionStatus.error}
-											</div>
-										)}
-										{actionStatus.success && (
-											<div className="action-success">
-												{actionStatus.success}
-											</div>
-										)}
-										
+                        <h2 className="section-title">{t("summary.title")}</h2>
+                        <button
+                            onClick={handleDownloadRecords}
+                            disabled={downloadStatus.loading || profile.records.length === 0}
+                            className="download-records-button"
+                        >
+                            {downloadStatus.loading ? t("download.downloading") : t("download.button")}
+                        </button>
+                    </div>
+
+                    {downloadStatus.error && (
+                        <div className="download-error">
+                            {downloadStatus.error}
+                        </div>
+                    )}
+                    {downloadStatus.success && (
+                        <div className="download-success">
+                            {t("download.success")}
+                        </div>
+                    )}
+
+                    {actionStatus.error && (
+                        <div className="action-error">
+                            {actionStatus.error}
+                        </div>
+                    )}
+                    {actionStatus.success && (
+                        <div className="action-success">
+                            {actionStatus.success}
+                        </div>
+                    )}
+
                     <div className="stats-grid">
                         <div className="stat-card">
                             <h3>{t("summary.publ_processed")}</h3>
@@ -395,7 +395,7 @@ const ProfilePage = () => {
                                                 </span>
                                         )}
                                     </th>
-									<th>{t("table.cols.actions")}</th>
+                                    <th>{t("table.cols.actions")}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -407,14 +407,16 @@ const ProfilePage = () => {
                                         <td>{record.abundance}</td>
                                         <td>{record.locality}</td>
                                         <td>{record.even_date}</td>
-										<td className="actions-cell">
-											<button onClick={() => handleEdit(record.hash)} className="edit-button" aria-label="Редактировать запись">
-												<FaPen />
-											</button>
-											<button onClick={() => handleDelete(record.hash)} className="delete-button" aria-label="Удалить запись">
-												<FaTimes />
-											</button>
-										</td>
+                                        <td className="actions-cell">
+                                            <button onClick={() => handleEdit(record.hash)} className="edit-button"
+                                                    aria-label="Редактировать запись">
+                                                <FaPen/>
+                                            </button>
+                                            <button onClick={() => handleDelete(record.hash)} className="delete-button"
+                                                    aria-label="Удалить запись">
+                                                <FaTimes/>
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                                 </tbody>

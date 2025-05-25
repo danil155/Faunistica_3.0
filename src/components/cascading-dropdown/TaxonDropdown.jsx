@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
 
-const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, isDisabled }) => {
-    const { t } = useTranslation('taxonDropdown');
-    const { formState, setFormState, pinnedSections } = useFormContext();
+const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, isDisabled}) => {
+    const {t} = useTranslation('taxonDropdown');
+    const {formState, setFormState, pinnedSections} = useFormContext();
     const [loading, setLoading] = useState(false);
 
     const levels = [
-        { name: 'family', placeholder: t("placehold_fam"), heading: t("family") },
-        { name: 'genus', placeholder: t("placehold_gen"), heading: t("genus") },
-        { name: 'species', placeholder: t("placehold_sp"), heading: t("species") }
+        {name: 'family', placeholder: t("placehold_fam"), heading: t("family")},
+        {name: 'genus', placeholder: t("placehold_gen"), heading: t("genus")},
+        {name: 'species', placeholder: t("placehold_sp"), heading: t("species")}
     ];
 
     const [options, setOptions] = useState({
@@ -34,12 +34,12 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
             timeoutId = setTimeout(() => func(...args), delay);
         };
     };
-    
+
     const toArray = (val) => Array.isArray(val) ? val : [val];
 
     const fetchWithFilters = useMemo(() => debounce(async (fieldName, searchText) => {
         if (searchText.length < 2) {
-            setOptions(prev => ({ ...prev, [fieldName]: [] }));
+            setOptions(prev => ({...prev, [fieldName]: []}));
             return;
         }
 
@@ -69,12 +69,12 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                 }));
             } else {
                 const opt = [t("undefined")].concat((data?.suggestions || []).filter(Boolean));
-                setOptions(prev => ({ ...prev, [fieldName]: opt }));
+                setOptions(prev => ({...prev, [fieldName]: opt}));
             }
         } finally {
             setLoading(false);
         }
-    }, debounceTime), [debounceTime, formState.family, formState.genus]);
+    }, debounceTime), [debounceTime, formState.family, formState.genus, t]);
 
     const updateField = (fieldName, value) => {
         if (value === t("undefined")) {
@@ -106,18 +106,18 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                 if (formState.genus || formState.species) {
                     updateField('genus', '');
                     updateField('species', '');
-                    setOptions({ family: toArray(autofillResult.family), genus: [], species: [] });
+                    setOptions({family: toArray(autofillResult.family), genus: [], species: []});
                 }
             } else if (fieldName === 'genus') {
                 if (formState.species) {
                     updateField('species', '');
-                    setOptions(prev => ({ ...prev, genus: toArray(autofillResult.genus), species: [] }));
+                    setOptions(prev => ({...prev, genus: toArray(autofillResult.genus), species: []}));
                 }
             }
         } catch (e) {
             console.error("Error in autoUpdate:", e);
         }
-    }, debounceTime), [formState.genus, formState.species, isInList]);
+    }, debounceTime), [debounceTime, formState.genus, formState.species, updateField]);
 
     return (
         <div className="form-group dropdown-container">
@@ -138,9 +138,9 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                             getOptionLabel={(option) => (option ? option.toString() : "")}
                             onInputChange={(_, input, reason) => {
                                 if (reason === "clear" || reason === "removeOption" || reason === "reset") {
-                                    setInputValues({ ...inputValues, [level.name]: "" });
+                                    setInputValues({...inputValues, [level.name]: ""});
                                 } else if (!options[level.name].includes(input)) {
-                                    setInputValues({ ...inputValues, [level.name]: input });
+                                    setInputValues({...inputValues, [level.name]: input});
                                     fetchWithFilters(level.name, input);
                                 }
                             }}
@@ -167,7 +167,8 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, 
                             value={formState[level.name]}
                             disabled={level.name === "species" || isDisabled ? isDefined || isDisabled : false}
                             onChange={(e) => {
-                                updateField(level.name, e.target.value)}}
+                                updateField(level.name, e.target.value)
+                            }}
                             placeholder={`${t("input")} ${level.heading.toLowerCase()}`}
                             fullWidth
                             required={true}

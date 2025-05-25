@@ -1,4 +1,4 @@
-import axios from 'axios'; 
+import axios from 'axios';
 import i18n from 'i18next';
 
 const api = axios.create({
@@ -9,12 +9,9 @@ const api = axios.create({
 let refreshTokenPromise = null;
 
 const apiService = {
-    // Аутентификация
     login: async (username, password) => {
-        console.log('login');
         try {
             const response = await api.post('/api/get_user', {username, password});
-            console.log('response');
             return response.data;
         } catch (error) {
             if (error.response?.status === 401) {
@@ -28,7 +25,6 @@ const apiService = {
         }
     },
 
-    // Выход из системы
     logout: async () => {
         const response = await api.post('/api/logout');
         return response.data;
@@ -43,19 +39,16 @@ const apiService = {
         }
     },
 
-    // Получение информации из текста
     getInfoFromText: async (text) => {
         const response = await api.post('/api/get_info', {text});
         return response.data;
     },
 
-    // Добавление записи
     insertRecord: async (recordData) => {
         const response = await api.post('/api/insert_record', recordData);
         return response.data;
     },
 
-    // Получение статистики
     getGeneralStats: async () => {
         try {
             const response = await api.get('/api/get_gen_stats');
@@ -71,7 +64,6 @@ const apiService = {
         }
     },
 
-    // Обновление токена
     refreshToken: async () => {
         try {
             if (!refreshTokenPromise) {
@@ -101,16 +93,14 @@ const apiService = {
 
     suggestGeo: async (filters) => {
         if (!filters || filters.text.length < 1) {
-            return { suggestions: [] };
+            return {suggestions: []};
         }
         try {
-            console.log(filters)
             const response = await api.post('/api/geo_search', filters);
-            console.log(response)
             return response.data;
         } catch (error) {
             console.error(error);
-            return { suggestions: [] };
+            return {suggestions: []};
         }
     },
 
@@ -146,7 +136,7 @@ const apiService = {
         try {
             const response = await api.get('/api/next_publ');
             return response.data;
-        }  catch (error) {
+        } catch (error) {
             if (error.response?.status === 409) {
                 throw new Error(i18n.t('api.errors.publication.not_filled'));
             }
@@ -172,13 +162,10 @@ const apiService = {
             await api.post('/api/support', data);
         } catch (error) {
             if (error.response) {
-                // Сервер ответил с кодом состояния, выходящим за пределы 2xx
                 throw new Error(error.response.data.message || i18n.t('api.errors.support.request_error'));
             } else if (error.request) {
-                // Запрос был сделан, но ответ не получен (бэкенд недоступен)
                 throw new Error(i18n.t('api.errors.common.server_unavailable'));
             } else {
-                // Произошла ошибка при настройке запроса
                 throw new Error(i18n.t('api.errors.support.general_error'));
             }
         }
@@ -228,12 +215,12 @@ const apiService = {
             throw error;
         }
     },
-		
-	getRecord: async (hash) => {
-		try {
-			const response = await api.post('/api/get_record', { hash });
-			return response.data;
-		} catch (error) {
+
+    getRecord: async (hash) => {
+        try {
+            const response = await api.post('/api/get_record', {hash});
+            return response.data;
+        } catch (error) {
             if (error.response?.status === 400) {
                 throw new Error(i18n.t('api.errors.records.invalid_token'));
             }
@@ -245,13 +232,13 @@ const apiService = {
             }
             throw new Error(i18n.t('api.errors.records.connection_error'));
         }
-	},
-	
-	deleteRecord: async (hash) => {
-		try {
-			const response = await api.post('/api/del_record', { hash });
-			return response.data;
-		} catch (error) {
+    },
+
+    deleteRecord: async (hash) => {
+        try {
+            const response = await api.post('/api/del_record', {hash});
+            return response.data;
+        } catch (error) {
             if (error.response?.status === 400) {
                 throw new Error(i18n.t('api.errors.records.invalid_token'));
             }
@@ -263,11 +250,11 @@ const apiService = {
             }
             throw new Error(i18n.t('api.errors.records.connection_error'));
         }
-	},
-        
+    },
+
     editRecord: async (hash, recordData) => {
         try {
-            const response = await api.post('/api/edit_record', { hash, ...recordData });
+            const response = await api.post('/api/edit_record', {hash, ...recordData});
             return response.data;
         } catch (error) {
             if (error.response?.status === 400) {
@@ -294,29 +281,29 @@ api.interceptors.response.use(
     response => response,
     async error => {
         const originalRequest = error.config;
-				
-		const currentPath = window.location.pathname;
-		const shouldRedirect = currentPath === '/text' || currentPath === '/form';
+
+        const currentPath = window.location.pathname;
+        const shouldRedirect = currentPath === '/text' || currentPath === '/form';
 
         if (error.response?.status === 403 && !originalRequest._retry) {
             originalRequest._retry = true;
-						
-			if (originalRequest.url.includes('/api/refresh_token')) {
-				console.error('Refresh token failed, logging out');
-				if (shouldRedirect) {
-					window.location.href = '/';
-				}
-				return Promise.reject(error);
-			}
+
+            if (originalRequest.url.includes('/api/refresh_token')) {
+                console.error('Refresh token failed, logging out');
+                if (shouldRedirect) {
+                    window.location.href = '/';
+                }
+                return Promise.reject(error);
+            }
 
             try {
                 await apiService.refreshToken();
                 return api(originalRequest);
             } catch (refreshError) {
                 console.error('Refresh token failed:', refreshError);
-					if (shouldRedirect) {
-						window.location.href = '/';
-					}
+                if (shouldRedirect) {
+                    window.location.href = '/';
+                }
                 return Promise.reject(refreshError);
             }
         }

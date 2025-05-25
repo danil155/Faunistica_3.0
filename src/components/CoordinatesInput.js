@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import { useState } from "react";
 import { apiService } from "../api";
 
-export const CoordinatesInput = ({ isDisabled }) => {
-    const { t } = useTranslation('coordinateInput');
-    const { formState, setFormState } = useFormContext();
+export const CoordinatesInput = ({isDisabled}) => {
+    const {t} = useTranslation('coordinateInput');
+    const {formState, setFormState} = useFormContext();
     const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-		
+
     let disabled = formState.geo_origin === "nothing";
 
     const clearCoordFields = () => {
@@ -27,16 +27,14 @@ export const CoordinatesInput = ({ isDisabled }) => {
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         let processedValue = value;
 
-        // Градусы в десятичном формате (ГГ.гггг)
         if (name.startsWith("grads_")) {
             if (coordFormat === "grads") {
-                // Десятичные градусы (ГГ.гггг°)
                 processedValue = value
                     .replace(/[^-0-9.]/g, '')
-                    .replace(/(?!^)-/g, '') // Удаляем минусы не в начале
+                    .replace(/(?!^)-/g, '')
                     .replace(/(\..*)\./g, '$1');
 
                 const parts = processedValue.split('.');
@@ -53,19 +51,16 @@ export const CoordinatesInput = ({ isDisabled }) => {
                 }
                 processedValue = parts.join('.');
             } else {
-                // Целые градусы (ГГ°)
                 processedValue = value
                     .replace(/[^-0-9]/g, '')
-                    .replace(/(?!^)-/g, '')
+                    .replace(/(?!^)-/g, '');
 
                 const maxDigits = name.includes('_east') ? 3 : 2;
                 processedValue = processedValue.slice(0, processedValue.startsWith('-') ? maxDigits + 1 : maxDigits);
             }
         }
-        // Минуты (ММ.ммм)
         else if (name.startsWith("mins_")) {
             if (coordFormat === "mins") {
-                // Формат ГГ°ММ.мм' — разрешаем десятичные
                 processedValue = value
                     .replace(/[^0-9.]/g, '')
                     .replace(/(\..*)\./g, '$1');
@@ -75,7 +70,6 @@ export const CoordinatesInput = ({ isDisabled }) => {
                 if (parts[1]) parts[1] = parts[1].slice(0, 3);
                 processedValue = parts.join('.');
             } else {
-                // Формат ГГ°ММ'СС'' — только целые числа (00-59)
                 processedValue = value
                     .replace(/[^0-9]/g, '')
                     .slice(0, 2);
@@ -85,7 +79,6 @@ export const CoordinatesInput = ({ isDisabled }) => {
                 }
             }
         }
-        // Секунды (СС.сс)
         else if (name.startsWith("secs_")) {
             processedValue = value
                 .replace(/[^0-9.]/g, '')
@@ -102,7 +95,7 @@ export const CoordinatesInput = ({ isDisabled }) => {
             [name]: processedValue
         }));
     };
-		
+
     const getLocationFromCoordinates = async () => {
         if (coordFormat === "grads") {
             if (!formState.grads_north || !formState.grads_east) {
@@ -187,7 +180,6 @@ export const CoordinatesInput = ({ isDisabled }) => {
                 placeholder={placeholder}
                 inputMode={inputMode}
             />
-            {/*{unit && <span className="unit">{unit}</span>}*/}
             <label htmlFor={id}>{unit}</label>
         </div>
     );

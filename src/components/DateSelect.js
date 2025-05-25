@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const DateSelect = ({ disabled }) => {
-    const { t } = useTranslation('dateSelect');
-    const { formState, setFormState, pinnedSections } = useFormContext();
+const DateSelect = ({disabled}) => {
+    const {t} = useTranslation('dateSelect');
+    const {formState, setFormState, pinnedSections} = useFormContext();
 
     const [isInterval, setIsInterval] = useState(false);
     const [precision, setPrecision] = useState('exact');
@@ -25,7 +25,7 @@ const DateSelect = ({ disabled }) => {
     }
 
     const handleChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
 
         setFormState(prev => ({
             ...prev,
@@ -41,7 +41,10 @@ const DateSelect = ({ disabled }) => {
                     disabled={disabled}
                     id="is_interval"
                     value={isInterval.toString()}
-                    onChange={(e) => { setIsInterval(e.target.value === "true"); resetForm(); }}
+                    onChange={(e) => {
+                        setIsInterval(e.target.value === "true");
+                        resetForm();
+                    }}
                     className="form-control"
                 >
                     <option value={false}>{t("single")}</option>
@@ -56,7 +59,7 @@ const DateSelect = ({ disabled }) => {
                     onChange={(e) => {
                         setPrecision(e.target.value);
                         resetForm();
-                        setFormState(prev => ({ ...prev, eve_day_def: e.target.value === "exact" }));
+                        setFormState(prev => ({...prev, eve_day_def: e.target.value === "exact"}));
                     }}
                     className="form-control"
                 >
@@ -67,7 +70,6 @@ const DateSelect = ({ disabled }) => {
             </div>
 
             <div className="form-group">
-                {/* Точная дата */}
                 {precision === 'exact' && (
                     <>
                         <label htmlFor="date">{t("date")}</label>
@@ -84,7 +86,6 @@ const DateSelect = ({ disabled }) => {
                     </>
                 )}
 
-                {/* До месяца */}
                 {precision === 'month' && (
                     <>
                         <label htmlFor="month">{t("month")}</label>
@@ -97,9 +98,9 @@ const DateSelect = ({ disabled }) => {
                             required
                         >
                             <option value="" disabled hidden>{t("select_month")}</option>
-                            {Array.from({ length: 12 }, (_, i) => (
+                            {Array.from({length: 12}, (_, i) => (
                                 <option key={i + 1} value={i + 1}>
-                                    {capitalize(new Date(0, i).toLocaleString(t("locale"), { month: "long" }))}
+                                    {capitalize(new Date(0, i).toLocaleString(t("locale"), {month: "long"}))}
                                 </option>
                             ))}
                         </select>
@@ -120,7 +121,6 @@ const DateSelect = ({ disabled }) => {
                     </>
                 )}
 
-                {/* До года */}
                 {precision === 'year' && (
                     <>
                         <label>{t("year")}</label>
@@ -138,10 +138,8 @@ const DateSelect = ({ disabled }) => {
                     </>
                 )}
 
-                {/* Интервал */}
                 {isInterval && (
                     <>
-                        {/* Точный конец */}
                         {precision === 'exact' && (
                             <>
                                 <label>{t("end_date")}</label>
@@ -157,7 +155,6 @@ const DateSelect = ({ disabled }) => {
                             </>
                         )}
 
-                        {/* До месяца */}
                         {precision === 'month' && (
                             <>
                                 <label>{t("end_month")}</label>
@@ -169,9 +166,9 @@ const DateSelect = ({ disabled }) => {
                                     required
                                 >
                                     <option value="" disabled hidden>{t("select_month")}</option>
-                                    {Array.from({ length: 12 }, (_, i) => (
+                                    {Array.from({length: 12}, (_, i) => (
                                         <option key={i + 1} value={i + 1}>
-                                            {capitalize(new Date(0, i).toLocaleString(t("locale"), { month: "long" }))}
+                                            {capitalize(new Date(0, i).toLocaleString(t("locale"), {month: "long"}))}
                                         </option>
                                     ))}
                                 </select>
@@ -191,7 +188,6 @@ const DateSelect = ({ disabled }) => {
                             </>
                         )}
 
-                        {/* До года */}
                         {precision === 'year' && (
                             <>
                                 <label>{t("end_year")}</label>
