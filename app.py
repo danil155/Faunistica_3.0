@@ -9,7 +9,7 @@ from slowapi.middleware import SlowAPIMiddleware
 
 from back_api import users, info, records, gen_stats, refresh_token, check_auth, logout, suggest_taxon, \
     autofill_taxon, get_publ, support, pers_stats, user_image, get_localion, get_records_file, \
-    get_record, del_record, edit_record, next_publ, publ_from_hash
+    get_record, del_record, edit_record, next_publ, publ_from_hash, geo_search
 from back_api.rate_limiter import rate_limit_handler, RateLimitExceeded, limiter
 from bot.bot_main import bot_start
 from config.config import LOGS_DIR
@@ -111,6 +111,7 @@ app.include_router(del_record.router, prefix="/api")
 app.include_router(edit_record.router, prefix="/api")
 app.include_router(next_publ.router, prefix="/api")
 app.include_router(publ_from_hash.router, prefix="/api")
+app.include_router(geo_search.router, prefix='/api')
 
 if __name__ == '__main__':
     asyncio.run(bot_start())

@@ -90,6 +90,23 @@ class StatisticsResponse(BaseModel):
     latest_records: List[LatestRecord]
 
 
+class GeoLocation(BaseModel):
+    id: str
+    name: str
+    type: str
+    parent_id: Optional[str] = None
+
+
+class GeoSearchRequest(BaseModel):
+    query: str
+    location_type: str
+    parent_id: Optional[str] = None
+
+
+class GeoSearchResponse(BaseModel):
+    suggestions: List[GeoLocation]
+
+
 class SuggestTaxonRequest(BaseModel):
     field: str
     text: str

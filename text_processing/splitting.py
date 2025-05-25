@@ -1,7 +1,7 @@
 import logging
 import re
 
-from text_processing.data import Data
+from text_processing.Data import Data
 from text_processing.geodecoder import get_location_info
 from text_processing.gbif_parser import find_species_in_text
 from config.config_vars import ROMAN_MONTHS
