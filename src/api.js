@@ -99,6 +99,27 @@ const apiService = {
         }
     },
 
+    suggestGeo: async (data) => {
+        if (!data || data.query.length < 2) {
+            return [];
+        }
+        try {
+            console.log(data)
+
+            const response = await api.post('/api/geo_search', {
+                query: data.query,
+                location_type: data.location_type,
+                parent_id: data.parent_id
+            });
+
+            console.log(response)
+            return response.data;
+        } catch (error) {
+            console.error(error);
+            return [];
+        }
+    },
+
     autofillTaxon: async (field, text) => {
         try {
             const response = await api.post('/api/autofill_taxon', {field, text});
@@ -266,8 +287,7 @@ const apiService = {
             }
             throw new Error(i18n.t('api.errors.records.connection_error'));
         }
-    },
-
+    }
 };
 
 api.interceptors.request.use((config) => {

@@ -8,6 +8,7 @@ import DateSelect from "../components/DateSelect";
 import { apiService } from '../api'
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import TaxonDropdown from "../components/cascading-dropdown/TaxonDropdown";
+import AdminDropdown from "../components/cascading-dropdown/AdminDropdown";
 import {CoordinatesInput} from "../components/CoordinatesInput";
 import { ToastContainer,toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -412,21 +413,20 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 												</div>
 											</div>
 
-											{adm.map((field) => (
-												<div key={field.name} className="form-group">
-													<label htmlFor={field.name}>{field.heading}:</label>
-													<input
-                                                        disabled={pinnedSections[sectionName] || false}
-														id={field.name}
-														className="text-input"
-														type="text"
-														name={field.name}
-														value={formState[field.name] || ""}
-														onChange={handleInputChange}
-														required={field.name !== "gathering_place"}
-													/>
-												</div>
-											))}
+                                            <AdminDropdown isDisabled={pinnedSections[sectionName] || false} />
+
+                                            <div className="form-group">
+                                                <label htmlFor="gathering_place">Место сбора:</label>
+                                                <input
+                                                    disabled={pinnedSections[sectionName] || false}
+                                                    id="gathering_place"
+                                                    className="text-input"
+                                                    type="text"
+                                                    name="gathering_place"
+                                                    value={formState.gathering_place || ""}
+                                                    onChange={handleInputChange}
+                                                />
+                                            </div>
 										</div>
 									</div>
 								);
