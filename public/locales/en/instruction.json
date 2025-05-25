@@ -7,7 +7,7 @@
             "first": "Internet access",
             "second": "Telegram messenger",
             "third": "A personal computer/laptop/tablet/smartphone",
-            "fourth": "Desktop version of a browser (Google Chrome, Firefox, Edge, Opera)"
+            "fourth": "Desktop (installed on the device) version of a browser («Yandex Browser», «Google Chrome», «Opera», «Microsoft Edge», «Firefox»)"
         },
 
         "registration": {
@@ -18,6 +18,22 @@
             "step22": "and click one of the available fields:",
             "step3": "Enter your username (the same one you registered in Telegram) and password, then click “Login”.",
             "success": "Congratulations! You can now start filling out the form."
+        },
+
+        "telegram_bot" : {
+            "title": "Telegram bot",
+            "description": "Let's take a look at our Telegram bot: what commands it has and how to manage them.",
+            "command1": "1. Start command - /start. Outputs basic information about the project. No functionality, except introductory, is not presented.",
+            "command2": "2. One of the main commands - /register. Without it you won't be able to access the main functionality of the site, so it's important. You will need to answer a number of questions to make sure that you are ready to join our team.",
+            "command3": "3. Another equally important command - /auth. It gives you a password to access the site and assigns an article to digitize. The password is valid indefinitely until you call this command again, so if you suddenly forget your password, don't hesitate to call it - it will come up with a new one for you.",
+            "command4": "4. The command to change the publication - /next_publ. If you are sure that you have digitized your current publication, you can click on it. It will check if your confidence matches reality and if everything is good - it will prepare a new publication for you to digitize. P.S. you can also change your publication directly on the website by going to the 'Form' tab.",
+            "command5": "5. Are you a statistician? Then this command is for you - /stats. It will display the general statistics of the service and, at the same time, your personal statistics. It does not have any functionality, except for familiarization.",
+            "command6": "6. You like change? There's a command for you - /rename. It allows you to change your nickname, if suddenly... want to. P.S. by the way, you don't have to change your nickname if you forget it, just call one of the commands - /register or /auth.",
+            "command7": "7. You like to take surve... okay, okay. The command - /sociology. Calls for a little survey that helps you and me get to know each other better! You can cancel it with /cancel, but more on that later...",
+            "command8": "8. An important command - /support. If something suddenly broke, happened in a different way than you expected or for any other reason you need to contact technical support - call this command. Keep in mind that the more detailed you describe the problem, the higher the chance that the problem will be fixed promptly.",
+            "command9": "9. The command to rollback - /cancel. This command rolls you back to the 'default state'. This command is needed if you want to end an action you have started or if you are stuck somewhere.",
+            "alert": "IMPORTANT: /support and /cancel commands are not available BEFORE and AT THE TIME of registration in the Telegram bot for technical reasons. If you suddenly encounter a problem at the registration stage, please contact support on the site:",
+            "command10": "10. And our finalist - the /menu command. This command will help you familiarize yourself with all the commands available to you. It does not represent any functionality, except for familiarization."
         },
 
         "publ_structure": {

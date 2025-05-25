@@ -1,3 +1,15 @@
+.section h3 {
+    font-size: 20px;
+}
+
+.section ol {
+    font-size: 18px;
+}
+
+.section p {
+    font-size: 18px;
+}
+
 .horizontal {
     display: flex;
     flex-wrap: wrap;
@@ -21,6 +33,7 @@
 
 .instr-content {
     padding: 0 50px;
+    max-width: 100vw;
     margin-bottom: 50px;
 }
 
@@ -82,7 +95,18 @@ img.full-width {
     color: orangered;
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 980px) {
+    .img-box {
+        max-width: 100vw;
+    }
+
+    .img-box img {
+        max-width: 100%;
+    }
+
+}
+
+@media (max-width: 1040px) {
     .instruction-content .section {
         padding: 50px;
     }

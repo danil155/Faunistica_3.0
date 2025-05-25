@@ -2,8 +2,16 @@ import "../styles/instruction.css";
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import { useTranslation, Trans } from 'react-i18next';
-import tlg_auth from "../img/instuction/tlg_reg.webp";
-import tlg_reg from "../img/instuction/tlg_auth.webp";
+import tlg_auth from "../img/instuction/tlg_auth.webp";
+import tlg_reg from "../img/instuction/tlg_reg.webp";
+import tlg_start from "../img/instuction/tlg_start.webp";
+import tlg_next_publ from "../img/instuction/tlg_next_publ.webp";
+import tlg_stats from "../img/instuction/tlg_stats.webp";
+import tlg_rename from "../img/instuction/tlg_rename.webp";
+import tlg_sociology from "../img/instuction/tlg_sociology.webp";
+import tlg_support from "../img/instuction/tlg_support.webp";
+import tlg_cancel from "../img/instuction/tlg_cancel.webp";
+import tlg_menu from "../img/instuction/tlg_menu.webp";
 import site_auth from "../img/instuction/site-auth1.webp";
 import site_auth2 from "../img/instuction/site-auth2.webp";
 import publ1 from "../img/instuction/publ1.webp";
@@ -45,6 +53,7 @@ export const Introduction = () => {
     const [collapsed, setCollapsed] = useState({
         requirements: false,
         registration: false,
+        telegram_bot: false,
         publ_structure: false,
         beginning_work: false,
         geo: false,
@@ -121,7 +130,7 @@ export const Introduction = () => {
                     </div>
                     {collapsed.registration && (
                         <>
-                    <div className="horizontal">
+                    <div>
                         <p>{t("sections.registration.step11")}
                             <Link to={"https://t.me/FaunisticaV3Bot"} target={"_blank"}> https://t.me/FaunisticaV3Bot</Link><br/>
                             {t("sections.registration.step12")}
@@ -131,6 +140,7 @@ export const Introduction = () => {
                         <div className="img-box">
                             <img src={tlg_reg} alt={t("alts.tlg_reg")}/>
                             <img src={tlg_auth} alt={t("alts.tlg_auth")}/>
+
                         </div>
                     </div>
                     <div>
@@ -142,6 +152,145 @@ export const Introduction = () => {
                         <img src={site_auth2} alt={t("alts.site_auth2")}/>
                     </div>
                     <p>{t("sections.registration.success")} </p>
+                        </>)}
+                </div>
+                <div className="section">
+                    <div className={`section-header ${
+                        !collapsed.telegram_bot ? "collapsed" : ""
+                    }`}
+                         onClick={() =>
+                             setCollapsed(
+                                 {...collapsed, telegram_bot: !collapsed.telegram_bot}
+                             )
+                         }>
+                        <h2>{t("sections.telegram_bot.title")}</h2>
+                        <button
+                            className={`collapse-toggle ${
+                                collapsed.telegram_bot ? "collapsed" : ""
+                            }`}
+                            type="button"
+                            onClick={() =>
+                                setCollapsed(
+                                    {...collapsed, telegram_bot: !collapsed.telegram_bot}
+                                )
+                            }
+                        >
+                            {collapsed.telegram_bot
+                                ? "⌃"
+                                : "⌃"}
+                        </button>
+                    </div>
+                    {collapsed.telegram_bot && (
+                        <>
+                            <div className={"horizontal"}>
+                                <h3>{t("sections.telegram_bot.description")}</h3>
+                            </div>
+                            <div>
+                                <p>{t("sections.telegram_bot.command1")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_start} alt={t("alts.tlg_start")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command2")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_reg} alt={t("alts.tlg_reg")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command3")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_auth} alt={t("alts.tlg_auth")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command4")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_next_publ} alt={t("alts.tlg_next_publ")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command5")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_stats} alt={t("alts.tlg_stats")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command6")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_rename} alt={t("alts.tlg_rename")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command7")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_sociology} alt={t("alts.tlg_sociology")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command8")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_support} alt={t("alts.tlg_support")}/>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command9")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_cancel} alt={t("alts.tlg_cancel")}/>
+                                </div>
+                            </div>
+
+                            <div className={"attention"}>
+                                <p>{t("sections.telegram_bot.alert")} <Link to={"https://faunistica.ru/feedback"} target={"_blank"}>https://faunistica.ru/feedback</Link>
+                                    <br/>
+                                    <br/>
+                                </p>
+                            </div>
+
+                            <div>
+                                <p>{t("sections.telegram_bot.command10")}
+                                    <br/>
+                                    <br/>
+                                </p>
+                                <div className="img-box">
+                                    <img src={tlg_menu} alt={t("alts.tlg_menu")}/>
+                                </div>
+                            </div>
                         </>)}
                 </div>
                 <div className="section">
