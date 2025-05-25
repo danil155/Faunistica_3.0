@@ -10,8 +10,8 @@
         "degrees": "ГГ.гггг°",
         "mins": "ГГ°ММ.мм",
         "secs": "ГГ°ММ'СС''",
-        "lat": "Latitude",
-        "long": "Longitude"
+        "lat": "Широта",
+        "long": "Долгота"
     },
     
     "detect_location": "Определить местоположение"

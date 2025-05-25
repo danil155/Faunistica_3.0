@@ -94,7 +94,7 @@ const LoginModal = ({ onClose, onLogin }) => {
                 setPassword(e.target.value);
                 setError('');
               }}
-              placeholder={t("modal.issue")}
+              placeholder={t("modal.pass")}
               required
             />
             {error && <div className="error-message">{error}</div>}

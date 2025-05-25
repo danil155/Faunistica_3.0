@@ -278,7 +278,6 @@ const EditRecordPage = () => {
         eve_DD_end: cleanValue(formData.eve_DD_end),
         eve_day_def: cleanValue(formData.eve_DD !== null),
         eve_habitat: cleanValue(formData.biotope),
-        abu_coll: cleanValue(formData.collector),
         eve_effort: cleanValue(formData.selective_gain),
         eve_REM: cleanValue(formData.eve_REM),
         tax_fam: cleanValue(formData.family),
