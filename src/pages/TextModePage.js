@@ -11,7 +11,7 @@ const TextModePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { formState, setFormState } = useFormContext();
+  const { formState, setFormState, pinnedSections } = useFormContext();
 
   const handleTextChange = (event) => {
     setText(event.target.value);
@@ -32,91 +32,95 @@ const TextModePage = () => {
       let specimens = {}
 
       if (result.count_males || result.count_females || result.count_juv_male || result.count_juv_female || result.count_juv) {
-        const specimens = {};
-      } else {
-        const specimens = {...formState.specimens}
-      }      
-      if (result.count_males) specimens.male_adult = result.count_males;
-      if (result.count_females) specimens.female_adult = result.count_females;
-      if (result.count_juv_male) specimens.male_juvenile = result.count_juv_male;
-      if (result.count_juv_female) specimens.female_juvenile = result.count_juv_female;
-      if (result.count_juv) specimens.undefined_juvenile = result.count_juv;
-
+        if (result.count_males) specimens.male_adult = result.count_males;
+        if (result.count_females) specimens.female_adult = result.count_females;
+        if (result.count_juv_male) specimens.male_juvenile = result.count_juv_male;
+        if (result.count_juv_female) specimens.female_juvenile = result.count_juv_female;
+        if (result.count_juv) specimens.undefined_juvenile = result.count_juv;
+      }
+      
       const coordinateUpdates = {};
-      if (result.coordinate_north) {
-        const {degrees, minutes, seconds } = result.coordinate_north;
-        if (degrees != null) {
-          coordinateUpdates.grads_north = degrees.toString();
-          if (minutes != null) {
-            coordinateUpdates.mins_north = minutes.toString();
-            if (seconds != null) {
-              coordinateUpdates.secs_north = seconds.toString();
-              coordinateUpdates.coordinate_north = `${degrees}°${minutes}'${seconds}"`;
-              coordinateUpdates.coordinate_format = "secs";
+      if (!pinnedSections["geographical"]) {
+        if (result.coordinate_north) {
+          const {degrees, minutes, seconds } = result.coordinate_north;
+          if (degrees != null) {
+            coordinateUpdates.grads_north = degrees.toString();
+            if (minutes != null) {
+              coordinateUpdates.mins_north = minutes.toString();
+              if (seconds != null) {
+                coordinateUpdates.secs_north = seconds.toString();
+                coordinateUpdates.coordinate_north = `${degrees}°${minutes}'${seconds}"`;
+              } else {
+                coordinateUpdates.coordinate_north = `${degrees}°${minutes}'`;
+              }
             } else {
-              coordinateUpdates.coordinate_north = `${degrees}°${minutes}'`;
-              coordinateUpdates.coordinate_format = "mins";
+              coordinateUpdates.coordinate_north = `${degrees}°`;
             }
-          } else {
-            coordinateUpdates.coordinate_north = `${degrees}°`;
           }
         }
-      }
 
-      if (result.coordinate_east) {
-        const {degrees, minutes, seconds} = result.coordinate_east;
-        if (degrees != null) {
-          coordinateUpdates.grads_east = degrees.toString();
-          if (minutes != null) {
-            coordinateUpdates.mins_east = minutes.toString();
-            if (seconds != null) {
-              coordinateUpdates.secs_east = seconds.toString();
-              coordinateUpdates.coordinate_east = `${degrees}°${minutes}'${seconds}"`;
+        if (result.coordinate_east) {
+          const {degrees, minutes, seconds} = result.coordinate_east;
+          if (degrees != null) {
+            coordinateUpdates.grads_east = degrees.toString();
+            if (minutes != null) {
+              coordinateUpdates.mins_east = minutes.toString();
+              if (seconds != null) {
+                coordinateUpdates.secs_east = seconds.toString();
+                coordinateUpdates.coordinate_east = `${degrees}°${minutes}'${seconds}"`;
+              } else {
+                coordinateUpdates.coordinate_east = `${degrees}°${minutes}'`;
+              }
             } else {
-              coordinateUpdates.coordinate_east = `${degrees}°${minutes}'`;
+                coordinateUpdates.coordinate_east = `${degrees}°`;
             }
-          } else {
-              coordinateUpdates.coordinate_east = `${degrees}°`;
           }
         }
       }
+            
 
       // Обновление состояния формы
       setFormState(prev => {
         const updates = {};
         
-        if (result.date != null) updates.begin_date = result.date;
-        if (result.biotope != null) updates.biotope = result.biotope;
-        if (result.collector != null) updates.collector = result.collector;
-        if (result.country != null) updates.country = result.country;
-        if (result.region != null) updates.region = result.region;
-        if (result.district != null) updates.district = result.district;
-        if (result.gathering_place != null) updates.gathering_place = result.gathering_place;
-        if (result.family != null) updates.family = result.family;
-        if (result.genus != null) updates.genus = result.genus;
-        if (result.species != null) updates.species = result.species;
-        if (result.taxonomic_notes != null) updates.taxonomic_notes = result.taxonomic_notes;
+        if (result.date != null && !pinnedSections["material_collection"]) updates.begin_date = result.date;
+        if (result.biotope != null && !pinnedSections["material_collection"]) updates.biotope = result.biotope;
+        if (result.collector != null && !pinnedSections["material_collection"]) updates.collector = result.collector;
+        if (result.country != null && !pinnedSections["administrative"]) updates.country = result.country;
+        if (result.region != null && !pinnedSections["administrative"]) updates.region = result.region;
+        if (result.district != null && !pinnedSections["administrative"]) updates.district = result.district;
+        if (result.gathering_place != null && !pinnedSections["administrative"]) updates.gathering_place = result.gathering_place;
+        if (result.family != null && !pinnedSections["taxonomy"]) updates.family = result.family;
+        if (result.genus != null && !pinnedSections["taxonomy"]) updates.genus = result.genus;
+        if (result.species != null && !pinnedSections["taxonomy"]) updates.species = result.species;
+        if (result.taxonomic_notes != null && !pinnedSections["taxonomy"]) updates.taxonomic_notes = result.taxonomic_notes;
         
-        return {
+        const newState = {
           ...prev,
           ...updates,
-          ...coordinateUpdates,
           specimens: {
             ...prev.specimens,
             ...specimens
           }
         };
+
+        if (!pinnedSections["geographical"]) {
+          return {
+            ...newState,
+            ...coordinateUpdates
+          };
+        }
+        
+        return newState;
       });
 
       console.log(formState.genus)
       navigate('/form');
 
     } catch (error) {
-      console.error("Request error:", error);
       setError(error.message || t("errors.request"));
     } finally {
       setIsLoading(false);
-      console.log(formState);
     }
   }
 
@@ -155,7 +159,7 @@ const TextModePage = () => {
           {isLoading ? (
             <>
               <span className="spinner"></span>
-              t("text.loading")
+              {t("text.loading")}
             </>
           ) : (
             t("text.button")

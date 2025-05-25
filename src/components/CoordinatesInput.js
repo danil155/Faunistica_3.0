@@ -1,11 +1,11 @@
 import { useFormContext } from "../pages/FormContext";
 import { useTranslation } from 'react-i18next';
-import { useState} from "react";
+import { useState } from "react";
 import { apiService } from "../api";
 
 export const CoordinatesInput = ({ isDisabled }) => {
     const { t } = useTranslation('coordinateInput');
-    const { formState, setFormState, pinnedSections } = useFormContext();
+    const { formState, setFormState } = useFormContext();
     const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);

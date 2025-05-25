@@ -9,8 +9,8 @@ i18n
   .use(initReactI18next)
   .init({
     fallbackLng: 'ru',
-    debug: true, // set to false in production
-    ns: ['home', 'api'], // your namespaces
+    debug: false,
+    ns: ['home'],
     defaultNS: 'home',
     backend: {
       loadPath: '/locales/{{lng}}/{{ns}}.json',
