@@ -1,22 +1,60 @@
-import asyncio
-from typing import List
 from fastapi import APIRouter, Request, HTTPException, Depends
-from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+import json
 import logging
+from typing import List, Dict, Optional
 
-from .schemas import GeoSearchRequest, GeoSearchResponse, GeoLocation
-from geodata.GeoFileLoader import GeoFileLoader
 from .token import get_current_user
+from .schemas import GeoSearchRequest, GeoSearchResponse
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
-executor = ThreadPoolExecutor()
-geo_loader = GeoFileLoader()
+json_path = Path(__file__).resolve().parent.parent / "locations.json"
+_LOCATION_DATA = None
 
 
-async def async_suggestion(data: GeoSearchRequest) -> List[GeoLocation]:
-    loop = asyncio.get_event_loop()
-    return await loop.run_in_executor(executor, lambda: geo_loader.search(data))
+def _load_location_data():
+    global _LOCATION_DATA
+    if _LOCATION_DATA is None:
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                _LOCATION_DATA = json.load(f)
+            logger.info(f"Successfully loaded location data from {json_path}")
+        except Exception as e:
+            logger.error(f"Failed to load location data: {e}", exc_info=True)
+            _LOCATION_DATA = []
+    return _LOCATION_DATA
+
+
+async def get_suggestions(field: str, text: str, filters: Optional[Dict] = None) -> List[str]:
+    location_data = _load_location_data()
+    if not location_data:
+        return []
+    text = text.lower().strip()
+    filters = filters or {}
+
+    if field == "region":
+        return [
+                   r["region"] for r in location_data
+                   if text in r["region"].lower()
+               ][:100]
+
+    elif field == "district":
+        region_filter = filters.get("region")
+        districts = []
+
+        for entry in location_data:
+            if region_filter and entry["region"] != region_filter:
+                continue
+
+            districts.extend([
+                d for d in entry["districts"]
+                if text in d.lower()
+            ])
+
+        return districts[:200]
+
+    return []
 
 
 @router.post("/geo_search", response_model=GeoSearchResponse)
@@ -26,13 +64,8 @@ async def geo_search(
         user_data: dict = Depends(get_current_user)
 ):
     try:
-        print(data)
-        result = await async_suggestion(data)
-        print(result)
-        return {"suggestions": result}
-    except ValueError as e:
-        logger.error(f'Value error: {str(e)}', exc_info=True)
-        raise HTTPException(status_code=400, detail=str(e))
+        suggestions = await get_suggestions(data.field, data.text, data.filters)
+        return {"suggestions": suggestions or None}
     except Exception as e:
-        logger.error(f'Internal server error: {str(e)}', exc_info=True)
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+        logger.error(f"Geo search failed: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Internal server error")
