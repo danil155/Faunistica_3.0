@@ -1,0 +1,18 @@
+{
+    "error": {
+        "fill": "Пожалуйста, заполните координаты",
+        "detect_coord": "Не удалось определить местоположение по координатам",
+        "detect_loc": "Произошла ошибка при определении местоположения"
+    },
+
+    "formats": {
+        "title": "Coordinate format",
+        "degrees": "DD.dddd°",
+        "mins": "DD°ММ.mm",
+        "secs": "DD°MM'SS''",
+        "lat": "Latitude",
+        "long": "Longitude"
+    },
+    
+    "detect_location": "Detect location"
+}

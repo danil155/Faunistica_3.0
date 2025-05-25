@@ -12,12 +12,12 @@ import {CoordinatesInput} from "../components/CoordinatesInput";
 import { ToastContainer,toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 
-
-const fieldsMap = {
-    "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
-    "Географическое положение": ["east", "north", "coordinate_north", "coordinate_east", "grads_north", "grads_east", "mins_north", "mins_east", "secs_east", "secs_north", "geo_origin", "geo_REM", "geo_uncert"],
-    "Сбор материала": [
+const FIELD_GROUPS = {
+  administrative: ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
+  geographical: ["east", "north", "coordinate_north", "coordinate_east", "grads_north", "grads_east", "mins_north", "mins_east", "secs_east", "secs_north", "geo_origin", "geo_REM", "geo_uncert"],
+  material_collection: [
         "begin_date",
         "end_date",
         "begin_year",
@@ -32,7 +32,15 @@ const fieldsMap = {
         "selective_gain",
         "eve_REM"
     ],
-    'Таксономия': ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
+  taxonomy: ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
+};
+
+const SECTION_IDS = {
+  GEOGRAPHICAL: "geographical",
+  ADMINISTRATIVE: "administrative",
+  MATERIAL: "material_collection",
+  TAXONOMY: "taxonomy",
+  ADD_SPECIMENS: "add_specimens"
 };
 
 const SectionControls = ({ 
@@ -44,9 +52,10 @@ const SectionControls = ({
   onMoveUp,
   onMoveDown,
   isFirst,
-  isLast
+  isLast,
+  t
 }) => (
-  <div className="section-controls">
+  	<div className="section-controls">
 		<h4>{sectionName}</h4>
 		<div className="section-buttons">
 			{!isFirst && (
@@ -79,13 +88,22 @@ const SectionControls = ({
 			type="button"
 			onClick={onCollapseToggle}
 		>
-			{isCollapsed ? "Развернуть" : "Свернуть"}
+			{isCollapsed ? t('sections.expand') : t('sections.collapse')}
 		</button>
 	</div>
 
 );
 
 const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
+	const { t } = useTranslation('formPage');
+
+	const fieldsMap = {
+	    administrative: FIELD_GROUPS.administrative,
+	    geographical: FIELD_GROUPS.geographical,
+	    material_collection: FIELD_GROUPS.material_collection,
+	    taxonomy: FIELD_GROUPS.taxonomy
+	  };
+
     // Получение контекста формы
     const {
         formState,
@@ -100,10 +118,10 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
     const [showResetModal, setShowResetModal] = useState(false);
     const [resetMode, setResetMode] = useState("soft");
     const adm = [
-        {name: "country", heading: "Страна" },
-        {name: "region", heading: "Регион" },
-        {name: "district", heading: "Район" },
-        {name: "gathering_place", heading: "Место сбора" },
+        {name: "country", heading: t('adm.country') },
+        {name: "region", heading: t('adm.region') },
+        {name: "district", heading: t('adm.district') },
+        {name: "gathering_place", heading: t('adm.gathering_place') },
     ]
 
     // Обработчик изменений для текстовых полей
@@ -114,10 +132,10 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 
     // Получение данных секции
     const getSectionData = (sectionName) => {
-        return fieldsMap[sectionName].reduce((acc, field) => {
-            acc[field] = formState[field];
-            return acc;
-        }, {});
+        return FIELD_GROUPS[sectionName].reduce((acc, field) => {
+	        acc[field] = formState[field];
+	        return acc;
+	    }, {});
     };
 
     // Переключение закрепления секции
@@ -133,11 +151,11 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 		// Смена порядка секций
 		const [sectionOrder, setSectionOrder] = useState(() => {
 			const defaultOrder = [
-				"Географическое положение",
-				"Административное положение",
-				"Сбор материала",
-				"Таксономия",
-				"Добавление особей"
+			    SECTION_IDS.GEOGRAPHICAL,
+			    SECTION_IDS.ADMINISTRATIVE,
+			    SECTION_IDS.MATERIAL,
+			    SECTION_IDS.TAXONOMY,
+			    SECTION_IDS.ADD_SPECIMENS
 			];
 			
 			const savedOrder = localStorage.getItem('sectionOrder');
@@ -151,7 +169,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 				
 				const newOrder = [...prevOrder];
 				[newOrder[index], newOrder[index - 1]] = [newOrder[index - 1], newOrder[index]];
-				
+
 				// Save to localStorage
 				localStorage.setItem('sectionOrder', JSON.stringify(newOrder));
 				return newOrder;
@@ -176,7 +194,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formState.specimens || Object.keys(formState.specimens).length === 0) {
-            toast.error("Добавьте особей!", { autoClose: 3000, position: 'bottom-right' });
+            toast.error(t("toast.add_specimens"), { autoClose: 3000, position: 'bottom-right' });
             return;
         }
 
@@ -221,11 +239,11 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
             } else {
 	            await apiService.insertRecord(recordData);
 	            resetForm();
-	            toast.success("Данные успешно отправлены! Незакреплённые поля очищены.", { autoClose: 3000, position: 'bottom-right'});
+	            toast.success(t("toast.data_sent"), { autoClose: 3000, position: 'bottom-right'});
 	        }
         } catch (error) {
-            console.error("Ошибка при отправке данных:", error);
-            toast.error("Произошла ошибка при отправке данных", { autoClose: 3000, position: 'bottom-right' });
+            console.error("Error while sending data:", error);
+            toast.error(t("toast.data_fail"), { autoClose: 3000, position: 'bottom-right' });
         }
     };
 
@@ -243,7 +261,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
     const renderFormActions = () => (
 	    <div className="form-actions">
 		    <button type="submit" className="submit-button">
-		        {isEditMode ? "Сохранить изменения" : "Отправить наблюдение"}
+		        {isEditMode ? t("buttons.edit") : t("buttons.send")}
 		    </button>
 		      
 		    {isEditMode ? (
@@ -252,7 +270,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 					className="cancel-button"
 					onClick={onCancel}
 		        >
-		        	Отмена
+		        	{t("buttons.cancel")}
 		        </button>
 		    ) : (
 		        <div className="reset-buttons">
@@ -264,7 +282,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 		              		setShowResetModal(true);
 		            	}}
 		          	>
-		            	Очистить форму
+		            	{t("buttons.clear")}
 		          	</button>
 		          	<button
 		            	type="button"
@@ -274,7 +292,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 		            		setShowResetModal(true);
 		            	}}
 		          	>
-		            	Полная очистка
+		            	{t("buttons.obliterate")}
 		        	</button>
 		        </div>
 		     )}
@@ -287,10 +305,10 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
             <div className="form-mode-container">
                 {!isEditMode && (
                 	<header>
-	                    <h3>Заполните форму вручную</h3>
-	                    <p>или</p>
+	                    <h3>{t("header.title")}</h3>
+	                    <p>{t("header.text")}</p>
 	                    <Link to="/text" className="switch-mode-button">
-	                        Введите текст
+	                        {t("header.button")}
 	                    </Link>
 	                </header>
 	            )}
@@ -303,27 +321,28 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 						const isLast = index === sectionOrder.length - 1;
 						
 						switch(sectionName) {
-							case "Географическое положение":
+							case SECTION_IDS.GEOGRAPHICAL:
 								return (
 									<div key={sectionName} className={`${getSectionClassName(sectionName)} section`}>
 										<div className={`section-header ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<SectionControls
-												sectionName={sectionName}
+												sectionName={t(`sections.${sectionName}`)}
 												isPinned={pinnedSections[sectionName] || false}
 												onPinToggle={() => pinSection(sectionName)}
 												isCollapsed={collapsedSections[sectionName]}
 												onCollapseToggle={() => toggleCollapseSection(sectionName)}
-												onMoveUp={moveSectionUp}
-												onMoveDown={moveSectionDown}
+												onMoveUp={() => moveSectionUp(sectionName)}
+												onMoveDown={() => moveSectionDown(sectionName)}
 												isFirst={isFirst}
 												isLast={isLast}
+												t={t}
 											/>
 										</div>
 
 										<div className={`form-grid ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<CoordinatesInput isDisabled={pinnedSections[sectionName] || false} />
 											<div className="form-group">
-												<label htmlFor="geo-origin">Происхождение координат:</label>
+												<label htmlFor="geo-origin">{t("geo.origin")}</label>
 												<select
                                                     disabled={pinnedSections[sectionName] || false}
 													id="geo-origin"
@@ -333,14 +352,14 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 													onChange={handleInputChange}
 													required
 												>
-													<option value="original">Из статьи</option>
-													<option value="volunteer">Моя привязка</option>
-													<option value="nothing">Координат не будет</option>
+													<option value="original">{t("geo.origins.publ")}</option>
+													<option value="volunteer">{t("geo.origins.own")}</option>
+													<option value="nothing">{t("geo.origins.nothing")}</option>
 												</select>
 											</div>
 
 											<div className="form-group">
-												<label htmlFor="geo_uncert">Радиус неточности координат, м:</label>
+												<label htmlFor="geo_uncert">{t("geo.uncert")}</label>
 												<input
                                                     disabled={pinnedSections[sectionName] || false}
 													className="text-input"
@@ -354,34 +373,34 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											</div>
 
 											<div className="form-group">
-												<label htmlFor="geo_REM">Примечания к расположению</label>
+												<label htmlFor="geo_REM">{t("geo.rem")}</label>
 												<textarea disabled={pinnedSections[sectionName] || false} id="geo_REM" name="geo_REM" value={formState.geo_REM} onChange={handleInputChange} />
 											</div>
 										</div>
 									</div>
 								);
 								
-							case "Административное положение":
+							case SECTION_IDS.ADMINISTRATIVE:
 								return (
 									<div key={sectionName} className={`${getSectionClassName(sectionName)} section`}>
 										<div className={`section-header ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<SectionControls
-												sectionName={sectionName}
+												sectionName={t(`sections.${sectionName}`)}
 												isPinned={pinnedSections[sectionName] || false}
 												onPinToggle={() => pinSection(sectionName)}
 												isCollapsed={collapsedSections[sectionName]}
 												onCollapseToggle={() => toggleCollapseSection(sectionName)}
-												onMoveUp={moveSectionUp}
-												onMoveDown={moveSectionDown}
+												onMoveUp={() => moveSectionUp(sectionName)}
+												onMoveDown={() => moveSectionDown(sectionName)}
 												isFirst={isFirst}
 												isLast={isLast}
+												t={t}
 											/>
 										</div>
 										<div className={`form-grid section-content ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<div className="form-group">
 												<div className="form-row">
 													<input
-
                                                         disabled={pinnedSections[sectionName] || false}
 														id="adm_verbatim"
 														name="adm_verbatim"
@@ -389,7 +408,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 														checked={formState.adm_verbatim ?? false}
 														onChange={() => setFormState(prev => ({...prev, adm_verbatim: !formState.adm_verbatim}))}
 													/>
-													<label htmlFor="adm_verbatim">Местоположение относится к Уралу</label>
+													<label htmlFor="adm_verbatim">{t("adm.ural")}</label>
 												</div>
 											</div>
 
@@ -412,27 +431,28 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 									</div>
 								);
 								
-							case "Сбор материала":
+							case SECTION_IDS.MATERIAL:
 								return (
 									<div key={sectionName} className={`${getSectionClassName(sectionName)} section`}>
 										<div className={`section-header ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<SectionControls
-												sectionName={sectionName}
+												sectionName={t(`sections.${sectionName}`)}
 												isPinned={pinnedSections[sectionName] || false}
 												onPinToggle={() => pinSection(sectionName)}
 												isCollapsed={collapsedSections[sectionName]}
 												onCollapseToggle={() => toggleCollapseSection(sectionName)}
-												onMoveUp={moveSectionUp}
-												onMoveDown={moveSectionDown}
+												onMoveUp={() => moveSectionUp(sectionName)}
+												onMoveDown={() => moveSectionDown(sectionName)}
 												isFirst={isFirst}
 												isLast={isLast}
+												t={t}
 											/>
 										</div>
 
 										<div className={`form-grid section-content ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<DateSelect getSectionData={getSectionData} disabled={pinnedSections[sectionName] || false} />
 											<div className="form-group">
-												<label htmlFor="biotope">Биотоп:</label>
+												<label htmlFor="biotope">{t("eve.biotope")}</label>
 												<input
                                                     disabled={pinnedSections[sectionName] || false}
 													id="biotope"
@@ -444,7 +464,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 												/>
 											</div>
 											<div className="form-group">
-												<label htmlFor="collector">Коллектор:</label>
+												<label htmlFor="collector">{t("eve.collector")}</label>
 												<input
                                                     disabled={pinnedSections[sectionName] || false}
 													id="collector"
@@ -458,21 +478,21 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											</div>
 
 											<div className="form-group">
-												<label htmlFor="measurement_units">Единицы измерения:</label>
+												<label htmlFor="measurement_units">{t("eve.units")}</label>
 												<input
                                                     disabled={pinnedSections[sectionName] || false}
 													id="measurement_units"
 													className="text-input"
 													type="text"
 													name="measurement_units"
-													value={formState.measurement_units || "Особи, шт."}
+													value={formState.measurement_units || t("eve.def_units")}
 													onChange={handleInputChange}
 													required
 												/>
 											</div>
 
 											<div className="form-group">
-												<label htmlFor="selective_gain">Выборочное усиление:</label>
+												<label htmlFor="selective_gain">{t("eve.effort")}</label>
 												<input
                                                     disabled={pinnedSections[sectionName] || false}
 													id="selective_gain"
@@ -485,27 +505,28 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 											</div>
 
 											<div className="form-group">
-												<label htmlFor="eve_REM">Примечания к сбору материала</label>
+												<label htmlFor="eve_REM">{t("eve.rem")}</label>
 												<textarea disabled={pinnedSections[sectionName] || false} id="eve_REM" name="eve_REM" value={formState.eve_REM} onChange={handleInputChange} />
 											</div>
 										</div>
 									</div>
 								);
 								
-							case "Таксономия":
+							case SECTION_IDS.TAXONOMY:
 								return (
 									<div key={sectionName} className={`${getSectionClassName(sectionName)} section`}>
 										<div className={`section-header ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
 											<SectionControls
-												sectionName={sectionName}
+												sectionName={t(`sections.${sectionName}`)}
 												isPinned={pinnedSections[sectionName] || false}
 												onPinToggle={() => pinSection(sectionName)}
 												isCollapsed={collapsedSections[sectionName]}
 												onCollapseToggle={() => toggleCollapseSection(sectionName)}
-												onMoveUp={moveSectionUp}
-												onMoveDown={moveSectionDown}
+												onMoveUp={() => moveSectionUp(sectionName)}
+												onMoveDown={() => moveSectionDown(sectionName)}
 												isFirst={isFirst}
 												isLast={isLast}
+												t={t}
 											/>
 										</div>
 
@@ -528,7 +549,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 															}
 														}}
 													/>
-													<label htmlFor="tax_sp_def">Вид определён</label>
+													<label htmlFor="tax_sp_def">{t("tax.sp_def")}</label>
 												</div>
 
 												<div className="form-row">
@@ -553,7 +574,7 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 															}
 														}}
 													/>
-													<label htmlFor="tax_nsp">Отсутствует в списке</label>
+													<label htmlFor="tax_nsp">{t("tax.in_list")}</label>
 												</div>
 
 												<div className="form-row">
@@ -565,12 +586,12 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 														checked={formState.is_new_species ?? false}
 														onChange={() => setFormState(prev => ({...prev, is_new_species: !prev.is_new_species}))}
 													/>
-													<label htmlFor="is_new_species">Описан, как новый вид</label>
+													<label htmlFor="is_new_species">{t("tax.type")}</label>
 												</div>
 
 												{formState.is_new_species && (
 													<div className='form-group'>
-														<label htmlFor="type_status">Типовой статус:</label>
+														<label htmlFor="type_status">{t("tax.type")}</label>
 														<select
                                                             disabled={pinnedSections[sectionName] || false}
 															id="type_status"
@@ -578,17 +599,17 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 															value={formState.type_status ?? ''}
 															onChange={handleInputChange}
 														>
-															<option value='holotype'>Голотип</option>
-															<option value='paratype'>Паратип</option>
-															<option value='neotype'>Неотип</option>
-															<option value='other'>Другое</option>
+															<option value='holotype'>{t("tax.types.holo")}</option>
+															<option value='paratype'>{t("tax.types.para")}</option>
+															<option value='neotype'>{t("tax.types.neo")}</option>
+															<option value='other'>{t("tax.types.other")}</option>
 														</select>
 													</div>
 												)}
 											</div>
 											<TaxonDropdown isDisabled={pinnedSections[sectionName] || false} isDefined={formState.tax_sp_def} isInList={formState.tax_nsp} />
 											<div className="form-group">
-												<label htmlFor="tax_REM">Таксономические примечания:</label>
+												<label htmlFor="tax_REM">{t("tax.rem")}</label>
 												<textarea
                                                     disabled={pinnedSections[sectionName] || false}
 													id="tax_REM"
@@ -602,12 +623,12 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
 									</div>
 								);
 								
-							case "Добавление особей":
+							case SECTION_IDS.ADD_SPECIMENS:
 								return (
 									<div key={sectionName} className="section">
 										<div className="section-header">
 											<div className="section-controls">
-												<h4>Добавление особей</h4>
+												<h4>{t("sections.add_specimens")}</h4>
 												{!isFirst && (
 													<button 
 														type="button" 
@@ -689,24 +710,22 @@ const FormModePage = ({ isEditMode = false, onSubmit, onCancel }) => {
                             className="modal-content"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <h3>Подтвердите действие</h3>
+                            <h3>{t("modal.conf_act")}</h3>
                             <p>
-                                {resetMode === "soft"
-                                    ? "Вы уверены, что хотите очистить все незакреплённые поля?"
-                                    : "Вы уверены, что хотите полностью очистить форму, включая закреплённые секции?"}
+                                {resetMode === "soft" ? t("modal.clear") : t("modal.obliterate")}
                             </p>
                             <div className="modal-actions">
                                 <button
                                     className="confirm-button"
                                     onClick={handleResetConfirm}
                                 >
-                                    Подтвердить
+                                    {t("modal.conf")}
                                 </button>
                                 <button
                                     className="cancel-button"
                                     onClick={() => setShowResetModal(false)}
                                 >
-                                    Отмена
+                                    {t("modal.canc")}
                                 </button>
                             </div>
                         </div>

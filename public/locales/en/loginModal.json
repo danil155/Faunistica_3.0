@@ -1,0 +1,20 @@
+{
+    "error": {
+        "wrong_pass": "Wrong password. Try again.",
+        "no_user": "User not found.",
+        "request_limit": "The number of attempts has been exceeded. Try again in one minute.",
+        "login_error": "Login error. Try again later."
+    },
+    
+    "modal": {
+        "tg_title": "Register via Telegram",
+        "tg_text": "Register using our Telegram bot",
+        "tg_qr": "Point your camera or click on the QR code",
+        "tg_data": "Data from Telegram:",
+        "username": "Enter username",
+        "pass": "Enter the password you received from the bot",
+        "loading": "Login...",
+        "button": "Login",
+        "issue": "Didn't get the password? Go to the bot and press /start"
+    }
+}

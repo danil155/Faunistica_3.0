@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ReactComponent as QrCode } from '../../img/qr-code.svg';
 import { useNavigate } from 'react-router-dom';
 import "./LoginModal.css";
 
 const LoginModal = ({ onClose, onLogin }) => {
+  const { t } = useTranslation('loginModal');
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -25,21 +27,21 @@ const LoginModal = ({ onClose, onLogin }) => {
         navigate('/form');
       }
     } catch (err) {
-      console.error('Ошибка авторизации: ', err);
+      console.error('Login error: ', err);
 
       if (err.message === 'Неверный пароль') {
-        setError('Неверный пароль. Попробуйте снова.');
+        setError(t("error.wrong_pass"));
       } else if (err.message === 'Пользователь не найден') {
-        setError('Пользователь не найден')
+        setError(t("error.no_user"))
       } else if (err.message === 'Количество попыток превышено'){
         setIsTooManyRequests(true);
-        setError('Количество попыток превышено. Попробуйте через минуту.');
+        setError(t("error.request_limit"));
         setTimeout(() => {
           setIsTooManyRequests(false);
           setError('');
         }, 30000);
       } else {
-        setError('Ошибка входа. Попробуйте позже.')
+        setError(t("error.login_error"))
 
       }
     } finally {
@@ -51,23 +53,23 @@ const LoginModal = ({ onClose, onLogin }) => {
     <div className="modal-overlay">
       <div className="modal telegram-login-modal">
         <button className="close-button" onClick={onClose}>×</button>
-        <h2>Вход через Telegram</h2>
+        <h2>{t("modal.tg_title")}</h2>
         
         <div className="telegram-instructions">
-          <p>Войдите с помощью нашего Telegram бота</p>
+          <p>{t("modal.tg_text")}</p>
           
           <div className="qr-code-container">
             <a href="https://t.me/FaunisticaV3Bot" target="_blank" rel="noopener noreferrer">
                 <QrCode className="qr-code" />
             </a>
-            <p>Наведите камеру или нажмите на QR-код</p>
+            <p>{t("modal.tg_qr")}</p>
           </div>
 
         </div>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Данные из Telegram:</label>
+            <label htmlFor="username">{t("modal.tg_data")}</label>
             <input
                 id="username"
                 name="username"
@@ -79,7 +81,7 @@ const LoginModal = ({ onClose, onLogin }) => {
                   setUsername(e.target.value);
                   setError('');
                 }}
-                placeholder="Введите имя пользователя"
+                placeholder={t("modal.username")}
                 required
             />
             <input
@@ -92,7 +94,7 @@ const LoginModal = ({ onClose, onLogin }) => {
                 setPassword(e.target.value);
                 setError('');
               }}
-              placeholder="Введите пароль, полученный от бота"
+              placeholder={t("modal.issue")}
               required
             />
             {error && <div className="error-message">{error}</div>}
@@ -106,14 +108,14 @@ const LoginModal = ({ onClose, onLogin }) => {
           >
             {isLoading ? (
                 <>
-                  <span className="spinner"></span> Вход...
+                  <span className="spinner"></span> {t("modal.loading")}
                 </>
-            ) : 'Войти'}
+            ) : t("modal.button")}
           </button>
         </form>
 
         <div className="help-text">
-          <p>Не получили пароль? Перейдите в бота и нажмите /start</p>
+          <p>{t("modal.issue")}</p>
         </div>
       </div>
     </div>

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import {Link, useNavigate} from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import { useFormContext } from "./FormContext";
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import { apiService } from "../api";
 
 const TextModePage = () => {
+  const { t } = useTranslation('textMode');
   const [text, setText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -18,7 +20,7 @@ const TextModePage = () => {
 
   async function handleSubmit() {
     if (!text.trim()) {
-      setError("Введите текст для обработки!");
+      setError(t("errors.empty"));
       return;
     }
 
@@ -27,90 +29,91 @@ const TextModePage = () => {
 
     try {
       const result = await apiService.getInfoFromText(text);
+      let specimens = {}
 
-      const specimens = {};
+      if (result.count_males || result.count_females || result.count_juv_male || result.count_juv_female || result.count_juv) {
+        const specimens = {};
+      } else {
+        const specimens = {...formState.specimens}
+      }      
       if (result.count_males) specimens.male_adult = result.count_males;
       if (result.count_females) specimens.female_adult = result.count_females;
       if (result.count_juv_male) specimens.male_juvenile = result.count_juv_male;
       if (result.count_juv_female) specimens.female_juvenile = result.count_juv_female;
       if (result.count_juv) specimens.undefined_juvenile = result.count_juv;
 
-      const processResult = {...result};
+      const coordinateUpdates = {};
       if (result.coordinate_north) {
         const {degrees, minutes, seconds } = result.coordinate_north;
         if (degrees != null) {
-          processResult.grads_north = degrees.toString();
+          coordinateUpdates.grads_north = degrees.toString();
           if (minutes != null) {
-            processResult.mins_north = minutes.toString();
+            coordinateUpdates.mins_north = minutes.toString();
             if (seconds != null) {
-              processResult.secs_north = seconds.toString();
-              processResult.coordinate_north = degrees.toString() + '°' + minutes.toString() + "'" + seconds.toString() + '"';
-              processResult.coordinate_format = "secs";
+              coordinateUpdates.secs_north = seconds.toString();
+              coordinateUpdates.coordinate_north = `${degrees}°${minutes}'${seconds}"`;
+              coordinateUpdates.coordinate_format = "secs";
             } else {
-              processResult.coordinate_north = degrees.toString() + '°' + minutes.toString() + "'";
-              processResult.coordinate_format = "mins";
+              coordinateUpdates.coordinate_north = `${degrees}°${minutes}'`;
+              coordinateUpdates.coordinate_format = "mins";
             }
           } else {
-            processResult.coordinate_north = degrees.toString() + '°';
+            coordinateUpdates.coordinate_north = `${degrees}°`;
           }
-        } else {
-          processResult.coordinate_north = "";
         }
-      } else {
-        processResult.coordinate_north = "";
       }
 
       if (result.coordinate_east) {
-        const {degrees, minutes, seconds } = result.coordinate_east;
+        const {degrees, minutes, seconds} = result.coordinate_east;
         if (degrees != null) {
-          processResult.grads_east = degrees.toString();
+          coordinateUpdates.grads_east = degrees.toString();
           if (minutes != null) {
-            processResult.mins_east = minutes.toString();
+            coordinateUpdates.mins_east = minutes.toString();
             if (seconds != null) {
-              processResult.secs_east = seconds.toString();
-              processResult.coordinate_east = degrees.toString() + '°' + minutes.toString() + "'" + seconds.toString() + '"';
+              coordinateUpdates.secs_east = seconds.toString();
+              coordinateUpdates.coordinate_east = `${degrees}°${minutes}'${seconds}"`;
             } else {
-              processResult.coordinate_east = degrees.toString() + '°' + minutes.toString() + "'";
+              coordinateUpdates.coordinate_east = `${degrees}°${minutes}'`;
             }
           } else {
-            processResult.coordinate_east = degrees.toString() + '°'
+              coordinateUpdates.coordinate_east = `${degrees}°`;
           }
-        } else {
-          processResult.coordinate_east = "";
         }
-      } else {
-        processResult.coordinate_east = "";
       }
 
       // Обновление состояния формы
       setFormState(prev => {
-        const newState = {
+        const updates = {};
+        
+        if (result.date != null) updates.begin_date = result.date;
+        if (result.biotope != null) updates.biotope = result.biotope;
+        if (result.collector != null) updates.collector = result.collector;
+        if (result.country != null) updates.country = result.country;
+        if (result.region != null) updates.region = result.region;
+        if (result.district != null) updates.district = result.district;
+        if (result.gathering_place != null) updates.gathering_place = result.gathering_place;
+        if (result.family != null) updates.family = result.family;
+        if (result.genus != null) updates.genus = result.genus;
+        if (result.species != null) updates.species = result.species;
+        if (result.taxonomic_notes != null) updates.taxonomic_notes = result.taxonomic_notes;
+        
+        return {
           ...prev,
-          ...processResult,
+          ...updates,
+          ...coordinateUpdates,
           specimens: {
             ...prev.specimens,
             ...specimens
-          },
-          // Явно устанавливаем координатные поля
-          begin_date: result.date,
-          grads_north: processResult.grads_north || prev.grads_north || '',
-          mins_north: processResult.mins_north || prev.mins_north || '',
-          secs_north: processResult.secs_north || prev.secs_north || '',
-          grads_east: processResult.grads_east || prev.grads_east || '',
-          mins_east: processResult.mins_east || prev.mins_east || '',
-          secs_east: processResult.secs_east || prev.secs_east || '',
-          coordinate_format: processResult.coordinate_format || prev.coordinate_format || 'grads'
+          }
         };
-
-        return newState;
       });
 
       console.log(formState.genus)
       navigate('/form');
 
     } catch (error) {
-      console.error("Ошибка запроса:", error);
-      setError(error.message || "Произошла ошибка при обработке текста");
+      console.error("Request error:", error);
+      setError(error.message || t("errors.request"));
     } finally {
       setIsLoading(false);
       console.log(formState);
@@ -120,17 +123,17 @@ const TextModePage = () => {
   return (
     <div className="text-container">
       <header>
-        <h3>Вставьте текст</h3>
-        <p>или</p>
+        <h3>{t("text.insert_text")}</h3>
+        <p>{t("text.or")}</p>
         <Link to="/form" className="switch-mode-button">
-          Заполните форму вручную
+          {t("text.manual")}
         </Link>
       </header>
       <ArticleInfo />
       
       <div className="content">
         <textarea
-          placeholder="Введите ваш текст здесь..."
+          placeholder={t("text.placeholder")}
           className="text-area"
           value={text}
           onChange={handleTextChange}
@@ -152,10 +155,10 @@ const TextModePage = () => {
           {isLoading ? (
             <>
               <span className="spinner"></span>
-              Обработка...
+              t("text.loading")
             </>
           ) : (
-            "Автозаполнение"
+            t("text.button")
           )}
         </button>
       </div>

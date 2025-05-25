@@ -1,0 +1,15 @@
+{
+    "errors": {
+        "empty": "Enter text for processing!",
+        "request": "An error occurred during text processing"        
+    },
+
+    "text": {
+        "insert_text": "Insert text",
+        "or": "or",
+        "manual": "Fill in the form manually",
+        "placeholder": "Enter your text here...",
+        "loading": "Processing...",
+        "button": "Autocomplete"
+    }
+}

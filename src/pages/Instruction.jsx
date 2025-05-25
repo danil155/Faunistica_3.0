@@ -1,6 +1,7 @@
 import "../styles/instruction.css";
 import React, {useState} from "react";
 import {Link} from "react-router-dom";
+import { useTranslation, Trans } from 'react-i18next';
 import tlg_auth from "../img/instuction/tlg_reg.webp";
 import tlg_reg from "../img/instuction/tlg_auth.webp";
 import site_auth from "../img/instuction/site-auth1.webp";
@@ -40,7 +41,7 @@ import coord1 from "../img/instuction/coord1.webp";
 import coord2 from "../img/instuction/coord2.webp";
 
 export const Introduction = () => {
-
+    const { t } = useTranslation('instruction');
     const [collapsed, setCollapsed] = useState({
         requirements: false,
         registration: false,
@@ -55,7 +56,7 @@ export const Introduction = () => {
     });
     return (
         <div className="instr-content">
-                <h1>Руководство волонтера проекта "Паутина данных"</h1>
+            <h1>{t("title")}</h1>
 
             <div className="instruction-content">
                 <div className="section">
@@ -67,7 +68,7 @@ export const Introduction = () => {
                                  {...collapsed, requirements: !collapsed.requirements}
                              )
                          }>
-                        <h2>Технические требования для участия в проекте</h2>
+                        <h2>{t("sections.requirements.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.requirements ? "collapsed" : ""
@@ -86,10 +87,10 @@ export const Introduction = () => {
                     </div>
                     {collapsed.requirements && (
                     <ol>
-                        <li>Доступ в интернет</li>
-                        <li>Мессенджер Телеграм</li>
-                        <li>Персональный компьютер/ноутбук/планшет/телефон</li>
-                        <li>Десктопная версия браузера (Google Chrome, Firefox, Edge, Opera)</li>
+                        <li>{t("sections.requirements.first")}</li>
+                        <li>{t("sections.requirements.second")}</li>
+                        <li>{t("sections.requirements.third")}</li>
+                        <li>{t("sections.requirements.fourth")}</li>
                     </ol>)}
                 </div>
                 <div className="section">
@@ -101,7 +102,7 @@ export const Introduction = () => {
                                  {...collapsed, registration: !collapsed.registration}
                              )
                          }>
-                        <h2>Регистрация и авторизация</h2>
+                        <h2>{t("sections.registration.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.registration ? "collapsed" : ""
@@ -121,29 +122,26 @@ export const Introduction = () => {
                     {collapsed.registration && (
                         <>
                     <div className="horizontal">
-                        <p>Для начала работы проходим по ссылке:
-                            <Link to={"https://t.me/FaunisticaV3Bot"} target={"_blank"}>https://t.me/FaunisticaV3Bot</Link><br/>
-                            Выбираем команду /register и следуем инструкциям телеграм-бота,
-                            чтобы зарегистрироваться. После регистрации выбираем команду /auth и получаем свою первую
-                            статью и пароль для сервиса.
+                        <p>{t("sections.registration.step11")}
+                            <Link to={"https://t.me/FaunisticaV3Bot"} target={"_blank"}> https://t.me/FaunisticaV3Bot</Link><br/>
+                            {t("sections.registration.step12")}
                             <br/>
                             <br/>
-                            Как только пароль получен, переходим на сайт <Link to={"https://faunistica.ru/"} target={"_blank"}>https://faunistica.ru/</Link> и нажимаем на одно из следующих полей.
                         </p>
                         <div className="img-box">
-                            <img src={tlg_reg} alt="telegram registration example"/>
-                            <img src={tlg_auth} alt="telegram authorisation example"/>
+                            <img src={tlg_reg} alt={t("alts.tlg_reg")}/>
+                            <img src={tlg_auth} alt={t("alts.tlg_auth")}/>
                         </div>
                     </div>
                     <div>
-                        <p>Как только пароль получен, переходим на сайт <Link to={"https://faunistica.ru/"} target={"_blank"}>https://faunistica.ru/</Link> и нажимаем на одно из следующих полей:</p>
-                        <img className={"full-width"} src={site_auth} alt="site auth example"/>
+                        <p>{t("sections.registration.step21")} <Link to={"https://faunistica.ru/"} target={"_blank"}>https://faunistica.ru/</Link> {t("sections.registration.step22")}<br/><br/></p>
+                        <img className={"full-width"} src={site_auth} alt={t("alts.site_auth")}/>
                     </div>
                     <div className="horizontal">
-                        <p>Далее заполняем поля «Имя пользователя» (ваш никнейм, который вы указали при регистрации в телеграм-боте) и «Пароль» и нажимаем кнопку «Войти».</p>
-                        <img src={site_auth2} alt="site auth example"/>
+                        <p>{t("sections.registration.step3")}</p>
+                        <img src={site_auth2} alt={t("alts.site_auth2")}/>
                     </div>
-                    <p>Поздравляем! Теперь вы можете перейти к заполнению формы. </p>
+                    <p>{t("sections.registration.success")} </p>
                         </>)}
                 </div>
                 <div className="section">
@@ -155,7 +153,7 @@ export const Introduction = () => {
                                  {...collapsed, publ_structure: !collapsed.publ_structure}
                              )
                          }>
-                        <h2>Структура научной публикации</h2>
+                        <h2>{t("sections.publ_structure.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.publ_structure ? "collapsed" : ""
@@ -174,115 +172,70 @@ export const Introduction = () => {
                     </div>
                     {collapsed.publ_structure && (
                         <>
-                    <p><b>Научная публикация</b> — это опубликованное произведение, созданное в соответствии
-                        с академическими стандартами построения и оформления текста, которое было издано в печатном виде
-                        или на электронных носителях.
+                    <p><Trans i18nKey="sections.publ_structure.definition">
+                        <b>Scientific publication</b> is a published work created in accordance with academic standards of text structure and formatting, which has been published in print or on electronic media.
+                    </Trans>
                         <br/>
                         <br/>
-                        Существует множество видов научных публикаций.
-                        В рамках проекта Паутина данных мы предлагаем вам поработать с:</p>
+                        {t("sections.publ_structure.types_intro")}</p>
                     <ul>
-                        <li>научными статьями</li>
-                        <li>монографиями</li>
-                        <li>материалами и тезисами докладов научных конференций</li>
-                        <li>авторефератами диссертаций</li>
+                        <li>{t("sections.publ_structure.types.articles")}</li>
+                        <li>{t("sections.publ_structure.types.monographs")}</li>
+                        <li>{t("sections.publ_structure.types.conference_materials")}</li>
+                        <li>{t("sections.publ_structure.types.dissertations")}</li>
                     </ul>
-                    <h3>Как устроена публикация</h3>
+                    <h3>{t("sections.publ_structure.how_it_works")}</h3>
                     <p>
-                        В самом верху первой страницы расположен блок, содержащий информацию о том, в каком журнале,
-                        номере и году была опубликована эта статья. Для работы это не особенно важно,
-                        но вдруг вам понравится тематика журнала и захочется прочитать всю подшивку.
+                        {t("sections.publ_structure.top_block")}
                         <br/>
                         <br/>
-                        Далее следует буквенно-циферный шифр. Не беспокойтесь. Эта информация важна для библиотекарей.
-                        УДК (универсальная десятичная классификация) позволяет отнести любую работу к определенной
-                        области знаний. В современном мире интерес к ней угасает, но в некоторых странах ее до сих пор
-                        используют.
+                        {t("sections.publ_structure.udk_explanation")}
                     </p>
                     <div className="horizontal">
-                        <img className="publ" src={publ1} alt="publication example"/>
+                        <img className="publ" src={publ1} alt={t("sections.publ_structure.alts.publ1")}/>
                         <p>
-                            Большим шрифтом и часто заглавными буквами обозначено название работы.
-                            Из которого многое можно понять, но не всегда. Поэтому следующим следом за разделом
-                            с перечислением авторов обычно располагается аннотация, в которой в очень краткой форме
-                            передано содержание статьи.
+                            {t("sections.publ_structure.title_explanation")}
                             <br/>
                             <br/>
-                            Научные статьи на английском языке устроены похожим образом.
+                            {t("sections.publ_structure.english_similarity")}
                         </p>
                     </div>
                     <div className="horizontal">
-                        <img className="publ" src={publ2} alt="publication example"/>
+                        <img className="publ" src={publ2} alt={t("sections.publ_structure.alts.publ2")}/>
                         <p>
-                            В этом примере нет информации об УДК, зато уже появляются такие разделы как «Аффилиация»
-                            (место работы авторов) и «Ключевые слова». Эти два раздела не зависят от языка, на котором
-                            опубликована работа, а скорее от времени, когда она была опубликована. В более старых
-                            публикациях они могут отсутствовать.
+                            {t("sections.publ_structure.example_no_udk")}
                             <br/>
                             <br/>
-                            И еще один пример для закрепления, в
-                            котором аннотация называется «резюме».
-                            Иногда заголовок Abstract (Аннотация)
-                            отсутствует, но сам раздел в публикации
-                            сохраняется. Так тоже может быть.
-                        </p>
-
-                    </div>
-                    <div className="horizontal">
-                        <img className="publ" src={publ3} alt="publication example"/>
-                        <p>
-                            В разделе «Введение» авторы обычно описывают состояние темы, которую они исследуют, почему
-                            они выбрали именно ее, что было сделано в этом направлении ранее, какие вопросы остались
-                            нерешенными.
-                            <br/>
-                            <br/>
-                            Раздел «Введение» может не обозначаться заголовком, но в подавляющем большинстве публикаций
-                            будет присутствовать.
+                            {t("sections.publ_structure.another_example")}
                         </p>
                     </div>
                     <div className="horizontal">
-                        <img className="publ" src={publ4} alt="publication example"/>
+                        <img className="publ" src={publ3} alt={t("sections.publ_structure.alts.publ3")}/>
                         <p>
-                            Огромное количество важной информации, в
-                            том числе и той, которая понадобится нам для
-                            создания записи о находке, содержится в
-                            разделе «Материал и методы». Как правило,
-                            здесь вы найдете метод сбора материала
-                            (почвенные ловушки, укосы, отряхивание
-                            растительности, ручной сбор и так далее),
-                            конкретные даты или частоту учетов, метод
-                            расчета показателей для финального
-                            представления данных, описание района
-                            исследования и конкретных биотопов, в которых
-                            проводили учеты. Если вам повезет, то в разделе
-                            «Материал и методы» прячутся географические
-                            координаты конкретных площадок и даже даты
-                            учетов. Устройство этого раздела зависит от типа
-                            публикации: в публикациях экологического
-                            характера здесь будет больше сведений, в
-                            публикациях фаунистического характера –
-                            только небольшая их часть (большинство данных
-                            для описания находок прячутся в основном
-                            тексте).
+                            {t("sections.publ_structure.introduction_section")}
+                            <br/>
+                            <br/>
+                            {t("sections.publ_structure.introduction_absence")}
+                        </p>
+                    </div>
+                    <div className="horizontal">
+                        <img className="publ" src={publ4} alt={t("sections.publ_structure.alts.publ4")}/>
+                        <p>
+                            {t("sections.publ_structure.materials_methods")}
                         </p>
                     </div>
                     <p>
-                        Основная часть работы может быть озаглавлена по-разному «Результаты» («Results»), «Список видов» («List of Species»), «Население
-                        биотопов», «Разнообразие фаун» или вообще иметь множество подразделов со своими названиями… или не иметь как такового
-                        подзаголовка. Но вы поймете, что это она! Вот некоторые примеры:
+                        {t("sections.publ_structure.main_part")}
                     </p>
                     <div className="horizontal">
-                        <img className="publ" src={publ5} alt="publication example"/>
-                        <img className="publ" src={publ6} alt="publication example"/>
+                        <img className="publ" src={publ5} alt={t("sections.publ_structure.alts.publ5")}/>
+                        <img className="publ" src={publ6} alt={t("sections.publ_structure.alts.publ6")}/>
                     </div>
                     <p>
-                        В разделах «Обсуждение» или «Выводы» авторы подводят заключение работы и анализа данных. В разделе «Благодарности» - говорят
-                        спасибо коллегам и организациям, которые помогли им справиться с задачей.
-                        «Литература», «References», «Библиографический список» — это вся литература, на которую ссылались в этой работе.
+                        {t("sections.publ_structure.discussion_conclusion")}
                     </p>
                         </>)}
                 </div>
-
 
                 <div className="section">
                     <div className={`section-header ${
@@ -293,7 +246,7 @@ export const Introduction = () => {
                                  {...collapsed, beginning_work: !collapsed.beginning_work}
                              )
                          }>
-                        <h2>Начало работы</h2>
+                        <h2>{t("sections.beginning_work.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.beginning_work ? "collapsed" : ""
@@ -313,39 +266,30 @@ export const Introduction = () => {
                     {collapsed.beginning_work && (
                         <>
                     <p>
-                        Ваша статья - научная работа, из которой мы будем извлекать данные. По клику на ссылку мы можем получить полный текст и ознакомиться с ним
-                        перед внесением данных. Для начала работы кликаем по ней:
+                        {t("sections.beginning_work.article_description")}
                     </p>
-                    <img className="full-width middle" src={work1} alt="link to publication example"/>
-                    <p>Ваша статья откроется в новой вкладке.</p>
+                    <img className="full-width middle" src={work1} alt={t("sections.beginning_work.alts.work1")}/>
+                    <p>{t("sections.beginning_work.new_tab")}</p>
                     <p>
-                        Под Текущей статьей расположены поля, в которые предстоит заносить информацию по каждой находке пауков. Все поля объединены в 5
-                        блоков: Географическое расположение, Административное расположение, Сбор материала, Таксономия, Количество. Далее мы на
-                        примерах рассмотрим, как заполнять каждый блок.
+                        {t("sections.beginning_work.fields_description")}
                     </p>
-                    <h3>Общие рекомендации по работе с публикацией:</h3>
+                    <h3>{t("sections.beginning_work.recommendations")}</h3>
                     <ol>
-                        <li>Для начала прочитайте публикацию целиком. Как показывает наш опыт, предварительное чтение публикации даст ответ на большинство
-                            вопросов, связанных с тем, где искать информацию о месте сбора, методах сбора и т.п.</li>
-                        <li>В рамках проекта мы вносим в форму информацию о НАХОДКАХ пауков. Одна находка — это один вид, найденный в одну дату в
-                            одном месте и собранный одним методом. При этом количество особей этого вида может быть любым. Если один и тот же вид собран
-                            в разные даты или в разных местах или разными методами, то есть если в этих пунктах есть хоть какие-то отличия, то это РАЗНЫЕ
-                            НАХОДКИ. Соответственно, каждую из них нам предстоит внести в форму по-отдельности. Ниже мы разберем это на примерах.</li>
-                        <li>Если возникают вопросы, не стесняйтесь обращаться к нам за помощью. Для этого можно дать телеграм-боту команду /support.</li>
+                        <li>{t("sections.beginning_work.recommendations1")}</li>
+                        <li>{t("sections.beginning_work.recommendations2")}</li>
+                        <li>{t("sections.beginning_work.recommendations3")}</li>
                     </ol>
-                    <p>Над Текущей статьей расположена кнопка «Введите текст».</p>
-                    <img className={"full-width middle"} src={work2} alt="input text button"/>
+                    <p>{t("sections.beginning_work.input_text_button")}</p>
+                    <img className={"full-width middle"} src={work2} alt={t("sections.beginning_work.alts.work2")}/>
                     <p>
-                        При нажатии вам откроется окно, где будет предложено ввести текст статьи. При копировании статьи в это поле, часть данных может быть
-                        заполнена автоматически.
+                        {t("sections.beginning_work.copy_text")}
                     </p>
                     <div className="attention">
                         <p>
-                            !Внимание!
+                            {t("sections.beginning_work.attention")}
                         </p>
                         <p>
-                            Хотя наш сервис и имеет в своем арсенале инструмент «автоматическое заполнение» и может распознать
-                            часть данных, крайне необходимо проверять все данные, заполненные автоматически.
+                            {t("sections.beginning_work.auto_fill_warning")}
                         </p>
                     </div>
                         </>)}
@@ -359,7 +303,7 @@ export const Introduction = () => {
                                  {...collapsed, geo: !collapsed.geo}
                              )
                          }>
-                        <h2>Географическое положение</h2>
+                        <h2>{t("sections.geo.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.geo ? "collapsed" : ""
@@ -378,41 +322,37 @@ export const Introduction = () => {
                     </div>
                     {collapsed.geo && (
                         <>
-                    <img className={"full-width"} src={geo} alt="geo fields"/>
+                    <img className={"full-width"} src={geo} alt={t("sections.geo.alts.geo")}/>
                     <p>
-                        Находим в статье координаты находки конкретного паука и вносим их в том формате, который приведен в публикации.
+                        {t("sections.geo.find_coordinates")}
                     </p>
-                    <img className={"full-width middle"} src={geo2} alt="geo select"/>
-                    <p>Если по каким-то причинам ввод географических координат затруднен (форма не дает записать координаты из-за разницы в формате
-                        представления данных, координаты слишком общие и т.д.), записываем их с комментарием (если он необходим) в поле Примечания к
-                        расположению
+                    <img className={"full-width middle"} src={geo2} alt={t("sections.geo.alts.geo2")}/>
+                    <p>{t("sections.geo.coordinates_difficulties")}
                     </p>
-                    <p>При этом в Происхождении координат выбираем вариант Координат не будет.</p>
-                    <img className={"full-width middle"} src={geo3} alt="geo select"/>
-                    <p>В публикации из <Link to={"https://sozontov.cc/arachnolibrary/files/p5099_2014_Esyunin_Ukhova.pdf"} target={"_blank"}>Примера 2</Link> в начале статьи, даны координаты каждой исследованной площадки. Две площадки выделены желтым для примера:
+                    <p>{t("sections.geo.no_coordinates_option")}</p>
+                    <img className={"full-width middle"} src={geo3} alt={t("sections.geo.alts.geo3")}/>
+                    <p>
+                        <Trans i18nKey="sections.geo.example2_intro" t={t}>
+                            В публикации из <Link to={"https://sozontov.cc/arachnolibrary/files/p5099_2014_Esyunin_Ukhova.pdf"} target={"_blank"}>Примера 2</Link> в начале статьи, даны координаты каждой исследованной площадки. Две площадки выделены желтым для примера:
+                        </Trans>
                     </p>
                             <div className={"horizontal"}>
-                                <img src={coord1} alt="coord article example"/>
-                                <img src={coord2} alt="coord article example"/>
+                                <img src={coord1} alt={t("sections.geo.alts.coord1")}/>
+                                <img src={coord2} alt={t("sections.geo.alts.coord2")}/>
                             </div>
                     <p>
-                        В этом примере координаты даны в формате градусы-минуты. Вводим их:
+                        {t("sections.geo.degrees_minutes_format")}
                     </p>
-                    <img className={"full-width middle"} src={geo4} alt="geo select"/>
-                    <p>Поскольку координаты приведены прямо в публикации, выбираем вариант Происхождения координат: "из статьи"</p>
+                    <img className={"full-width middle"} src={geo4} alt={t("sections.geo.alts.geo4")}/>
+                    <p>{t("sections.geo.coordinates_source")}</p>
                     <p>
-                        Радиус неточности координат - расстояние в метрах, описывающее окружность относительно указанных в широте и долготе координат, в
-                        пределах которой находится реальный локалитет. Составляет 30 м для большинства современных GPS устройств или другое, в зависимости от
-                        метода геопривязки, но никогда не 0. Если значение неизвестно, оставляем поле пустым.
+                        {t("sections.geo.radius_explanation")}
                         <br/>
                         <br/>
-
-                        Собственной геопривязкой на данном этапе развития проекта мы не занимаемся, так что у нас только два варианта того, как поступить с
-                        этим разделом формы - либо вносить координаты из публикации, либо не вносить, если они в публикации отсутствуют.
+                        {t("sections.geo.georeferencing")}
                         <br/>
                         <br/>
-                        Но если вы достаточно мотивированы и квалифицированы для того, чтобы самостоятельно заняться поиском координат (геопривязкой),
-                        пожалуйста, обратитесь к нам за инструктажем в индивидуальном порядке.
+                        {t("sections.geo.georeferencing_offer")}
                     </p>
                         </>)}
                 </div>
@@ -425,7 +365,7 @@ export const Introduction = () => {
                                  {...collapsed, adm: !collapsed.adm}
                              )
                          }>
-                        <h2>Административное положение</h2>
+                        <h2>{t("sections.adm.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.adm ? "collapsed" : ""
@@ -444,71 +384,43 @@ export const Introduction = () => {
                     </div>
                     {collapsed.adm && (
                         <>
-                    <img className={"full-width"} src={adm} alt="adm fields"/>
+                    <img className={"full-width"} src={adm} alt={t("sections.adm.alts.adm")}/>
                     <p>
-                        В блок Административное расположение вносится вся информация о месте находки с точки зрения административного деления страны.
+                        {t("sections.adm.block_description")}
                         <br/>
                         <br/>
-                        Регион - это область, республика или край, а Район - более мелкие административные единицы, из которых состоят регионы. Если вы хотите
-                        внести из данной публикации все находки, а не только относящиеся к Уралу, то снимаем галочку Местоположение относится к Уралу и после
-                        этого вводим любые другие административные названия.
+                        {t("sections.adm.region_district")}
                     </p>
                     <div className="horizontal">
                         <p>
-                            Поскольку наш проект направлен в первую
-                            очередь на оцифровку данных о пауках Урала,
-                            находки из других мест вы можете пропускать. В
-                            данном проекте под Уралом мы понимаем
-                            административные единицы: Республика
-                            Башкортостан, Республика Коми, Оренбургская
-                            область, Ненецкий автономный округ, Пермский
-                            край, Свердловская область, Ханты-Мансийский
-                            автономный округ, Челябинская область, Ямало-
-                            Ненецкий автономный округ
+                            {t("sections.adm.ural_focus")}
                         </p>
-                        <img src={image37} alt={"Ural map"}/>
+                        <img src={image37} alt={t("sections.adm.alts.image37")}/>
                     </div>
-                    <p>Место сбора записываем вручную в точности так, как оно указано в работе. Чаще всего это ближайший населенный пункт к тому месту, где
-                        была сделана находка, но могут быть названия заповедников, указание направления (4 км к югу от д. Макарово) и другие варианты.</p>
-                    <h3>Рассмотрим заполнение блока на примерах.</h3>
-                    <p>Пример 1. Статья: Esyunin S.L., Tuneva T.K., Farzalieva G.Sh. 2007. Remarks on the Ural spider fauna (Arachnida, Aranei), 12. Spiders of the steppe
-                        zone of Orenburg Region // Arthropoda Selecta. Vol. 16, No 1. P. 43-63.</p>
-                    <p>Поскольку публикация на английском, то все данные так же вводим на английском.</p>
-                    <p>Местоположение всегда указывается в разделе “Материалы и методы” публикации. В этой статье информация о Регионе отражена также в
-                        заголовке публикации - “Remarks on the Ural spider fauna (Arachnida, Aranei), 12. Spiders of the steppe zone of Orenburg Region”. Значит, в качестве
-                        региона вписываем Оренбургскую область:</p>
-                    <img className={"full-width middle"} src={adm2} alt="Adm filling example"/>
-                    <p>В данном примере перечисление конкретных мест сбора Ниже в тексте статьи даются ссылки на соответствующие материала дано в
-                        разделе “Introducon” (Введение): локалитеты в виде номеров в квадратных скобках (выделены желтым маркером):</p>
+                    <p>{t("sections.adm.collection_location")}</p>
+                    <h3>{t("sections.adm.examples_heading")}</h3>
+                    <p>{t("sections.adm.example1_intro")}</p>
+                    <p>{t("sections.adm.english_publication")}</p>
+                    <p>{t("sections.adm.example1_region")}</p>
+                    <img className={"full-width middle"} src={adm2} alt={t("sections.adm.alts.adm2")}/>
+                    <p>{t("sections.adm.example1_locations")}</p>
                     <div className="horizontal">
-                        <img  src={image39} alt="Another publication example"/>
-                        <img  src={image40} alt="Another publication example"/>
+                        <img src={image39} alt={t("sections.adm.alts.image39")}/>
+                        <img src={image40} alt={t("sections.adm.alts.image40")}/>
                     </div>
                     <div className="horizontal">
                         <p>
-                            Если мы соотнесем эти номера с теми, что даны во введении, получится, что и первая,
-                            и вторая находки относится к Кувандыкскому району. Смело выбираем его в
-                            соответствующем поле. Можно начать вводить первые буквы и по ним быстро найти
-                            подходящий вариант:
+                            {t("sections.adm.example1_conclusion")}
                             <br />
                             <br />
-                            Место сбора вписываем так, как оно указано в статье. Для первой находки это будет
-                            (продолжаем сверяться с номерами в квадратных скобках): Novokazanka Vil. & Katrala
-                            Riv.:
+                            {t("sections.adm.example1_location_entry")}
                         </p>
-                        <img src={adm3} alt={"Adm input example"}/>
+                        <img src={adm3} alt={t("sections.adm.alts.adm3")}/>
                     </div>
-                    <p>Для второй находки, соответственно, Aituar Vil.</p>
-                    <p>Пример 2. Статья: Ухова Н.Л., Есюнин С.Л., Семенов В.Б., Ухова О.В., Кочергина М.С., Конюхова А.В. Численность почвенных и напочвенных
-                        беспозвоночных животных// Летопись природы Висимского государственного природного биосферного заповедника за 2013 год.
-                        Екатеринбург: Издательский дом Академии Естествознания. 2014. С. 106–132.</p>
-                    <p>В тексте публикации не приводятся данные об административном расположении района исследований. Однако, из выходных данных
-                        публикации “Летопись природы Висимского государственного природного биосферного заповедника за 2013 год” мы видим, что
-                        исследования проводились на территории Висимского заповедника. Регион и район, к которым относится местоположение заповедника,
-                        выясняем на сайте самого заповедника или через любой другой удобный вам ресурс в Интернете. Если в статье, как здесь, указан квартал
-                        заповедника, его также записываем в Место сбора.</p>
-                    <p>Заполненная информация в блоке будет выглядеть следующим образом:</p>
-                    <img className={"full-width"} src={adm4} alt="Final adm filling"/>
+                    <p>{t("sections.adm.example2_location")}</p>
+                    <p>{t("sections.adm.example2_reserve")}</p>
+                    <p>{t("sections.adm.filled_example")}</p>
+                    <img className={"full-width"} src={adm4} alt={t("sections.adm.alts.adm4")}/>
                         </>)}
                 </div>
                 <div className="section">
@@ -520,7 +432,7 @@ export const Introduction = () => {
                                  {...collapsed, eve: !collapsed.eve}
                              )
                          }>
-                        <h2>Сбор материала:</h2>
+                        <h2>{t("sections.eve.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.eve ? "collapsed" : ""
@@ -539,59 +451,47 @@ export const Introduction = () => {
                     </div>
                     {collapsed.eve && (
                         <>
-                    <img className={"full-width"} src={eve1} alt={"Eve fields"}/>
+                    <img className={"full-width"} src={eve1} alt={t("sections.eve.alts.eve1")}/>
                         <div className="horizontal">
                             <p>
-                                Здесь вводим даты сбора материала - конкретный день / месяц / год или их интервал - зависит от публикации. Если нужно ввести интервал,
-                                выбираем Интервал дат:
+                                {t("sections.eve.dates_description")}
                             </p>
-                            <img src={eve2} alt={"Interval field"}/>
+                            <img src={eve2} alt={t("sections.eve.alts.eve2")}/>
                         </div>
                         <div className="horizontal">
                             <p>
-                                Если в публикации отсутствуют день и/или месяц сбора, не забываем выбрать точность даты, иначе при проверке получим ошибку:
+                                {t("sections.eve.date_absence")}
                             </p>
-                            <img src={eve3} alt={"Interval field"}/>
+                            <img src={eve3} alt={t("sections.eve.alts.eve3")}/>
                         </div>
 
-                    <p>Биотоп – это небольшой участок территории с однородными природными условиями, который обычно выделяют и называют по тому, какие
-                        растения там преобладают, например березовый лес, пойменный луг, полынно-злаковая степь. Вносить в форму следует как можно более
-                        полную информацию о площадке.</p>
+                    <p>{t("sections.eve.biotope_definition")}</p>
 
                     <div className="horizontal">
-                            <p>В Примере 1 названия биотопов приведены в аннотированном списке видов для каждой находки:
+                            <p>{t("sections.eve.example1_biotopes")}
                                 <br/>
                                 <br/>
                                 <br/>
-                            Текст, выделенный желтым, целиком вносим в поле Биотоп.</p>
-                        <img className={"small"} src={image25} alt={"Article example"}/>
+                            {t("sections.eve.yellow_text")}</p>
+                        <img className={"small"} src={image25} alt={t("sections.eve.alts.image25")}/>
                     </div>
-                    <p>В Примере 2 биотоп такой: “вейниково-малиново-кипрейная гарь на границе пожара 2010 г. на ветровальном участке пихто-ельника
-                        высокотравно-папоротникового коренного; квартал 112; 560 м над у. м.”</p>
-                    <p>Информацию о номере квартала вносим в Место сбора (см. раздел Географическое расположение). Высоту над уровнем моря можно никуда
-                        не записывать или внести в Примечания к сбору материала.</p>
-                    <p>Иногда вместо краткого названия пишут подробные описания, копируем их в Примечания к сбору материала.</p>
-                    <p>Коллектор - тот, кто собрал паука. Для находки из нашего Примера 1 указаны только инициалы автора сбора материала - TTK. Однако в тексте
-                        статьи перечислены все коллекторы в формате Ф.И.О. с расшифровкой - Фамилия И.О. Нашему коллектору TTK соответствует расшифровка
-                        Tuneva T.K.:</p>
+                    <p>{t("sections.eve.example2_biotope")}</p>
+                    <p>{t("sections.eve.quarter_altitude")}</p>
+                    <p>{t("sections.eve.detailed_descriptions")}</p>
+                    <p>{t("sections.eve.collector_example1")}</p>
                     <div className="horizontal">
-                        <img src={image26} alt={"Article example"}/>
-                        <p>Именно эту полную информацию нужно будет внести в поле Коллектор.</p>
+                        <img src={image26} alt={t("sections.eve.alts.image26")}/>
+                        <p>{t("sections.eve.full_collector_info")}</p>
                     </div>
-                    <p>Если в статье не указаны авторы сбора материала, то в окошко Коллектор вносим авторов публикации. Именно такая ситуация сложилась для
-                        Примера 2. Здесь про коллекторов пишем: “Ухова Н.Л., Есюнин С.Л., Семенов В.Б., Ухова О.В., Кочергина М.С.,
-                        Конюхова А.В.”</p>
-                    <p>Выборочное усилие исследователя, затраченное на поимку пауков, позволяет понять, насколько их много в данной местности, например 200
-                        взмахов сачком, 100 ловушко-суток (лов.-сут., т.к. он поставил 10 ловушек на 10 дней, 10*10 = 100), или обследование 1 кв. м. поверхности
-                        почвы. В Примечаниях к сбору материала стоит написать метод, которым материал собирался, если он указан в публикации (например,
-                        банки-ловушки).</p>
-                    <p>Полностью заполненный блок Сбор материала на Примере 1 выглядит так:</p>
-                    <img className={"full-width"} src={eve4} alt={"Filled eve"}/>
-                    <p>А для Примера 2, так, если взять выделенный вид:</p>
-                    <img className={"full-width middle"} src={image9} alt={"eve example"}/>
-                    <img className={"full-width"} src={eve5} alt={"eve example"}/>
+                    <p>{t("sections.eve.no_collector_info")}</p>
+                    <p>{t("sections.eve.selective_effort")}</p>
+                    <p>{t("sections.eve.filled_example1")}</p>
+                    <img className={"full-width"} src={eve4} alt={t("sections.eve.alts.eve4")}/>
+                    <p>{t("sections.eve.filled_example2")}</p>
+                    <img className={"full-width middle"} src={image9} alt={t("sections.eve.alts.image9")}/>
+                    <img className={"full-width"} src={eve5} alt={t("sections.eve.alts.eve5")}/>
                     <div className="attention">
-                        <p>Выборочное усилие в тексте публикации может отсутствовать.</p>
+                        <p>{t("sections.eve.effort_absence")}</p>
                     </div>
                         </>)}
                 </div>
@@ -604,7 +504,7 @@ export const Introduction = () => {
                                  {...collapsed, tax: !collapsed.tax}
                              )
                          }>
-                        <h2>Таксономия</h2>
+                        <h2>{t("sections.tax.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.tax ? "collapsed" : ""
@@ -623,44 +523,34 @@ export const Introduction = () => {
                     </div>
                     {collapsed.tax && (
                         <>
-                    <img className={"full-width"} src={tax1} alt={"tax fields"}/>
+                    <img className={"full-width"} src={tax1} alt={t("sections.tax.alts.tax1")}/>
                     <p>
-                        Здесь записываем латинские названия семейства, рода и вида пауков. Как выглядит эта информация в тексте? Немного вникнем в основы
-                        зоологической латыни.
+                        {t("sections.tax.latin_names")}
                         <br/>
                         <br/>
-                        Мы имеем дело с отрядом Пауки (по-латински Araneae или Aranei). Отряды разбиваются зоологами на более мелкие систематические
-                        единицы - семейства. Найти название семейства пауков не сложно - они все оканчиваются на -dae (например, Araneidae, Lycosidae, Thomisidae).
+                        {t("sections.tax.spiders_order")}
                         <br/>
                         <br/>
-                        Семейства, в свою очередь, делят на еще более мелкие единицы - рода, а рода делят на виды. Род и вид обычно идут в связке, как название
-                        улицы и номер дома. Полное название вида выглядит, например, так: Araneus diadematus Clerck, 1757; Trochosa ruricola (De Geer, 1778). Род
-                        и вид в научных работах принято писать курсивом. После названия вида указаны фамилия автора, описавшего вид, и год описания. Эту
-                        информацию вносить никуда не надо.
+                        {t("sections.tax.families_explanation")}
                         <br/>
                         <br/>
-                        Для облегчения задачи по внесению таксономических названий все поля оформлены как выпадающие списки с вариантами, нужно только
-                        начать вводить. Так же если вы сначала вводите вид, поля семейство и род заполнятся автоматически.
+                        {t("sections.tax.dropdown_help")}
                         <br/>
                         <br/>
-                        Вот так таксономия выглядит в статье из Примера 1:
+                        {t("sections.tax.example1_appearance")}
                     </p>
                     <div className={"horizontal"}>
-                        <img className="small" src={tax2} alt={"Tax article example"}/>
-                        <img className={"middle"} src={tax3} alt={"Tax form filling example"}/>
+                        <img className="small" src={tax2} alt={t("sections.tax.alts.tax2")}/>
+                        <img className={"middle"} src={tax3} alt={t("sections.tax.alts.tax3")}/>
                     </div>
                     <p>
-                        Если в выпадающем списке не найден нужный вид, ставим галочку Отсутствует в списке и вводим название вручную. Такое может быть, если
-                        вид со времен выхода публикации был переименован и сейчас числится в каталоге пауков Мира под другим названием.
+                        {t("sections.tax.missing_species")}
                         <br/>
                         <br/>
-                        В некоторых работах род может быть сокращен до одной буквы. Это делается в том случае, если подряд идут несколько представителей одного
-                        рода. Бывает, что сокращают название вида, а совсем редко - и то, и другое. В форму род и вид вносим полностью, без сокращений.
+                        {t("sections.tax.abbreviated_names")}
                         <br/>
                         <br/>
-                        Если вид описан как новый для науки, к нему идет приписка sp.n. (species nova). Ставим галочку Описан как новый вид. Иногда у найденного
-                        паука удается определить только род, но не вид. В таких случаях про паука говорят “определен до рода” и пишут sp. вместо видового названия,
-                        например Araneus sp. В этом случае мы снимаем галочку с Вид определен и не пишем никакого видового названия, ведь его нет в публикации.
+                        {t("sections.tax.new_species")}
                     </p>
                         </>)}
                 </div>
@@ -673,7 +563,7 @@ export const Introduction = () => {
                                  {...collapsed, count: !collapsed.count}
                              )
                          }>
-                        <h2>Количество</h2>
+                        <h2>{t("sections.count.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.count ? "collapsed" : ""
@@ -693,36 +583,28 @@ export const Introduction = () => {
                     {collapsed.count && (
                         <>
                     <p>
-                        Данные о количестве пауков вносим с учетом их пола и возраста. Вместо слов самка или самец в публикациях традиционно используются
-                        символы f, m, ♀, ♂ для половозрелых особей и sub. f., sub. m., sub.♀, sub.♂, juv для неполовозрелых. Если особей более одной, то ставят два
-                        знака пола: 5 ♂♂.
+                        {t("sections.count.gender_age")}
                         <br/>
                         <br/>
-                        ♂, male, или просто m - 1 самец
+                        {t("sections.count.symbols.male")}
                         <br/>
-                        ♂♂ - 2 и более самца
+                        {t("sections.count.symbols.males")}
                         <br/>
-                        ♀, female, или просто f - 1 самка
+                        {t("sections.count.symbols.female")}
                         <br/>
-                        ♀♀ - 2 и более самок
+                        {t("sections.count.symbols.females")}
                         <br/>
-                        juvenile, или juv – неполовозрелая особь, настолько молодая, что ее пол невозможно определить<br/>
-                        sub. – молодая особь, которая станет взрослой в следующую линьку, ее пол уже можно определить (subf, subm, sub♀, sub♂)<br/>
-                        Количество вносим в форму как есть. Если количество пауков приведено без указания полов, всех особей записываем во взрослых. Если даны
-                        самцы и самки - пишем раздельно, не суммируем!<br/>
-                        Количество экземпляров может быть не указано, например, поставлен только + в таблице, тогда по умолчанию в Количество вносим 1 и пишем
-                        в Комментарии: “наличие особей, а не их количество”.<br/>
-                        Если указано не количество особей, а другой показатель численности (экз./100 взм, мг/м2 и т.д.), вносим данное число в Количество, а в
-                        Комментарии вписываем единицу измерения - экз./100 взм, мг/м2 и т.д.<br/>
-                        Бывает, что в публикации приведены несколько показателей. Тогда нам надо выбрать один. Попадаемость на 100 лов.-сут. приоритетнее,
-                        чем %, а непосредственное количество особей приоритетнее лов.-сут. Отработаем этот момент на Примере 2, поскольку Пример 1 такого
-                        лишен. Вот так выглядит фрагмент таблицы из этой публикации:
+                        {t("sections.count.symbols.juvenile")}<br/>
+                        {t("sections.count.symbols.subadult")}<br/>
+                        {t("sections.count.quantity_rules1")}<br/>
+                        {t("sections.count.quantity_rules2")}<br/>
+                        {t("sections.count.quantity_rules3")}<br/>
+                        {t("sections.count.quantity_rules4")}<br/>
+                        {t("sections.count.example2_table")}
                     </p>
-                    <img className={"full-width middle"} src={tax4} alt={"Tax article example"}/>
-                    <p>В таблице указаны два показателя численности: попадаемость, которая выражается в экз./100 л-с и относительное обилие, которое
-                        выражается в %.</p>
-                    <p>Более значимый показатель мы вносим в форму, а в Комментарии пишем, что это за показатель, и вносим данные менее значимого
-                        показателя.</p>
+                    <img className={"full-width middle"} src={tax4} alt={t("sections.count.alts.tax4")}/>
+                    <p>{t("sections.count.two_indicators")}</p>
+                    <p>{t("sections.count.more_significant")}</p>
                         </>)}
                 </div>
                 <div className={"section"}>
@@ -734,7 +616,7 @@ export const Introduction = () => {
                                  {...collapsed, extra: !collapsed.extra}
                              )
                          }>
-                        <h2>Дополнительные возможности</h2>
+                        <h2>{t("sections.extra.title")}</h2>
                         <button
                             className={`collapse-toggle ${
                                 collapsed.extra ? "collapsed" : ""
@@ -753,32 +635,26 @@ export const Introduction = () => {
                     </div>
                     {collapsed.extra && (
                         <>
-                    <h3>Замочки</h3>
+                    <h3>{t("sections.extra.locks_heading")}</h3>
                     <p>
-                        Если мы прочитали статью и понимаем, что информация из какого-то блока далее
-                        будет повторяться для разных записей, мы можем зафиксировать информацию
-                        во всем блоке, нажав на замочек:
+                        {t("sections.extra.locks_description")}
                     </p>
-                    <p>Информация под закрытым замочком после заполнения всех полей и нажатия кнопки Записать сохранится.</p>
+                    <p>{t("sections.extra.locks_saving")}</p>
                     <div className={"attention"}>
-                        <p>Если замочек не нажать, после отправки наблюдений все незакрепленные поля очищаются автоматически. При
-                            каждой новой записи поля необходимо фиксировать вновь.</p>
+                        <p>{t("sections.extra.locks_warning")}</p>
                     </div>
-                    <p>Замочки есть у всех блоков, кроме Количества. Обязательно попробуйте эту опцию, с ней данные вносятся быстрее и проще!</p>
-                    <h3>Очистка и полная очистка формы</h3>
-                    <p>В случаях, если вам нужно частично очистить форму, то закрепляем все блоки,
-                        которые необходимо сохранить и нажимаем кнопку Очистить формы.
+                    <p>{t("sections.extra.locks_availability")}</p>
+                    <h3>{t("sections.extra.clear_forms_heading")}</h3>
+                    <p>{t("sections.extra.partial_clearing")}
                         <br/>
                         <br/>
-                        Если нужно очистить всю форму полностью, нажимаем Полная очистка.
+                        {t("sections.extra.full_clearing")}
                         <br/>
                         <br/>
-                        При полной очистке отчищаются все поля (даже с замочками) и все замочки
-                        которые были закрыты - открываются.</p>
-                    <h3>Свернуть</h3>
+                        {t("sections.extra.full_clearing_effect")}</p>
+                    <h3>{t("sections.extra.collapse_heading")}</h3>
                     <p>
-                        Если вы закончили заполнять блок, чтобы он не мешался, вы можете его свернуть,
-                        нажав кнопку Свернуть
+                        {t("sections.extra.collapse_description")}
                     </p>
                         </>)}
                 </div>

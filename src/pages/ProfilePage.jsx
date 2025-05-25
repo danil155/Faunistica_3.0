@@ -1,12 +1,13 @@
 import { apiService } from "../api";
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 import { FaPen, FaTimes } from 'react-icons/fa';
 import { Modal, ConfirmationModal } from "../components/modal/confirmModal"
-import EditRecordModal from '../components/modal/editModal';
 import '../styles/profile.css';
 
 const ProfilePage = () => {
+    const { t } = useTranslation('profile');
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
         username: "",
@@ -38,13 +39,6 @@ const ProfilePage = () => {
 			title: '',
 			message: ''
 		});
-
-        const [editModal, setEditModal] = useState({
-          isOpen: false,
-          record: null,
-          loading: false,
-          error: null
-        });
 		
 		const [actionStatus, setActionStatus] = useState({
 			loading: false,
@@ -53,22 +47,16 @@ const ProfilePage = () => {
 		});
 		
 		const handleEdit = (hash) => {
-			setConfirmationModal({
-				isOpen: true,
-				action: 'edit',
-				hash,
-				title: 'Редактирование записи',
-				message: 'Вы уверены, что хотите редактировать эту запись?'
-			});
-		};
+            navigate(`/edit/${hash}`);
+        };
 
 		const handleDelete = (hash) => {
 			setConfirmationModal({
 				isOpen: true,
 				action: 'delete',
 				hash,
-				title: 'Удаление записи',
-				message: 'Вы уверены, что хотите удалить эту запись? Это действие нельзя отменить.'
+				title: t("del.title"),
+				message: t("del.message")
 			});
 		};
 		const confirmAction = async () => {
@@ -85,7 +73,7 @@ const ProfilePage = () => {
 					setModal({
 						isOpen: true,
 						type: 'success',
-						message: 'Запись успешно удалена'
+						message: t("del.success")
 					});
 					setProfile(prev => ({
 						...prev,
@@ -96,33 +84,12 @@ const ProfilePage = () => {
 				setModal({
 					isOpen: true,
 					type: 'error',
-					message: error.message || 'Произошла ошибка'
+					message: error.message || t("errors.del")
 				});
 			} finally {
                 setActionStatus({ loading: false, error: null, success: null });
             }
 		};
-
-        const handleSaveRecord = async (updatedRecord) => {
-        setEditModal(prev => ({ ...prev, loading: true, error: null }));
-          
-        try {
-            await apiService.editRecord(updatedRecord.hash, updatedRecord);
-            setEditModal({ isOpen: false, record: null, loading: false, error: null });
-            setModal({
-                isOpen: true,
-                type: 'success',
-                message: 'Запись успешно обновлена'
-            });
-            fetchProfile();
-        } catch (error) {
-            setEditModal(prev => ({
-                ...prev,
-                loading: false,
-                error: error.message || 'Ошибка при сохранении'
-            }));
-        }
-        };
 
 		const cancelAction = () => {
 			setConfirmationModal({ ...confirmationModal, isOpen: false });
@@ -145,7 +112,7 @@ const ProfilePage = () => {
 						}
 
 						const profileData = {
-								username: per_stats.data[0] || "Не указан",
+								username: per_stats.data[0] || t("user.no_username"),
 								userId: per_stats.data[1],
 								avatar: avatarUrl,
 								stats: {
@@ -153,7 +120,7 @@ const ProfilePage = () => {
 										correctRecords: per_stats.data[2].rec_ok || 0,
 										checkRatio: per_stats.data[2].check_ratio || 0,
 										speciesCount: per_stats.data[2].species_count || 0,
-										mostCommonSpecies: per_stats.data[2].most_common_species || "Нет данных"
+										mostCommonSpecies: per_stats.data[2].most_common_species || t("errors.MVSpecies")
 								},
 								records: Array.isArray(per_stats.data[3]) ? per_stats.data[3] : [].map(record => ({
 										...record,
@@ -163,8 +130,8 @@ const ProfilePage = () => {
 
 						setProfile(profileData);
 				} catch (error) {
-						console.error("Ошибка при загрузке профиля:", error);
-						setError(error.message || "Произошла ошибка при загрузке данных");
+						console.error("Error while loading profile:", error);
+						setError(error.message || t("errors.user"));
 				} finally {
 						setLoading(false);
 				}
@@ -222,7 +189,7 @@ const ProfilePage = () => {
             console.error("Download error:", error);
             setDownloadStatus({
                 loading: false,
-                error: error.message || "Ошибка при загрузке записей",
+                error: error.message || t("errors.user"),
                 success: false
             });
         }
@@ -251,7 +218,7 @@ const ProfilePage = () => {
     }, [profile.records, sortConfig]);
 
     if (loading) return <div className="loading-message">
-        Загрузка данных<span className="loading-dots"></span>
+        {t("user.loading")}<span className="loading-dots"></span>
     </div>;
 
     if (error) return <div className="error-message">{error}</div>;
@@ -273,20 +240,12 @@ const ProfilePage = () => {
 			>
 				<p>{modal.message}</p>
 			</Modal>
-            <EditRecordModal
-                isOpen={editModal.isOpen}
-                record={editModal.record}
-                onSave={handleSaveRecord}
-                onCancel={() => setEditModal({ isOpen: false, record: null })}
-                loading={editModal.loading}
-                error={editModal.error}
-            />
             {/* Боковая панель с профилем */}
             <div className="profile-sidebar">
                 <div className="profile-card">
                     <div className="profile-avatar">
                         {profile.avatar ? (
-                            <img src={profile.avatar} alt="Аватар пользователя" />
+                            <img src={profile.avatar} alt={t("user.pfp")} />
                         ) : (
                             <div className="avatar-fallback">
                                 {profile.username.charAt(0).toUpperCase()}
@@ -300,11 +259,11 @@ const ProfilePage = () => {
                 <div className="quick-stats">
                     <div className="stat-item">
                         <div className="stat-number">{profile.stats.processedPublications}</div>
-                        <div className="stat-label">Обработано публикаций</div>
+                        <div className="stat-label">{t("summary.publ_processed")}</div>
                     </div>
                     <div className="stat-item">
                         <div className="stat-number">{profile.stats.speciesCount}</div>
-                        <div className="stat-label">Видов найдено</div>
+                        <div className="stat-label">{t("summary.species_found")}</div>
                     </div>
                 </div>
             </div>
@@ -313,13 +272,13 @@ const ProfilePage = () => {
             <div className="profile-content">
                 <section className="stats-section">
                     <div className="section-header">
-												<h2 className="section-title">Основная статистика</h2>
+												<h2 className="section-title">{t("summary.title")}</h2>
 												<button 
 														onClick={handleDownloadRecords}
 														disabled={downloadStatus.loading || profile.records.length === 0}
 														className="download-records-button"
 												>
-														{downloadStatus.loading ? 'Загрузка...' : 'Скачать все записи'}
+														{downloadStatus.loading ? t("download.downloading") : t("download.button")}
 												</button>
 										</div>
 										
@@ -330,7 +289,7 @@ const ProfilePage = () => {
 										)}
 										{downloadStatus.success && (
 												<div className="download-success">
-														Файл успешно скачан!
+														{t("download.success")}
 												</div>
 										)}
 										
@@ -347,22 +306,22 @@ const ProfilePage = () => {
 										
                     <div className="stats-grid">
                         <div className="stat-card">
-                            <h3>Публикаций обработано</h3>
+                            <h3>{t("summary.publ_processed")}</h3>
                             <div className="stat-value">{profile.stats.processedPublications}</div>
                         </div>
 
                         <div className="stat-card">
-                            <h3>Правильных записей</h3>
+                            <h3>{t("summary.publ_correct")}</h3>
                             <div className="stat-value">{profile.stats.correctRecords}</div>
                         </div>
 
                         <div className="stat-card">
-                            <h3>Коэффициент проверки</h3>
+                            <h3>{t("summary.check_coef")}</h3>
                             <div className="stat-value">{profile.stats.checkRatio.toFixed(2)}</div>
                         </div>
 
                         <div className="stat-card">
-                            <h3>Всего видов</h3>
+                            <h3>{t("summary.species_found")}</h3>
                             <div className="stat-value">{profile.stats.speciesCount}</div>
                         </div>
                     </div>
@@ -370,26 +329,26 @@ const ProfilePage = () => {
 
                 <div className="detailed-stats">
                     <section className="common-species">
-                        <h3 className="section-subtitle">Самый частый вид</h3>
+                        <h3 className="section-subtitle">{t("summary.MVSpecies")}</h3>
                         <div className="species-value">
-                            {profile.stats.mostCommonSpecies || "Нет данных"}
+                            {profile.stats.mostCommonSpecies || t("errors.MVSpecies")}
                         </div>
                     </section>
                 </div>
 
                 <section className="records-section">
-                    <h2 className="section-title">Последние записи</h2>
+                    <h2 className="section-title">{t("table.title")}</h2>
 
                     {profile.records.length > 0 ? (
                         <div className="records-table-container">
                             <div className="table-info">
-                                Показано {sortedRecords.length} из {profile.records.length} записей
+                                {t("table.displayed")} {sortedRecords.length} {t("table.out_of")} {profile.records.length} {t("table.records")}
                             </div>
                             <table className="records-table">
                                 <thead>
                                 <tr>
                                     <th onClick={() => requestSort('date')}>
-                                        Дата и время
+                                        {t("table.cols.date")}
                                         {sortConfig.key === 'date' && (
                                             <span className="sort-arrow">
                                                     {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -397,7 +356,7 @@ const ProfilePage = () => {
                                         )}
                                     </th>
                                     <th onClick={() => requestSort('author')}>
-                                        Автор
+                                        {t("table.cols.author")}
                                         {sortConfig.key === 'author' && (
                                             <span className="sort-arrow">
                                                     {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -405,7 +364,7 @@ const ProfilePage = () => {
                                         )}
                                     </th>
                                     <th onClick={() => requestSort('species')}>
-                                        Вид
+                                        {t("table.cols.species")}
                                         {sortConfig.key === 'species' && (
                                             <span className="sort-arrow">
                                                     {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -413,7 +372,7 @@ const ProfilePage = () => {
                                         )}
                                     </th>
                                     <th onClick={() => requestSort('abundance')}>
-                                        Количество
+                                        {t("table.cols.count")}
                                         {sortConfig.key === 'abundance' && (
                                             <span className="sort-arrow">
                                                     {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -421,7 +380,7 @@ const ProfilePage = () => {
                                         )}
                                     </th>
                                     <th onClick={() => requestSort('locality')}>
-                                        Локация
+                                        {t("table.cols.location")}
                                         {sortConfig.key === 'locality' && (
                                             <span className="sort-arrow">
                                                     {sortConfig.direction === 'asc' ? '↑' : '↓'}
@@ -429,14 +388,14 @@ const ProfilePage = () => {
                                         )}
                                     </th>
                                     <th onClick={() => requestSort('even_date')}>
-                                        Дата сбора
+                                        {t("table.cols.collection_date")}
                                         {sortConfig.key === 'even_date' && (
                                             <span className="sort-arrow">
                                                     {sortConfig.direction === 'asc' ? '↑' : '↓'}
                                                 </span>
                                         )}
                                     </th>
-																		<th>Действия</th>
+									<th>{t("table.cols.actions")}</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -448,21 +407,21 @@ const ProfilePage = () => {
                                         <td>{record.abundance}</td>
                                         <td>{record.locality}</td>
                                         <td>{record.even_date}</td>
-																				<td className="actions-cell">
-																						<button onClick={() => handleEdit(record.hash)} className="edit-button" aria-label="Редактировать запись">
-																								<FaPen />
-																						</button>
-																						<button onClick={() => handleDelete(record.hash)} className="delete-button" aria-label="Удалить запись">
-																								<FaTimes />
-																						</button>
-																				</td>
+										<td className="actions-cell">
+											<button onClick={() => handleEdit(record.hash)} className="edit-button" aria-label="Редактировать запись">
+												<FaPen />
+											</button>
+											<button onClick={() => handleDelete(record.hash)} className="delete-button" aria-label="Удалить запись">
+												<FaTimes />
+											</button>
+										</td>
                                     </tr>
                                 ))}
                                 </tbody>
                             </table>
                         </div>
                     ) : (
-                        <div className="no-records">Нет данных о записях</div>
+                        <div className="no-records">{t("table.no_records")}</div>
                     )}
                 </section>
             </div>

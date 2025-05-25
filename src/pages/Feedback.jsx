@@ -1,7 +1,9 @@
 import {apiService} from "../api";
 import {useState} from "react";
+import { useTranslation } from 'react-i18next';
 
 const FeedbackPage = () => {
+    const { t } = useTranslation('feedback');
     const [error, setError] = useState(null);
     const [feedback, setFeedback] = useState({
         link: "",
@@ -25,13 +27,13 @@ const FeedbackPage = () => {
 
         // Validate Telegram link
         if (!validateTelegramLink(feedback.link)) {
-            setLinkError("Пожалуйста, введите корректный Telegram ID (например, @username или t.me/username)");
+            setLinkError(t('errors.invalid_telegram'));
             return;
         }
 
         // Check required fields
         if (!feedback.issue_type || !feedback.text) {
-            setError("Пожалуйста, заполните все обязательные поля!");
+            setError(t('errors.required_fields'));
             return;
         }
 
@@ -39,10 +41,9 @@ const FeedbackPage = () => {
             setLoading(true);
             await apiService.postSupport(feedback);
             setSuccess(true);
-            console.log("Успешно отправлено");
         } catch (error) {
-            console.error("Ошибка:", error);
-            setError(error.message || "Произошла ошибка при отправке");
+            console.error("Error:", error);
+            setError(error.message || t('errors.submission_error'));
         } finally {
             setLoading(false);
         }
@@ -56,15 +57,15 @@ const FeedbackPage = () => {
 
     return (
         <div className="feedback">
-            <h1>Форма обратной связи</h1>
+            <h1>{t('title')}</h1>
             {success ? (
                 <div className="success-message" style={{ marginTop: '20px', padding: '15px', backgroundColor: '#e8f5e9', borderRadius: '4px', color: '#2e7d32' }}>
-                    Ваше сообщение успешно отправлено! Ожидайте, с Вами свяжется администратор / организатор проекта.
+                    {t('success.message')}
                 </div>
             ) : (
                 <form className="feedback-form" onSubmit={handleSubmit}>
                     <div className="form-group">
-                        <label htmlFor="link">Ссылка на Вас в Telegram:</label>
+                        <label htmlFor="link">{t('form.telegram_label')}</label>
                         <input 
                             className={"text-input"} 
                             id="link" 
@@ -73,34 +74,29 @@ const FeedbackPage = () => {
                             required 
                             onChange={onChange}
                             value={feedback.link}
-                            placeholder="@username или t.me/username"
+                            placeholder={t('form.telegram_placeholder')}
                         />
                         {linkError && <p className="error-message">{linkError}</p>}
                     </div>
                     
                     <div className="form-group">
-                        <label htmlFor="user_name">Ваш никнейм, заданный в боте (необязательно)</label>
+                        <label htmlFor="user_name">{t('form.username_label')}</label>
                         <input className={"text-input"} id="user_name" type="text" name="user_name" onChange={onChange} />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="issue_type">С чем возникла ваша проблема?</label>
+                        <label htmlFor="issue_type">{t('form.issue_label')}</label>
                         <select id="issue_type" className="form-control" name="issue_type" value={feedback.issue_type} onChange={onChange}>
                             <option value="">-</option>
-                            <option value="authorisation-website">Проблемы с авторизацией на сайте</option>
-                            <option value="authorisation-tg">Проблемы с авторизацией в боте</option>
-                            <option value="registration">Проблемы с регистрацией в боте</option>
-                            <option value="get-publication">Проблемы с получением статьи</option>
-                            <option value="autofill">Проблемы с автозаполнением</option>
-                            <option value="fill-by-hand">Проблемы с заполнением вручную</option>
-                            <option value="confirmation">Проблемы с отправкой формы</option>
-                            <option value="other">Другое</option>
+                            {Object.entries(t('form.issue_types', { returnObjects: true })).map(([value, label]) => (
+                                <option key={value} value={value}>{label}</option>
+                            ))}
                         </select>
                     </div>
 
                     <div className="content">
-                        <label htmlFor="text">Опишите вашу проблему здесь:</label>
+                        <label htmlFor="text">{t('form.problem_label')}</label>
                         <textarea
-                            placeholder="Введите вашу проблему здесь..."
+                            placeholder={t('form.problem_placeholder')}
                             className="text-area"
                             id="text"
                             name="text"
@@ -115,7 +111,7 @@ const FeedbackPage = () => {
                         className="button_submit_text submit-button" 
                         disabled={loading}
                     >
-                        {loading ? "Отправка..." : "Сообщить о проблеме"}
+                        {loading ? t('form.submitting') : t('form.submit_button')}
                     </button>
                 </form>
             )}

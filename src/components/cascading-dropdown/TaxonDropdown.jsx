@@ -1,22 +1,24 @@
 import { Autocomplete, TextField } from "@mui/material";
 import React, { useMemo, useState } from "react";
+import { useTranslation } from 'react-i18next';
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
 
-const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }) => {
+const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300, isDisabled }) => {
+    const { t } = useTranslation('taxonDropdown');
     const { formState, setFormState, pinnedSections } = useFormContext();
     const [loading, setLoading] = useState(false);
 
     const levels = [
-        { name: 'family', placeholder: 'Начните печатать семейство...', heading: 'Семейство' },
-        { name: 'genus', placeholder: 'Начните печатать род...', heading: 'Род' },
-        { name: 'species', placeholder: 'Начните печатать вид...', heading: 'Вид' }
+        { name: 'family', placeholder: t("placehold_fam"), heading: t("family") },
+        { name: 'genus', placeholder: t("placehold_gen"), heading: t("genus") },
+        { name: 'species', placeholder: t("placehold_sp"), heading: t("species") }
     ];
 
     const [options, setOptions] = useState({
         family: [],
-        genus: ["Не определено"],
-        species: ["Не определено"]
+        genus: [t("undefined")],
+        species: [t("undefined")]
     });
 
     const [inputValues, setInputValues] = useState({
@@ -66,7 +68,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                     [fieldName]: (data?.suggestions || []).filter(Boolean)
                 }));
             } else {
-                const opt = ["Не определено"].concat((data?.suggestions || []).filter(Boolean));
+                const opt = [t("undefined")].concat((data?.suggestions || []).filter(Boolean));
                 setOptions(prev => ({ ...prev, [fieldName]: opt }));
             }
         } finally {
@@ -75,7 +77,7 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
     }, debounceTime), [debounceTime, formState.family, formState.genus]);
 
     const updateField = (fieldName, value) => {
-        if (value === "Не определено") {
+        if (value === t("undefined")) {
             setFormState(prev => ({
                 ...prev,
                 [fieldName]: "unknown"
@@ -143,16 +145,16 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                                 }
                             }}
                             autoSelect={true}
-                            value={formState[level.name] === "unknown" ? "Не определено" : formState[level.name]}
+                            value={formState[level.name] === "unknown" ? t("undefined") : formState[level.name]}
                             autoHighlight={true}
                             id={level.name}
                             options={options[level.name]}
                             loading={loading}
-                            disabled={level.name === "species" || pinnedSections["Сбор материала"] ? isDefined || pinnedSections["Сбор материала"] : false}
+                            disabled={level.name === "species" || isDisabled ? isDefined || isDisabled : false}
                             renderInput={(params) => (
                                 <TextField
                                     {...params}
-                                    placeholder={level.name === "species" && isDefined ? "Не определено" : level.placeholder}
+                                    placeholder={level.name === "species" && isDefined ? t("undefined") : level.placeholder}
                                     size="small"
                                     required={level.name !== "species" || !isDefined}
                                 />
@@ -163,10 +165,10 @@ const TaxonDropdown = ({ isDefined = true, isInList = true, debounceTime = 300 }
                             size="small"
                             id={level.name}
                             value={formState[level.name]}
-                            disabled={level.name === "species" || pinnedSections["Сбор материала"] ? isDefined || pinnedSections["Сбор материала"] : false}
+                            disabled={level.name === "species" || isDisabled ? isDefined || isDisabled : false}
                             onChange={(e) => {
                                 updateField(level.name, e.target.value)}}
-                            placeholder={`Введите ${level.heading.toLowerCase()}`}
+                            placeholder={`${t("input")} ${level.heading.toLowerCase()}`}
                             fullWidth
                             required={true}
                         />

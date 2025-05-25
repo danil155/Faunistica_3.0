@@ -6,8 +6,10 @@ import { FormProvider, defaultState } from './FormContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/editPage.css';
+import { useTranslation } from 'react-i18next';
 
 const EditRecordPage = () => {
+  const { t } = useTranslation('editRecord');
   const { hash } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -137,7 +139,7 @@ const EditRecordPage = () => {
       } catch (err) {
         setError(err.message);
         setLoading(false);
-        toast.error(`Ошибка загрузки записи: ${err.message}`);
+        toast.error(t('errors.load_record', { error: err.message }));
         navigate('/profile');
       }
     };
@@ -289,16 +291,16 @@ const EditRecordPage = () => {
       };
 
       await apiService.editRecord(hash, updatedRecord);
-      toast.success("Изменения успешно сохранены!");
+      toast.success(t('success.saved'));
       navigate('/profile');
     } catch (error) {
-      console.error("Ошибка при сохранении изменений:", error);
-      toast.error("Произошла ошибка при сохранении изменений");
+      console.error(t('errors.save_failed'), error);
+      toast.error(t('errors.save_failed'));
     }
   };
 
   if (loading) {
-    return <div className="loading-message">Загрузка записи...</div>;
+    return <div className="loading-message">{t('status.loading')}</div>;
   }
 
   if (error) {
@@ -306,7 +308,7 @@ const EditRecordPage = () => {
   }
 
   if (!initialFormState) {
-    return <div className="loading-message">Подготовка формы...</div>;
+    return <div className="loading-message">{t('status.preparing_form')}</div>;
   }
 
   return (

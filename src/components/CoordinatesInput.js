@@ -1,8 +1,10 @@
 import { useFormContext } from "../pages/FormContext";
+import { useTranslation } from 'react-i18next';
 import { useState} from "react";
 import { apiService } from "../api";
 
-export const CoordinatesInput = () => {
+export const CoordinatesInput = ({ isDisabled }) => {
+    const { t } = useTranslation('coordinateInput');
     const { formState, setFormState, pinnedSections } = useFormContext();
     const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
     const [isLoading, setIsLoading] = useState(false);
@@ -104,19 +106,19 @@ export const CoordinatesInput = () => {
     const getLocationFromCoordinates = async () => {
         if (coordFormat === "grads") {
             if (!formState.grads_north || !formState.grads_east) {
-                setError("Пожалуйста, заполните координаты");
+                setError(t("error.fill"));
                 return;
             }
         } else if (coordFormat === "mins") {
             if (!formState.grads_north || !formState.mins_north ||
                 !formState.grads_east || !formState.mins_east) {
-                setError("Пожалуйста, заполните координаты");
+                setError(t("error.fill"));
                 return;
             }
         } else if (coordFormat === "secs") {
             if (!formState.grads_north || !formState.mins_north || !formState.secs_north ||
                 !formState.grads_east || !formState.mins_east || !formState.secs_east) {
-                setError("Пожалуйста, заполните координаты");
+                setError(t("error.fill"));
                 return;
             }
         }
@@ -153,7 +155,7 @@ export const CoordinatesInput = () => {
             const location = await apiService.getLocationFromCoordinates(requestData);
 
             if (!location.country && !location.region && !location.district) {
-                setError("Не удалось определить местоположение по координатам");
+                setError(t("error.detect_coord"));
                 return;
             }
 
@@ -166,7 +168,7 @@ export const CoordinatesInput = () => {
 
         } catch (err) {
             console.error("Error getting location:", err);
-            setError("Произошла ошибка при определении местоположения");
+            setError(t("error.detect_loc"));
         } finally {
             setIsLoading(false);
         }
@@ -180,7 +182,7 @@ export const CoordinatesInput = () => {
                 className="coord"
                 name={name}
                 value={value}
-                disabled={disabled || pinnedSections["Географическое положение"]}
+                disabled={disabled || isDisabled}
                 onChange={handleInputChange}
                 placeholder={placeholder}
                 inputMode={inputMode}
@@ -193,7 +195,7 @@ export const CoordinatesInput = () => {
     return (
         <>
             <div className="form-group">
-                <label htmlFor="coord-format">Формат координат</label>
+                <label htmlFor="coord-format">{t("formats.title")}</label>
                 <select
                     id="coord-format"
                     name="coordinate_format"
@@ -202,17 +204,17 @@ export const CoordinatesInput = () => {
                         clearCoordFields();
                     }}
                     value={coordFormat}
-                    disabled={disabled || pinnedSections["Географическое положение"]}
+                    disabled={disabled || isDisabled}
                 >
-                    <option value="grads">ГГ.гггг° (56.83777°)</option>
-                    <option value="mins">ГГ°ММ.мм' (56° 50.266')</option>
-                    <option value="secs">ГГ°ММ'СС'' (56° 50' 15.99")</option>
+                    <option value="grads">{t("formats.degrees")} (56.83777°)</option>
+                    <option value="mins">{t("formats.mins")} (56° 50.266')</option>
+                    <option value="secs">{t("formats.secs")} (56° 50' 15.99")</option>
                 </select>
             </div>
 
             {coordFormat === "grads" ? (
                 <div className="form-group">
-                    <label htmlFor="grads-north">Широта N°</label>
+                    <label htmlFor="grads-north">{t("formats.lat")} N°</label>
                     {renderInputField(
                         "grads-north",
                         "grads_north",
@@ -221,7 +223,7 @@ export const CoordinatesInput = () => {
                         "decimal",
                         ""
                     )}
-                    <label htmlFor="grads-east">Долгота E°</label>
+                    <label htmlFor="grads-east">{t("formats.long")} E°</label>
                     {renderInputField(
                         "grads-east",
                         "grads_east",
@@ -233,7 +235,7 @@ export const CoordinatesInput = () => {
                 </div>
             ) : coordFormat === "mins" ? (
                 <div className="form-group">
-                    <label>Широта N°</label>
+                    <label>{t("formats.lat")} N°</label>
                     <div className="form-row">
                         {renderInputField(
                             "grads-north",
@@ -252,7 +254,7 @@ export const CoordinatesInput = () => {
                             "'"
                         )}
                     </div>
-                    <label>Долгота E°</label>
+                    <label>{t("formats.long")} E°</label>
                     <div className="form-row">
                         {renderInputField(
                             "grads-east",
@@ -274,7 +276,7 @@ export const CoordinatesInput = () => {
                 </div>
             ) : (
                 <div className="form-group">
-                    <label>Широта N°</label>
+                    <label>{t("formats.lat")} N°</label>
                     <div className="form-row">
                         {renderInputField(
                             "grads-north-secs",
@@ -301,7 +303,7 @@ export const CoordinatesInput = () => {
                             '"'
                         )}
                     </div>
-                    <label>Долгота E°</label>
+                    <label>{t("formats.long")} E°</label>
                     <div className="form-row">
                         {renderInputField(
                             "grads-east-secs",
@@ -335,9 +337,9 @@ export const CoordinatesInput = () => {
                 <button
                     type="button"
                     onClick={getLocationFromCoordinates}
-                    disabled={isLoading || disabled || pinnedSections["Географическое положение"]}
+                    disabled={isLoading || disabled || isDisabled}
                     className="location-pin-button"
-                    title="Определить местоположение"
+                    title={t("detect_location")}
                 >
                     {isLoading ? (
                         <span className="pulse-icon">✈️</span>

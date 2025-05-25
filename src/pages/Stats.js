@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import '../styles/stats.css';
 import { BarChart } from '@mui/x-charts';
 import { apiService } from "../api";
 
 const StatsPage = () => {
+    const { t } = useTranslation('stats');
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -25,10 +27,10 @@ const StatsPage = () => {
     }, []);
 
     if (loading) return <div className="loading-message">
-        Загрузка данных<span className="loading-dots"></span>
+        {t("messages.loading")}<span className="loading-dots"></span>
     </div>;
     if (error) return <div className="error-message">{error}</div>;
-    if (!stats) return <div className="no-data">Нет данных для отображения</div>;
+    if (!stats) return <div className="no-data">{t("messages.no_data")}</div>;
 
     // Подготовка данных для графика
     const chartData = {
@@ -47,30 +49,30 @@ const StatsPage = () => {
 
     return (
         <div className="stats-container">
-            <h2>Статистика</h2>
+            <h2>{t("stats.title")}</h2>
             <div id="stats">
                 <div>
                 <div className="info-container">
-                    <p>Всего публикаций</p>
+                    <p>{t("stats.basic.publ_all")}</p>
                     <h3>{stats.total_publications}</h3>
                 </div>
                 <div className="info-container">
-                    <p>Обработано публикаций</p>
+                    <p>{t("stats.basic.publ_processed")}</p>
                     <h3>{stats.processed_publications}</h3>
                 </div>
                 </div>
                 <div>
                 <div className="info-container">
-                    <p>Всего видов</p>
+                    <p>{t("stats.basic.species_all")}</p>
                     <h3>{stats.total_species}</h3>
                 </div>
                 <div className="info-container">
-                    <p>Уникальных видов</p>
+                    <p>{t("stats.basic.species_unique")}</p>
                     <h3>{stats.unique_species}</h3>
                 </div>
                 </div>
                 <div className='info-container'>
-                    <p>Распределение количества особей по видам</p>
+                    <p>{t("stats.hysto_title")}</p>
                     <BarChart
                         series={chartData.series}
                         xAxis={chartData.xAxis}
@@ -81,14 +83,14 @@ const StatsPage = () => {
                 </div>
 
                 <div className='info-container'>
-                    <p>Последние записи</p>
+                    <p>{t("stats.table.title")}</p>
                     <table className='stats-table'>
                         <thead>
                         <tr>
-                            <th>Дата</th>
-                            <th>Вид</th>
-                            <th>Местоположение</th>
-                            <th>Пользователь</th>
+                            <th>{t("stats.table.date")}</th>
+                            <th>{t("stats.table.species")}</th>
+                            <th>{t("stats.table.location")}</th>
+                            <th>{t("stats.table.user")}</th>
                         </tr>
                         </thead>
                         <tbody>

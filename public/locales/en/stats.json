@@ -1,0 +1,24 @@
+{
+    "messages": {
+        "loading": "Loading data",
+        "no_data": "Data is unavailable"
+    },
+
+    "stats": {
+        "title": "Statistics",
+        "basic": {
+            "publ_all": "Total publications",
+            "publ_processed": "Processed publications",
+            "species_all": "Total species",
+            "species_unique": "Unique species"
+        },
+        "hysto_title": "Distribution of number of individuals by species",
+        "table": {
+            "title": "Latest records",
+            "date": "Date",
+            "species": "Species",
+            "location": "Location",
+            "user": "User"
+        }
+    }
+}

@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const SpecimenForm = ({ value = [], onChange }) => {
+  const { t } = useTranslation('specimenForm');
   const GENDER_OPTIONS = [
-    { value: 'male', label: 'Мужской' },
-    { value: 'female', label: 'Женский' },
-    { value: 'undefined', label: 'Не определён' }
+    { value: 'male', label: t("male") },
+    { value: 'female', label: t("female") },
+    { value: 'undefined', label: t("undefined") }
   ];
 
   const MATURITY_OPTIONS = [
-    { value: 'adult', label: 'Взрослый' },
-    { value: 'juvenile', label: 'Ювенильный' }
+    { value: 'adult', label: t("adult") },
+    { value: 'juvenile', label: t("juvenile") }
   ];
 
   const [currentSpecimen, setCurrentSpecimen] = useState({
@@ -46,7 +48,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
     );
 
     if (isDuplicate) {
-      alert('Особь с такими характеристиками уже добавлена');
+      alert(t("alert"));
       return;
     }
 
@@ -64,7 +66,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
       
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px' }}>
         <div>
-          <label htmlFor={"gender"} style={{ display: 'block', marginBottom: '5px' }}>Пол:</label>
+          <label htmlFor={"gender"} style={{ display: 'block', marginBottom: '5px' }}>{t("sex")}</label>
           <select
               id="gender"
             value={currentSpecimen.gender} 
@@ -78,7 +80,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
         </div>
         
         <div>
-          <label htmlFor={"maturity"} style={{ display: 'block', marginBottom: '5px' }}>Зрелость:</label>
+          <label htmlFor={"maturity"} style={{ display: 'block', marginBottom: '5px' }}>{t("maturity")}</label>
           <select
               id={"maturity"}
             value={currentSpecimen.maturity} 
@@ -92,7 +94,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
         </div>
         
         <div>
-          <label htmlFor={"count"} style={{ display: 'block', marginBottom: '5px' }}>Количество:</label>
+          <label htmlFor={"count"} style={{ display: 'block', marginBottom: '5px' }}>{t("amount")}</label>
           <input
               id={"count"}
               type="number"
@@ -113,12 +115,12 @@ const SpecimenForm = ({ value = [], onChange }) => {
         onClick={addSpecimen}
         style={{ padding: '8px 15px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px' }}
       >
-        Добавить особь
+        {t("add")}
       </button>
       
       {value.length > 0 && (
         <div style={{ marginTop: '15px' }}>
-          <h4 style={{ marginBottom: '10px' }}>Добавленные особи:</h4>
+          <h4 style={{ marginBottom: '10px' }}>{t("added")}</h4>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             {value.map((specimen, index) => (
               <li 
@@ -132,7 +134,7 @@ const SpecimenForm = ({ value = [], onChange }) => {
                 }}
               >
                 <span>
-                  {`${getGenderLabel(specimen.gender)}, ${getMaturityLabel(specimen.maturity)}, кол-во: ${specimen.count}`}
+                  {`${getGenderLabel(specimen.gender)}, ${getMaturityLabel(specimen.maturity)}, ${t("count")} ${specimen.count}`}
                 </span>
                 <button 
                   type="button" 

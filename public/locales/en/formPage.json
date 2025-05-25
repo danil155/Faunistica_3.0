@@ -1,0 +1,81 @@
+{
+  "header": {
+    "title": "Fill in the form manually",
+    "text": "or",
+    "button": "Insert text"
+  },
+
+  "sections": {
+    "geographical": "Geographic position",
+    "administrative": "Administrative position",
+    "material_collection": "Material collection",
+    "taxonomy": "Taxonomy",
+    "add_specimens": "Add specimens",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+
+  "adm": {
+    "ural": "Location is in the Urals",
+    "country": "Country",
+    "region": "Region",
+    "district": "District",
+    "gathering_place": "Gathering place"
+  },
+
+  "geo": {
+    "origin": "Origin of coordinates:",
+    "origins": {
+      "publ": "From the article",
+      "own": "My georeferencing",
+      "nothing": "There will be no coordinates"
+    },
+    "uncert": "Coordinate uncertainty radius (m):",
+    "rem": "Location remarks:"
+  },
+
+  "eve" : {
+    "collector": "Collector:",
+    "biotope": "Biotope:",
+    "units": "Measurement units:",
+    "def_units": "Individuals",
+    "effort": "Selective effort:",
+    "rem": "Material collection notes:"
+  },
+
+  "tax": {
+    "sp_def": "Species identified",
+    "in_list": "Not in reference list",
+    "new_sp": "Described as new species",
+    "type": "Type status:",
+    "types": {
+      "holo": "Holotype",
+      "para": "Paratype",
+      "neo": "Neotype",
+      "other": "Other"
+    },
+    "rem": "Taxonomic notes:"
+  },
+
+  "buttons": {
+    "send": "Send records",
+    "edit": "Save changes",
+    "clear": "Clear form",
+    "obliterate": "Full reset",
+    "cancel": "Cancel"
+  },
+
+  "toast": {
+    "add_specimens": "Add specimens!",
+    "data_sent": "Data sent successfully! Not pinned fields have been cleared.",
+    "data_fail": "An error occurred while sending data"
+  },
+
+  "modal": {
+    "conf_act": "Confirm action",
+    "conf": "Confirm",
+    "canc": "Cancel",
+    "clear": "Are you sure you want to clear all fields that are not pinned?",
+    "obliterate": "Are you sure you want to clear the form completely, including the pinned sections?"
+  }
+}

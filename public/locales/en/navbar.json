@@ -1,0 +1,17 @@
+{
+  "logo": "Data Web",
+  "menu": {
+    "toggle": "Toggle menu"
+  },
+  "links": {
+    "form": "Form",
+    "instruction": "Instructions",
+    "stats": "Statistics",
+    "support": "Support",
+    "profile": "Account"
+  },
+  "auth": {
+    "login": "Login / <1>Register</1>",
+    "logout": "Logout"
+  }
+}

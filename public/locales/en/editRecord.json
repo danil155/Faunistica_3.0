@@ -1,0 +1,24 @@
+{
+  "errors": {
+    "load_record": "Error loading record: {{error}}",
+    "save_failed": "Failed to save changes",
+    "unknown_code": "Unknown specimen code: {{code}}",
+    "invalid_coordinate": "Invalid coordinate format: {{coord}}"
+  },
+  "success": {
+    "saved": "Changes saved successfully!"
+  },
+  "status": {
+    "loading": "Loading record...",
+    "preparing_form": "Preparing form..."
+  },
+  "specimen_codes": {
+    "male_adult": "mmm",
+    "female_adult": "fff",
+    "male_juvenile": "ssm",
+    "female_juvenile": "ssf",
+    "undefined_adult": "adu",
+    "undefined_juvenile": "juv"
+  },
+  "measurement_units": "Individuals"
+}

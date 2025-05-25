@@ -1,0 +1,31 @@
+{
+  "title": "Форма обратной связи",
+  "success": {
+    "message": "Ваше сообщение успешно отправлено! Ожидайте, с Вами свяжется администратор / организатор проекта."
+  },
+  "errors": {
+    "invalid_telegram": "Пожалуйста, введите корректный Telegram ID (например, @username или t.me/username)",
+    "required_fields": "Пожалуйста, заполните все обязательные поля!",
+    "submission_error": "Произошла ошибка при отправке"
+  },
+  "form": {
+    "telegram_label": "Ссылка на Вас в Telegram:",
+    "telegram_placeholder": "@username или t.me/username",
+    "username_label": "Ваш никнейм, заданный в боте (необязательно)",
+    "issue_label": "С чем возникла ваша проблема?",
+    "issue_types": {
+      "authorisation-website": "Проблемы с авторизацией на сайте",
+      "authorisation-tg": "Проблемы с авторизацией в боте",
+      "registration": "Проблемы с регистрацией в боте",
+      "get-publication": "Проблемы с получением статьи",
+      "autofill": "Проблемы с автозаполнением",
+      "fill-by-hand": "Проблемы с заполнением вручную",
+      "confirmation": "Проблемы с отправкой формы",
+      "other": "Другое"
+    },
+    "problem_label": "Опишите вашу проблему здесь:",
+    "problem_placeholder": "Введите вашу проблему здесь...",
+    "submitting": "Отправка...",
+    "submit_button": "Сообщить о проблеме"
+  }
+}

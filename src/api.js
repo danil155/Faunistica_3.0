@@ -1,7 +1,8 @@
 import axios from 'axios'; 
+import i18n from 'i18next';
 
 const api = axios.create({
-    baseURL: "http://localhost:5001",
+    // baseURL: "http://localhost:5001",
     withCredentials: true
 });
 
@@ -17,11 +18,11 @@ const apiService = {
             return response.data;
         } catch (error) {
             if (error.response?.status === 401) {
-                throw new Error('Неверный пароль');
+                throw new Error(i18n.t('api.errors.login.invalid_password'));
             } else if (error.response?.status === 404) {
-                throw new Error('Пользователь не найден');
+                throw new Error(i18n.t('api.errors.login.user_not_found'));
             } else if (error.response?.status === 429) {
-                throw new Error('Количество попыток превышено')
+                throw new Error(i18n.t('api.errors.login.too_many_attempts'));
             }
             throw error;
         }
@@ -61,11 +62,11 @@ const apiService = {
             return response.data;
         } catch (error) {
             if (error.response) {
-                throw new Error(error.response.data.message || 'Ошибка при получении общей статистики');
+                throw new Error(error.response.data.message || i18n.t('api.errors.stats.general_error'));
             } else if (error.request) {
-                throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже.');
+                throw new Error(i18n.t('api.errors.common.server_unavailable'));
             } else {
-                throw new Error('Произошла ошибка при запросе общей статистики');
+                throw new Error(i18n.t('api.errors.stats.request_error'));
             }
         }
     },
@@ -132,12 +133,12 @@ const apiService = {
             return response.data;
         }  catch (error) {
             if (error.response?.status === 409) {
-                throw new Error('Текущая публикация ещё не заполнена.');
+                throw new Error(i18n.t('api.errors.publication.not_filled'));
             }
             if (error.response?.status === 404) {
-                throw new Error('Нет доступных публикаций.');
+                throw new Error(i18n.t('api.errors.publication.not_available'));
             }
-            throw new Error('Не удалось получить данные по публикациям.');
+            throw new Error(i18n.t('api.errors.publication.general_error'));
         }
     },
 
@@ -157,13 +158,13 @@ const apiService = {
         } catch (error) {
             if (error.response) {
                 // Сервер ответил с кодом состояния, выходящим за пределы 2xx
-                throw new Error(error.response.data.message || 'Произошла ошибка при отправке запроса');
+                throw new Error(error.response.data.message || i18n.t('api.errors.support.request_error'));
             } else if (error.request) {
                 // Запрос был сделан, но ответ не получен (бэкенд недоступен)
-                throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже.');
+                throw new Error(i18n.t('api.errors.common.server_unavailable'));
             } else {
                 // Произошла ошибка при настройке запроса
-                throw new Error('Произошла ошибка при отправке запроса');
+                throw new Error(i18n.t('api.errors.support.general_error'));
             }
         }
     },
@@ -174,11 +175,11 @@ const apiService = {
             return response;
         } catch (error) {
             if (error.response) {
-                throw new Error(error.response.data.message || 'Ошибка при получении профиля');
+                throw new Error(error.response.data.message || i18n.t('api.errors.support.request_error'));
             } else if (error.request) {
-                throw new Error('Сервер недоступен. Пожалуйста, попробуйте позже.');
+                throw new Error(i18n.t('api.errors.common.server_unavailable'));
             } else {
-                throw new Error('Произошла ошибка при запросе профиля');
+                throw new Error(i18n.t('api.errors.support.general_error'));
             }
         }
     },
@@ -205,9 +206,9 @@ const apiService = {
             return response;
         } catch (error) {
             if (error.response?.status === 429) {
-                throw new Error('Пожалуйста, подождите минуту перед следующей загрузкой');
+                throw new Error(i18n.t('api.errors.records.wait_before_download'));
             } else if (error.response?.status === 404) {
-                throw new Error('Записи не найдены');
+                throw new Error(i18n.t('api.errors.records.not_found'));
             }
             throw error;
         }
@@ -219,15 +220,15 @@ const apiService = {
 			return response.data;
 		} catch (error) {
             if (error.response?.status === 400) {
-                throw new Error('Некорректный токен записи. Возможно, ссылка устарела или повреждена.');
+                throw new Error(i18n.t('api.errors.records.invalid_token'));
             }
             if (error.response?.status === 404) {
-                throw new Error('Запись не найдена или вы не имеете к ней доступа.');
+                throw new Error(i18n.t('api.errors.records.not_found_or_no_access'));
             }
             if (error.response?.status === 500) {
-                throw new Error('Произошла ошибка на сервере. Попробуйте позже.');
+                throw new Error(i18n.t('api.errors.common.server_error'));
             }
-            throw new Error('Не удалось получить данные записи. Проверьте подключение к сети.');
+            throw new Error(i18n.t('api.errors.records.connection_error'));
         }
 	},
 	
@@ -237,15 +238,15 @@ const apiService = {
 			return response.data;
 		} catch (error) {
             if (error.response?.status === 400) {
-                throw new Error('Некорректный токен записи. Возможно, ссылка устарела или повреждена.');
+                throw new Error(i18n.t('api.errors.records.invalid_token'));
             }
             if (error.response?.status === 404) {
-                throw new Error('Запись не найдена или вы не имеете к ней доступа.');
+                throw new Error(i18n.t('api.errors.records.not_found_or_no_access'));
             }
             if (error.response?.status === 500) {
-                throw new Error('Произошла ошибка на сервере. Попробуйте позже.');
+                throw new Error(i18n.t('api.errors.common.server_error'));
             }
-            throw new Error('Не удалось получить данные записи. Проверьте подключение к сети.');
+            throw new Error(i18n.t('api.errors.records.connection_error'));
         }
 	},
         
@@ -255,15 +256,15 @@ const apiService = {
             return response.data;
         } catch (error) {
             if (error.response?.status === 400) {
-                throw new Error('Некорректный токен записи. Возможно, ссылка устарела или повреждена.');
+                Error(i18n.t('api.errors.records.invalid_token'));
             }
             if (error.response?.status === 404) {
-                throw new Error('Запись не найдена или вы не имеете к ней доступа.');
+                throw new Error(i18n.t('api.errors.records.not_found_or_no_access'));
             }
             if (error.response?.status === 500) {
-                throw new Error('Произошла ошибка на сервере. Попробуйте позже.');
+                throw new Error(i18n.t('api.errors.common.server_error'));
             }
-            throw new Error('Не удалось получить данные записи. Проверьте подключение к сети.');
+            throw new Error(i18n.t('api.errors.records.connection_error'));
         }
     },
 

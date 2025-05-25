@@ -1,0 +1,23 @@
+{
+    "error": {
+        "change_error": "Failed to change publication. Please try again.",
+        "unexpected_error": "An unexpected error occurred."
+    },
+
+    "data": {
+        "title": "Your article",
+        "field": {
+            "title": "Title:",
+            "author": "Authors:",
+            "year": "Year of publication:",
+            "link": "File link:"
+        },
+        "placeholder": {
+            "title": "All the Stories (Collected)",
+            "author": "Edgar Allan Poe"
+        },
+        "alt": "Article cover"
+    },
+
+    "button": "Change publication"
+}

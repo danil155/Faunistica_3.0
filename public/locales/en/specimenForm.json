@@ -1,0 +1,14 @@
+{
+    "male": "Male",
+    "female": "Female",
+    "undefined": "Undefined",
+    "adult": "Adult",
+    "juvenile": "Juvenile",
+    "alert": "A specimen with these characteristics has already been added",
+    "sex": "Sex:",
+    "maturity": "Maturity:",
+    "amount": "Amount:",
+    "add": "Add specimen",
+    "added": "Added specimens:",
+    "count": "amount:"
+}

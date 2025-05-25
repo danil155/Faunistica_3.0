@@ -1,9 +1,11 @@
 import { useFormContext } from "../pages/FormContext";
 import { useState } from "react";
+import { useTranslation } from 'react-i18next';
 
 const capitalize = (s) => s.charAt(0).toUpperCase() + s.slice(1);
 
-const DateSelect = () => {
+const DateSelect = ({ disabled }) => {
+    const { t } = useTranslation('dateSelect');
     const { formState, setFormState, pinnedSections } = useFormContext();
 
     const [isInterval, setIsInterval] = useState(false);
@@ -34,21 +36,21 @@ const DateSelect = () => {
     return (
         <>
             <div className="form-group">
-                <label htmlFor="is_interval">Тип даты:</label>
+                <label htmlFor="is_interval">{t("type")}</label>
                 <select
-                    disabled={pinnedSections["Сбор материала"] || false}
+                    disabled={disabled}
                     id="is_interval"
                     value={isInterval.toString()}
                     onChange={(e) => { setIsInterval(e.target.value === "true"); resetForm(); }}
                     className="form-control"
                 >
-                    <option value={false}>Одиночная дата</option>
-                    <option value={true}>Интервал дат</option>
+                    <option value={false}>{t("single")}</option>
+                    <option value={true}>{t("interval")}</option>
                 </select>
 
-                <label htmlFor="precision">Точность:</label>
+                <label htmlFor="precision">{t("precision")}</label>
                 <select
-                    disabled={pinnedSections["Сбор материала"] || false}
+                    disabled={disabled}
                     id="precision"
                     value={precision}
                     onChange={(e) => {
@@ -58,9 +60,9 @@ const DateSelect = () => {
                     }}
                     className="form-control"
                 >
-                    <option value="exact">Точная дата</option>
-                    <option value="month">С точностью до месяца</option>
-                    <option value="year">С точностью до года</option>
+                    <option value="exact">{t("exact")}</option>
+                    <option value="month">{t("up_to_month")}</option>
+                    <option value="year">{t("up_to_year")}</option>
                 </select>
             </div>
 
@@ -68,9 +70,9 @@ const DateSelect = () => {
                 {/* Точная дата */}
                 {precision === 'exact' && (
                     <>
-                        <label htmlFor="date">Дата:</label>
+                        <label htmlFor="date">{t("date")}</label>
                         <input
-                            disabled={pinnedSections["Сбор материала"] || false}
+                            disabled={disabled}
                             id="date"
                             type="date"
                             name="begin_date"
@@ -85,26 +87,26 @@ const DateSelect = () => {
                 {/* До месяца */}
                 {precision === 'month' && (
                     <>
-                        <label htmlFor="month">Месяц:</label>
+                        <label htmlFor="month">{t("month")}</label>
                         <select
-                            disabled={pinnedSections["Сбор материала"] || false}
+                            disabled={disabled}
                             id="month"
                             name="begin_month"
                             value={formState.begin_month || ''}
                             onChange={handleChange}
                             required
                         >
-                            <option value="" disabled hidden>Выберите месяц</option>
+                            <option value="" disabled hidden>{t("select_month")}</option>
                             {Array.from({ length: 12 }, (_, i) => (
                                 <option key={i + 1} value={i + 1}>
-                                    {capitalize(new Date(0, i).toLocaleString("ru-RU", { month: "long" }))}
+                                    {capitalize(new Date(0, i).toLocaleString(t("locale"), { month: "long" }))}
                                 </option>
                             ))}
                         </select>
 
-                        <label htmlFor="year">Год:</label>
+                        <label htmlFor="year">{t("year")}</label>
                         <input
-                            disabled={pinnedSections["Сбор материала"] || false}
+                            disabled={disabled}
                             id="year"
                             className="text-input"
                             type="number"
@@ -121,9 +123,9 @@ const DateSelect = () => {
                 {/* До года */}
                 {precision === 'year' && (
                     <>
-                        <label>Год:</label>
+                        <label>{t("year")}</label>
                         <input
-                            disabled={pinnedSections["Сбор материала"] || false}
+                            disabled={disabled}
                             className="text-input"
                             type="number"
                             name="begin_year"
@@ -142,9 +144,9 @@ const DateSelect = () => {
                         {/* Точный конец */}
                         {precision === 'exact' && (
                             <>
-                                <label>Конечная дата:</label>
+                                <label>{t("end_date")}</label>
                                 <input
-                                    disabled={pinnedSections["Сбор материала"] || false}
+                                    disabled={disabled}
                                     className="text-input"
                                     type="date"
                                     name="end_date"
@@ -158,25 +160,25 @@ const DateSelect = () => {
                         {/* До месяца */}
                         {precision === 'month' && (
                             <>
-                                <label>Конечный месяц:</label>
+                                <label>{t("end_month")}</label>
                                 <select
-                                    disabled={pinnedSections["Сбор материала"] || false}
+                                    disabled={disabled}
                                     name="end_month"
                                     value={formState.end_month || ''}
                                     onChange={handleChange}
                                     required
                                 >
-                                    <option value="" disabled hidden>Выберите месяц</option>
+                                    <option value="" disabled hidden>{t("select_month")}</option>
                                     {Array.from({ length: 12 }, (_, i) => (
                                         <option key={i + 1} value={i + 1}>
-                                            {capitalize(new Date(0, i).toLocaleString("ru-RU", { month: "long" }))}
+                                            {capitalize(new Date(0, i).toLocaleString(t("locale"), { month: "long" }))}
                                         </option>
                                     ))}
                                 </select>
 
-                                <label>Конечный год:</label>
+                                <label>{t("end_year")}</label>
                                 <input
-                                    disabled={pinnedSections["Сбор материала"] || false}
+                                    disabled={disabled}
                                     className="text-input"
                                     type="number"
                                     name="end_year"
@@ -192,9 +194,9 @@ const DateSelect = () => {
                         {/* До года */}
                         {precision === 'year' && (
                             <>
-                                <label>Конечный год:</label>
+                                <label>{t("end_year")}</label>
                                 <input
-                                    disabled={pinnedSections["Сбор материала"] || false}
+                                    disabled={disabled}
                                     className="text-input"
                                     type="number"
                                     name="end_year"

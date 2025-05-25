@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {apiService} from "../../api";
 import PublicationErrorModal from "../PublicationErrorModal";
+import { useTranslation } from 'react-i18next';
 import {Link, useParams} from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 const ArticleInfo = ({ isEditMode = false }) => {
+    const { t } = useTranslation('articleInfo');
     const [publication, setPublication] = useState(null);
     const [showPublicationError, setShowPublicationError] = useState(false);
     const { hash } = useParams();
@@ -49,14 +51,14 @@ const ArticleInfo = ({ isEditMode = false }) => {
             if (result) {
                 window.location.reload();
             } else {
-                toast.error("Не удалось сменить публикацию. Пожалуйста, попробуйте снова.");
+                toast.error(t("error.change_error"));
             }
         } catch (error) {
             console.error("Error changing publication:", error);
             if (error.message) {
                 toast.error(error.message);
             } else {
-                toast.error("Произошла непредвиденная ошибка");
+                toast.error(t("error.unexpected_error"));
             }
         }
     }
@@ -65,14 +67,14 @@ const ArticleInfo = ({ isEditMode = false }) => {
         <>
         {showPublicationError && <PublicationErrorModal onRetry={handleRetry} />}
             <>
-                <h4>Ваша статья</h4>
+                <h4>{t("data.title")}</h4>
                 <div className='article-card'>
-                    <img src={publication?.year ? require(`../../img/publ-spider-${(publication?.year % 8)}.jpg`) : "https://placehold.co/120x120"} alt="Обложка статьи" />
+                    <img src={publication?.year ? require(`../../img/publ-spider-${(publication?.year % 8)}.jpg`) : "https://placehold.co/120x120"} alt={t("data.alt")} />
                     <div id="article_info_container">
-                        <p>Название: {publication?.name ?? "Все рассказы (сборник)"}</p>
-                        <p>Авторы: {publication?.author ?? "Эдгар Аллан По"}</p>
-                        <p>Год издания: {publication?.year ?? 2009}</p>
-                        <p>Ссылка на файл: <Link to={publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"} target="_blank">{publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}</Link></p>
+                        <p>{t("data.field.title")} {publication?.name ?? t("data.field.title")}</p>
+                        <p>{t("data.field.author")} {publication?.author ?? t("data.field.title")}</p>
+                        <p>{t("data.field.year")} {publication?.year ?? 2009}</p>
+                        <p>{t("data.field.link")} <Link to={publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"} target="_blank">{publication?.pdf_file ?? "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}</Link></p>
                     </div>
                 </div>
                 {!isEditMode && publication && (
@@ -81,7 +83,7 @@ const ArticleInfo = ({ isEditMode = false }) => {
                         onClick={handleChangePublication}
                         className='change-publ-btn'
                     >
-                        Сменить публикацию
+                        {t("button")}
                     </button>
                 )}
             </>

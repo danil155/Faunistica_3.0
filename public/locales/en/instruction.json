@@ -1,0 +1,202 @@
+{
+    "title": "Volunteer guide for the “Data Web” project",
+
+    "sections": {
+        "requirements": {
+            "title": "To participate in the project, you’ll need:",
+            "first": "Internet access",
+            "second": "Telegram messenger",
+            "third": "A personal computer/laptop/tablet/smartphone",
+            "fourth": "Desktop version of a browser (Google Chrome, Firefox, Edge, Opera)"
+        },
+
+        "registration": {
+            "title": "Registration and login",
+            "step11": "Go to the link:",
+            "step12": "In Telegram, use the /register command and follow the bot’s instructions to register. After that, use /auth to receive your first article and password.",
+            "step21":"Once you have the password, go to the website",
+            "step22": "and click one of the available fields:",
+            "step3": "Enter your username (the same one you registered in Telegram) and password, then click “Login”.",
+            "success": "Congratulations! You can now start filling out the form."
+        },
+
+        "publ_structure": {
+            "title": "Structure of the scientific publication",
+            "definition_title": "Scientific publication",
+            "definition": "is a text that follows academic standards and has been published either in print or electronically.",
+            "types_intro": "There are many types of scientific publications. As part of the Data Web project, we invite you to work with:",
+            "types": {
+                "articles": "scientific articles",
+                "monographs": "monographs",
+                "conference_materials": "proceedings and abstracts of scientific conferences",
+                "dissertations": "dissertation abstracts"
+            },
+            "how_it_works": "How the publication works",
+            "top_block": "At the very top of the first page is a block containing information about which magazine, issue and year the article was published in. This is not particularly important for work, but you may like the subject of the magazine and want to read the whole issue.",
+            "udk_explanation": "What follows is an alphanumeric cipher. Don't worry. This information is important to librarians. The UDC (Universal Decimal Classification) allows you to assign any work to a particular field of knowledge. In the modern world, interest in it is waning, but some countries still use it.",
+            "title_explanation": "The title of the work is marked in large font and often in capital letters. From which much can be understood, but not always. Therefore, the section listing the authors is usually followed by an abstract, which very briefly summarises the content of the paper.",
+            "english_similarity": "Научные статьи на английском языке устроены похожим образом.",
+            "example_no_udk": "In this example, there is no information about the UDC, but there are already such sections as ‘Affiliation’ (authors' place of work) and “Keywords”. These two sections do not depend on the language in which the paper is published, but rather on when it was published. Older publications may not have them.",
+            "another_example": "And one more example to reinforce, in which the abstract is called ‘summary’. Sometimes the Abstract heading is missing, but the section itself is retained in the publication. This can also be the case.",
+            "introduction_section": "In the Introduction section, authors usually describe the status of the topic they are researching, why they chose it, what has been done in this direction before, what issues remain unresolved.",
+            "introduction_absence": "The ‘Introduction’ section may not be labelled with a title, but in the vast majority of publications it will be present.",
+            "materials_methods": "A great deal of important information, including that which we will need to create a record of the finding, is contained in the ‘Material and Methods’ section. This is usually where you will find the method of collection (soil traps, mowing, shaking off vegetation, hand collection, and so on), the specific dates or frequency of counts, the method of calculating indicators for the final presentation of the data, and a description of the study area and the specific habitats where the surveys were conducted. If you are lucky, the ‘Material and Methods’ section hides the geographical coordinates of specific sites and even the dates of the surveys. The layout of this section depends on the type of publication: ecological publications will have more information here, while faunistic publications will have only a small part of it (most of the data for the description of findings are hidden in the main text).",
+            "main_part": "The main part of the paper may be entitled variously ‘Results’, ‘List of Species’, ‘Biotope Population’, ‘Faunal Diversity’, or in general have many subsections with their own titles... or have no subheading as such. But you'll know it's a one! Here are some examples:",
+            "discussion_conclusion": "In the ‘Discussion’ or ‘Conclusions’ sections, the authors summarise their work and data analysis. In the Acknowledgements section, they say thank you to colleagues and organisations that helped them with the task. ‘Literature’, “References”, “Bibliography” - this is all the literature referred to in this paper.",
+            "alts": {
+                "publ1": "Example of a publication",
+                "publ2": "Example of a publication",
+                "publ3": "Example of a publication",
+                "publ4": "Example of a publication",
+                "publ5": "Example of a publication",
+                "publ6": "Example of a publication"
+            }
+        },
+
+        "beginning_work": {
+            "title": "How to start",
+            "article_description": "Your article is the research paper from which we will extract data. By clicking on the link we can get the full text and read it before entering the data. To get started, we click on it:",
+            "new_tab": "Your article will open in a new tab.",
+            "fields_description": "Below the Current article are the fields in which to enter information for each spider finding. All fields are grouped into 5 blocks: Geographic location, Administrative location, Collection of material, Taxonomy, Quantity. Further we will consider how to fill each block with examples.",
+            "recommendations": "General recommendations for working with the publication:",
+            "recommendations1": "First, read the publication in its entirety. In our experience, a preliminary reading of the publication will answer most questions related to where to look for information about the collection site, collection methods, etc.",
+            "recommendations2": "As part of the project, we put information on the spider findings form. One finding is one species found on one date at one location and collected by one method. The number of individuals of this species can be any number of individuals. If the same species is collected on different dates or in different places or by different methods, that is, if there are any differences in these items, then these are DIFFERENT FINDINGS. Accordingly, we have to enter each of them into the form separately. Below we will break this down with examples.",
+            "recommendations3": "If you have any questions, feel free to contact us for help. You can use the /support command in the Telegram bot.",
+            "input_text_button": "Above the Current article there is a button ‘Enter text’.",
+            "copy_text": "When you click on it, a window will open where you will be asked to enter the text of the article. If you copy the article into this field, some of the data can be filled in automatically.",
+            "attention": "!Attention!",
+            "auto_fill_warning": "Although our service has in its arsenal the tool ‘automatic filling’ and can recognise some of the data, it is extremely important to check all the data filled automatically.",
+            "alts": {
+                "work1": "Link to an example of a publication",
+                "work2": "Text input button"
+            }
+        },
+
+        "geo": {
+            "title": "Geographic position",
+            "find_coordinates": "Find the coordinates of a particular spider finding in the article and enter them in the format given in the publication.",
+            "coordinates_difficulties": "If for some reason it is difficult to enter geographic coordinates (the form does not allow to record coordinates because of the difference in the format of data representation, coordinates are too general, etc.), record them with a comment (if necessary) in the Notes to location field",
+            "no_coordinates_option": "At the same time, in the Origin of coordinates, select the No coordinates option.",
+            "example2_intro": "In the publication from <1>Example 2</1> at the beginning of the article, the coordinates of each site investigated are given. Two sites are highlighted in yellow for the example:",
+            "degrees_minutes_format": "In this example, the coordinates are given in degree-minutes format. Enter them:",
+            "coordinates_source": "Since the coordinates are given directly in the publication, we select the Origin of Coordinates option: “from the article”:",
+            "radius_explanation": "The radius of coordinate inaccuracy is the distance in metres describing a circle relative to the coordinates given in latitude and longitude, within which the actual locale is located. It is 30 m for most modern GPS devices or other, depending on the georeferencing method, but never 0. If the value is unknown, leave the field empty.",
+            "georeferencing": "We do not do our own georeferencing at this stage of the project development, so we have only two options on how to deal with this section of the form - either to include coordinates from the publication, or not to include them if they are not in the publication.",
+            "georeferencing_offer": "However, if you are motivated and skilled enough to do the coordinates (georeferencing) yourself, please contact us for individual guidance.",
+            "alts": {
+                "coord1": "Example of coordinates in a publication",
+                "coord2": "Example of coordinates in a publication"
+            }
+        },
+
+        "adm": {
+            "title": "Administrative position",
+            "block_description": "The Administrative Location block contains all the information about the location of the finding in terms of the administrative division of the country.",
+            "region_district": "Region is an oblast, republic or krai, and Rayon is smaller administrative units that make up regions. If you want to enter all findings from this publication, not just those related to the Urals, then uncheck the box Location is related to the Urals and then enter any other administrative names.",
+            "ural_focus": "As our project is primarily aimed at digitising data on spiders from the Urals, findings from other locations you can skip. In this project we understand the following administrative units as the Urals: Republic of Bashkortostan, Komi Republic, Orenburg Oblast, Nenets Autonomous Okrug, Perm Krai, Sverdlovsk Oblast, Khanty-Mansiysk Autonomous Okrug, Chelyabinsk Oblast, Yamalo-Nenets Autonomous Okrug",
+            "collection_location": "The place of collection is written down manually exactly as it is indicated in the work. Most often it is the nearest settlement to the place where the finding was made, but there may be names of reserves, indication of direction (4 km south of Makarovo village) and other variants.",
+            "examples_heading": "Let's consider filling in the block with examples.",
+            "example1_intro": "Example 1. Article: Esyunin S.L., Tuneva T.K., Farzalieva G.Sh. 2007. Remarks on the Ural spider fauna (Arachnida, Aranei), 12. Spiders of the steppe zone of Orenburg Region // Arthropoda Selecta. Vol. 16, No 1. P. 43-63.",
+            "english_publication": "Since the publication is in English, all data must be entered in English.",
+            "example1_region": "The location is always indicated in the ‘Materials and Methods’ section of the publication. In this article information about the Region is also reflected in the title of the publication - ‘Remarks on the Ural spider fauna (Arachnida, Aranei), 12. Spiders of the steppe zone of Orenburg Region’. So, the Orenburg Region is included as a region:",
+            "example1_locations": "In this example, the enumeration of specific collection sites Below in the text of the article, references to the relevant material are given in the section ‘Introducon’: localities in the form of numbers in square brackets (highlighted with a yellow marker):",
+            "example1_conclusion": "We write the collection location as it appears in the article. For the first finding it will be (keep checking against the numbers in square brackets): Novokazanka Vil. & Katrala Riv:",
+            "example1_location_entry": "For the second finding, respectively, Aituar Vil.",
+            "example2_location": "Example 2. Article: Ukhova N.L., Yesiunin S.L., Semyonov V.B., Ukhova O.V., Kochergina M.S., Konyukhova A.V. Numbers of soil and ground invertebrate animals// Annals of Nature of the Visimsk State Natural Biosphere Reserve for 2013. Ekaterinburg: Publishing House of the Academy of Natural History. 2014. С. 106-132.",
+            "example2_reserve": "The text of the publication does not provide data on the administrative location of the research area. However, from the output data of the publication ‘Nature Chronicle of the Visimsk State Natural Biosphere Reserve for 2013’ we can see that the research was conducted in the territory of the Visimsk Reserve. The region and district, to which the location of the reserve belongs, can be found out on the website of the reserve itself or through any other convenient resource on the Internet. If a neighbourhood of the reserve is indicated in the article, as here, it is also written down in the Collection Place.",
+            "filled_example": "The filled in information in the block will look as follows:",
+            "alts": {
+                "adm": "Adm fields",
+                "image37": "Ural's map",
+                "adm2": "Adm fields example filling",
+                "image39": "Another publication example",
+                "image40": "Another publication example",
+                "adm3": "Example location input",
+                "adm4": "Final adm filling"
+            }
+        },
+
+        "eve": {
+            "title": "Material collection",
+            "dates_description": "Here we enter the dates of material collection - a specific day / month / year or their interval - depends on the publication. If you need to enter an interval, select Date interval:",
+            "date_absence": "If there is no collection day and/or month in the publication, do not forget to select the date accuracy, otherwise you will get an error when checking:",
+            "biotope_definition": "A biotope is a small area of territory with homogeneous natural conditions, which is usually identified and named by the plants that predominate there, e.g. birch forest, floodplain meadow, wormwood-grass steppe. The form should include as much information about the site as possible.",
+            "example1_biotopes": "In Example 1, the habitat names are given in the annotated species list for each finding:",
+            "yellow_text": "The text highlighted in yellow is entered in its entirety in the Biotope field.",
+            "example2_biotope": "In Example 2, the biotope is: ‘raspberry-raspberry-cyprea woodland on the edge of the 2010 fire in a wind-damaged area of high herb-fernaceous fir-elder native; quarter 112; 560 m above sea level’.",
+            "quarter_altitude": "The information on the block number should be entered into the Collection Location (see Geographic Location section). The altitude above sea level can be left blank or entered in the Collection Notes.",
+            "detailed_descriptions": "Sometimes detailed descriptions are written instead of a short name; copy them into the Collection Notes.",
+            "collector_example1": "Collector is the person who collected the spider. For the finding from our Example 1, only the initials of the author of the material collection, TTK, are listed. However, in the text of the article all collectors are listed in the format F.I.O. with the transcription - Surname I.O. Our collector TTK corresponds to the transcription Tuneva T.K.:",
+            "full_collector_info": "It is this complete information that will need to be entered into the Collector field.",
+            "no_collector_info": "If the authors of the material collection are not specified in the article, the authors of the publication should be entered in the Collector box. This is the situation for Example 2. Here we write about the collectors: ‘Ukhova N.L., Yesiunin S.L., Semyonov V.B., Ukhova O.V., Kochergina M.S., Konyukhova A.V.’",
+            "selective_effort": "Selective effort of the researcher spent on catching spiders allows to understand how many of them there are in a given area, e.g. 200 swings of a net, 100 trap-days (trap-days, since he set 10 traps for 10 days, 10*10 = 100), or survey of 1 sq. m. of soil surface. In the Collection Notes, it is worth writing the method by which the material was collected if it is stated in the publication (e.g. trap pots).",
+            "filled_example1": "The fully completed Material Collection block in Example 1 looks like this:",
+            "filled_example2": "And for Example 2, so if you take the highlighted view:",
+            "effort_absence": "Selective effort may not be present in the text of the publication.",
+            "alts": {
+                "eve1": "Material collection",
+                "eve2": "Поле с интервалом",
+                "eve3": "Поле с интервалом",
+                "image25": "Publication example",
+                "image26": "Publication example",
+                "eve4": "Filled material collection",
+                "image9": "Material collection example",
+                "eve5": "Material collection example"
+            }
+        },
+
+        "tax": {
+            "title": "Taxonomy",
+            "latin_names": "Here we write down the Latin names of the family, genus and species of spiders. What does this information look like in the text? Let's get into the basics of zoological Latin a little bit.",
+            "spiders_order": "We are dealing with the order Spiders (in Latin, Araneae or Aranei). Detachments are divided by zoologists into smaller systematic units - families. It is not difficult to find the name of spider families - they all end in -dae (for example, Araneidae, Lycosidae, Thomisidae).",
+            "families_explanation": "Families, in turn, are divided into even smaller units - genera, and genera are divided into species. Genus and species usually go together like a street name and house number. The full species name looks, for example, as follows: Araneus diadematus Clerck, 1757; Trochosa ruricola (De Geer, 1778). The genus and species in scientific papers are usually written in italics. After the species name, the surname of the author who described the species and the year of description are indicated. This information does not need to be entered anywhere.",
+            "dropdown_help": "To facilitate the task of entering taxonomic names, all fields are designed as drop-down lists with options, you only need to start entering. Also, if you enter species first, the family and genus fields will be filled in automatically.",
+            "example1_appearance": "This is what the taxonomy looks like in the article from Example 1:",
+            "missing_species": "If the desired species is not found in the drop-down list, tick the checkbox Absent from list and enter the name manually. This can happen if the species has been renamed since the publication and is now listed in the World Spider Catalogue under a different name.",
+            "abbreviated_names": "В некоторых работах род может быть сокращен до одной буквы. Это делается в том случае, если подряд идут несколько представителей одного рода. Бывает, что сокращают название вида, а совсем редко - и то, и другое. В форму род и вид вносим полностью, без сокращений.",
+            "new_species": "If a species is described as new to science, it is labelled sp.n. (species nova). (species nova). Tick the box Described as a new species. Sometimes it is possible to determine only the genus, but not the species, of a found spider. In such cases we say about the spider ‘determined to genus’ and write sp. instead of species name, for example Araneus sp. In this case, we uncheck the Species Identified checkbox and do not write any species name, because it is not in the publication.",
+            "alts": {
+                "tax1": "Taxonomy fields",
+                "tax2": "Tax article example",
+                "tax3": "Filled tax example"
+            }
+        },
+
+        "count": {
+            "title": "Count",
+            "gender_age": "Data on the number of spiders are entered taking into account their sex and age. Instead of the words female or male, the symbols f, m, ♀, ♂ for sexually mature individuals and sub. f., sub. m., sub.♀, sub.♂, juv for immature individuals. If there is more than one individual, two sex characters are used: 5 ♂♂.",
+            "symbols": {
+                "male": "♂, male, or simply m - 1 male",
+                "males": "♂♂ - 2 or more males",
+                "female": "♀, female, или просто f - 1 самка",
+                "females": "♀♀ - 2 or more females",
+                "juvenile": "juvenile, or juv - an immature individual so young that its sex cannot be determined",
+                "subadult": "sub. - a juvenile that will become an adult at the next moult and its sex can already be determined (subf, subm, sub♀, sub♂)."
+            },
+            "quantity_rules1": "The number is entered in the form as it is. If the number of spiders is given without sexes, all individuals are recorded as adults. If males and females are given, write them separately, do not sum them up!",
+            "quantity_rules2": "The number of specimens may not be specified, for example, only + in the table, then by default enter 1 in the Quantity and write in the Comments: ‘presence of specimens, not their number’.",
+            "quantity_rules3": "If the number of individuals is not the number of individuals, but another indicator of abundance (spc./100 swp, mg/m2, etc.), enter this number in the Quantity and write the unit of measurement in the Comments - spc/100 swp, mg/m2, etc.",
+            "quantity_rules4": "It happens that a publication contains several indicators. Then we have to choose one. Capture rate with 100 catch per day is prioritised over %, and the direct number of individuals is prioritised over catch per day. Let's work on this point in Example 2, since Example 1 lacks it. This is what a fragment of the table from this publication looks like:",
+            "two_indicators": "Two measures of abundance are given in the table: hit rate, which is expressed in eq./100 c-d and relative abundance, which is expressed as %.",
+            "more_significant": "We enter the more significant indicator into the form, and in the Comments we write what the indicator is and enter the data of the less significant indicator.",
+            "alts": {
+                "tax4": "Tax article example"
+            }
+        },
+
+        "extra": {
+            "title": "Additional features",
+            "locks_heading": "Locks",
+            "locks_description": "If we have read an article and realise that information from some block will be repeated for different entries, we can lock the information in the whole block by clicking on the lock:",
+            "locks_saving": "The information under the closed lock will be saved after filling in all the fields and clicking the Record button.",
+            "locks_warning": "If the lock is not clicked, all uncommitted fields will be cleared automatically after the observations are sent. Each time a new record is made, the fields must be fixed again.",
+            "locks_availability": "All blocks have locks except Quantity. Be sure to try this option, it makes entering data faster and easier!",
+            "clear_forms_heading": "Clearing and fully resetting the form",
+            "partial_clearing": "In cases where you need to partially clear the form, lock all the blocks that need to be saved and click the Clear form button.",
+            "full_clearing": "If you need to clean the whole form, click Full reset.",
+            "full_clearing_effect": "In case of full reset, all fields (even with locks) are cleared and all locks that were closed are opened.",
+            "collapse_heading": "Collapse",
+            "collapse_description": "If you have finished filling a block, you can collapse it by pressing the Collapse button."
+        }
+    }
+}

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
+import i18n from 'i18next';
 
 const FormContext = createContext(undefined);
 
@@ -46,10 +47,17 @@ export const defaultState = {
   specimens: {}
 };
 
+const SECTION_KEYS = {
+  ADMIN: 'administrative',
+  GEO: 'geographical',
+  MATERIAL: 'material_collection', 
+  TAXONOMY: 'taxonomy'
+};
+
 export const fieldsMap = {
-  "Административное положение": ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
-  "Географическое положение": ["east", "north", "coordinate_north", "coordinate_east", "grads_north", "grads_east", "mins_north", "mins_east", "secs_east", "secs_north", "geo_origin", "geo_REM", "geo_uncert"],
-  "Сбор материала": [
+  [SECTION_KEYS.ADMIN]: ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
+  [SECTION_KEYS.GEO]: ["east", "north", "coordinate_north", "coordinate_east", "grads_north", "grads_east", "mins_north", "mins_east", "secs_east", "secs_north", "geo_origin", "geo_REM", "geo_uncert"],
+  [SECTION_KEYS.MATERIAL]: [
     "begin_date",
     "end_date",
     "begin_year",
@@ -64,10 +72,11 @@ export const fieldsMap = {
     "selective_gain",
     "eve_REM"
   ],
-  'Таксономия': ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
+  [SECTION_KEYS.TAXONOMY]: ["family", "genus", "species", "taxonomic_notes", "tax_sp_def", "tax_nsp", "type_status"],
 };
 
 export const FormProvider = ({ children, initialState, isEditMode = false }) => {
+  {i18n.t(`FormContext.sections.${SECTION_KEYS.ADMIN}`)}
   const [formState, setFormState] = useState(() => {
     if (initialState) return initialState;
     if (!isEditMode) {

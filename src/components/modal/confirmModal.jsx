@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import './confirmModal.css';
 
 export const Modal = ({ isOpen, onClose, children, type = 'info' }) => {
@@ -27,6 +28,7 @@ export const ConfirmationModal = ({
   title, 
   message 
 }) => {
+  const { t } = useTranslation('confirmModal');
   if (!isOpen) return null;
 
   return (
@@ -37,10 +39,10 @@ export const ConfirmationModal = ({
           <p>{message}</p>
           <div className="modal-actions">
             <button className="modal-button confirm" onClick={onConfirm}>
-              Подтвердить
+              {t("confirm")}
             </button>
             <button className="modal-button cancel" onClick={onCancel}>
-              Отмена
+              {t("cancel")}
             </button>
           </div>
         </div>
