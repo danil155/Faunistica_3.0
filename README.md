@@ -110,7 +110,7 @@ def decrypt_id(token: str, user_id: int) -> int | None:
 
 В корневой папке frontend через терминал прописываем:
 
-`npm install`
+`npm install i18next react-i18next i18next-http-backend i18next-browser-languagedetector --legacy-peer-deps npm install`
 
 `npm start`
 
