@@ -164,7 +164,7 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                 }
             }
         }
-        localStorage.setItem('pinnedOrder', JSON.stringify(newList));
+        localStorage.setItem('sectionOrder', JSON.stringify(newList));
         const finaldOrder = localStorage.getItem('sectionOrder');
         return finaldOrder ? JSON.parse(finaldOrder) : defaultOrder;
     });
