@@ -141,17 +141,14 @@ async def add_publication_from_json(session: AsyncSession, publ_json: dict):
 async def get_general_stats(session: AsyncSession):
     stats = {}
 
-    # Total users
     stmt = select(func.count()).select_from(User).where((User.reg_stat == 1) | (User.reg_stat >= 7))
     result = await session.execute(stmt)
     stats['total_users'] = result.scalar()
 
-    # Average age
     result = await session.execute(select(func.avg(User.age)))
     avg_age = result.scalar()
     stats['avg_age'] = round(avg_age, 1) if avg_age else 0
 
-    # Publications
     stmt = select(Publ.language).where(Publ.ural.is_(True), Publ.coords.is_(True), Publ.occs.is_(True))
     result = await session.execute(stmt)
     langs = result.scalars().all()
@@ -161,7 +158,6 @@ async def get_general_stats(session: AsyncSession):
         'eng_publs': sum('eng' in (lang or '').lower() for lang in langs)
     })
 
-    # Records
     result = await session.execute(select(Record.type))
     records = result.scalars().all()
     rec_ok = records.count('rec_ok')
@@ -170,7 +166,6 @@ async def get_general_stats(session: AsyncSession):
     stats['rec_fail_ratio'] = round(records.count('rec_fail') / rec_ok, 2) if rec_ok else 0
     stats['check_ratio'] = round(sum('check' in (r or '') for r in records) / rec_ok, 2) if rec_ok else 0
 
-    # Species & families
     species_stmt = select(func.count(func.distinct(func.concat(Record.tax_gen, '_', Record.tax_sp)))).where(Record.type == 'rec_ok')
     families_stmt = select(func.count(func.distinct(Record.tax_fam))).where(Record.type == 'rec_ok')
 
@@ -188,7 +183,6 @@ async def get_general_stats(session: AsyncSession):
 async def get_user_stats(session: AsyncSession, user_id: int):
     stats = {}
 
-    # Publications processed
     publ_ids = set()
     publs = []
     recs_stmt = select(Record.publ_id).where(Record.user_id == user_id)
@@ -201,7 +195,6 @@ async def get_user_stats(session: AsyncSession, user_id: int):
     stats['processed_publs'] = max(len(publ_ids), 0)
     total_records = len(publs)
 
-    # Record stats
     result = await session.execute(select(Record.type).where(Record.user_id == user_id))
     records = result.scalars().all()
 
@@ -213,14 +206,12 @@ async def get_user_stats(session: AsyncSession, user_id: int):
         'check_ratio': round(rec_check / rec_ok, 2) if total_records else 0,
     })
 
-    # Species count
     species_stmt = select(func.count(func.distinct(func.concat(Record.tax_gen, '_', Record.tax_sp)))).where(
         Record.type == 'rec_ok', Record.user_id == user_id
     )
     result = await session.execute(species_stmt)
     stats['species_count'] = result.scalar()
 
-    # Most common species
     result = await session.execute(text("""
         SELECT mode() WITHIN GROUP (ORDER BY CONCAT(tax_gen, ' ', tax_sp)) 
         FROM records 
@@ -344,28 +335,24 @@ async def add_record_from_json(session: AsyncSession, record_json: dict):
 
 async def get_statistics(session: AsyncSession):
     stats = {}
-    # 1. Total publications
+
     stmt = select(func.count()).select_from(Publ)
     result = await session.execute(stmt)
     stats['total_publications'] = result.scalar()
 
-    # 2. Amount of processed publications
     stmt = select(func.count(func.distinct(Record.publ_id)))
     result = await session.execute(stmt)
     stats['processed_publications'] = result.scalar()
 
-    # 3. Total species count
     stmt = select(func.count()).select_from(Record).where(Record.type == 'rec_ok')
     result = await session.execute(stmt)
     stats['total_species'] = result.scalar()
 
-    # 4. Unique species count
     stmt = select(func.count(func.distinct(func.concat(Record.tax_gen, '_', Record.tax_sp)))).where(
         Record.type == 'rec_ok')
     result = await session.execute(stmt)
     stats['unique_species'] = result.scalar()
 
-    # 5. Top 4 species with the most spiders
     stmt = select(Record.tax_gen, Record.tax_sp, func.count(Record.id).label('spider_count')) \
         .group_by(Record.tax_gen, Record.tax_sp) \
         .order_by(func.count(Record.id).desc()) \
@@ -374,7 +361,6 @@ async def get_statistics(session: AsyncSession):
     top_species = result.fetchall()
     stats['top_species'] = [{"species": f"{row.tax_gen} {row.tax_sp}", "count": row.spider_count} for row in top_species]
 
-    # 6. Latest 4 records
     stmt = select(
         func.date(Record.datetime).label('formatted_date'),
         Record.tax_gen,

@@ -17,14 +17,12 @@ async def bot_start() -> None:
 
         dp = Dispatcher(storage=MemoryStorage())
 
-        # Initialize database
         try:
             await init_db()
         except Exception as db_error:
             logger.error(f'Database initialization failed: {db_error}', exc_info=True)
             raise
 
-        # Initialize handlers
         handlers = Handlers(bot, get_session)
         dp.include_router(handlers.router)
 

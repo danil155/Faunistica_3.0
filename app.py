@@ -17,7 +17,7 @@ from config.config import LOGS_DIR
 logs_dir = LOGS_DIR
 logs_dir.mkdir(exist_ok=True)
 
-log_format = "%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s"
+log_format = '%(asctime)s %(levelname)s [%(filename)s:%(lineno)d] %(message)s'
 
 
 def only_warning(record):
@@ -25,7 +25,7 @@ def only_warning(record):
 
 
 main_handler = TimedRotatingFileHandler(
-    filename=logs_dir / "service.log",
+    filename=logs_dir / 'service.log',
     when='midnight',
     backupCount=30,
     encoding='utf-8'
@@ -35,7 +35,7 @@ main_handler.addFilter(only_warning)
 main_handler.setFormatter(logging.Formatter(log_format))
 
 error_handler = TimedRotatingFileHandler(
-    filename=logs_dir / "errors.log",
+    filename=logs_dir / 'errors.log',
     when='midnight',
     backupCount=90,
     encoding='utf-8'
@@ -75,42 +75,41 @@ app.state.limiter = limiter
 app.add_middleware(SlowAPIMiddleware)
 
 origins = [
-    "http://localhost:3000",
-    "https://faunistica.ru",
-    "https://faunistica.online"
+    'http://localhost:3000',
+    'https://faunistica.ru',
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['http://localhost:3000'],    # Replace to origins later on
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=['GET', 'POST'],
-    allow_headers=["Content-Type", "Authorization"],
-    expose_headers=["set-cookie", "Content-Disposition"]
+    allow_headers=['Content-Type', 'Authorization'],
+    expose_headers=['set-cookie', 'Content-Disposition']
 )
 
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
-app.include_router(users.router, prefix="/api")
-app.include_router(info.router, prefix="/api")
-app.include_router(records.router, prefix="/api")
-app.include_router(gen_stats.router, prefix="/api")
-app.include_router(refresh_token.router, prefix="/api")
-app.include_router(check_auth.router, prefix="/api")
-app.include_router(logout.router, prefix="/api")
-app.include_router(suggest_taxon.router, prefix="/api")
-app.include_router(autofill_taxon.router, prefix="/api")
-app.include_router(get_publ.router, prefix="/api")
-app.include_router(support.router, prefix="/api")
-app.include_router(pers_stats.router, prefix="/api")
-app.include_router(user_image.router, prefix="/api")
-app.include_router(get_localion.router, prefix="/api")
-app.include_router(get_records_file.router, prefix="/api")
-app.include_router(get_record.router, prefix="/api")
-app.include_router(del_record.router, prefix="/api")
-app.include_router(edit_record.router, prefix="/api")
-app.include_router(next_publ.router, prefix="/api")
-app.include_router(publ_from_hash.router, prefix="/api")
+app.include_router(users.router, prefix='/api')
+app.include_router(info.router, prefix='/api')
+app.include_router(records.router, prefix='/api')
+app.include_router(gen_stats.router, prefix='/api')
+app.include_router(refresh_token.router, prefix='/api')
+app.include_router(check_auth.router, prefix='/api')
+app.include_router(logout.router, prefix='/api')
+app.include_router(suggest_taxon.router, prefix='/api')
+app.include_router(autofill_taxon.router, prefix='/api')
+app.include_router(get_publ.router, prefix='/api')
+app.include_router(support.router, prefix='/api')
+app.include_router(pers_stats.router, prefix='/api')
+app.include_router(user_image.router, prefix='/api')
+app.include_router(get_localion.router, prefix='/api')
+app.include_router(get_records_file.router, prefix='/api')
+app.include_router(get_record.router, prefix='/api')
+app.include_router(del_record.router, prefix='/api')
+app.include_router(edit_record.router, prefix='/api')
+app.include_router(next_publ.router, prefix='/api')
+app.include_router(publ_from_hash.router, prefix='/api')
 app.include_router(geo_search.router, prefix='/api')
 
 if __name__ == '__main__':

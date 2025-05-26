@@ -17,10 +17,10 @@ def dms_to_decimal(degrees: float, minutes: float = 0, seconds: float = 0, direc
 
 def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
     coord_dict = {
-        "degrees": None,
-        "minutes": None,
-        "seconds": None,
-        "decimal": None,
+        'degrees': None,
+        'minutes': None,
+        'seconds': None,
+        'decimal': None,
     }
 
     try:
@@ -42,10 +42,10 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
         if match:
             degrees, minutes, seconds, direction = match.groups()
             coord_dict.update({
-                "degrees": float(degrees),
-                "minutes": float(minutes),
-                "seconds": float(seconds),
-                "decimal": dms_to_decimal(degrees, minutes, seconds, direction),
+                'degrees': float(degrees),
+                'minutes': float(minutes),
+                'seconds': float(seconds),
+                'decimal': dms_to_decimal(degrees, minutes, seconds, direction),
             })
             return coord_dict
 
@@ -57,10 +57,10 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
         if match:
             degrees, minutes, direction = match.groups()
             coord_dict.update({
-                "degrees": float(degrees),
-                "minutes": float(minutes),
-                "seconds": None,
-                "decimal": dms_to_decimal(degrees, minutes, 0, direction),
+                'degrees': float(degrees),
+                'minutes': float(minutes),
+                'seconds': None,
+                'decimal': dms_to_decimal(degrees, minutes, 0, direction),
             })
             return coord_dict
 
@@ -72,10 +72,10 @@ def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
         if match:
             degrees, direction = match.groups()
             coord_dict.update({
-                "degrees": float(degrees),
-                "minutes": None,
-                "seconds": None,
-                "decimal": dms_to_decimal(degrees, 0, 0, direction),
+                'degrees': float(degrees),
+                'minutes': None,
+                'seconds': None,
+                'decimal': dms_to_decimal(degrees, 0, 0, direction),
             })
             return coord_dict
     except Exception as e:
@@ -200,9 +200,9 @@ def process_6_blocks(blocks) -> str:
     if not all(b.isdigit() for b in blocks):
         return str()
     
-    start_date = f"{blocks[2]}-{blocks[1]}-{blocks[0].zfill(2)}"
-    end_date = f"{blocks[5]}-{blocks[4]}-{blocks[3].zfill(2)}"
-    return f"{start_date}:{end_date}"
+    start_date = f'{blocks[2]}-{blocks[1]}-{blocks[0].zfill(2)}'
+    end_date = f'{blocks[5]}-{blocks[4]}-{blocks[3].zfill(2)}'
+    return f'{start_date}:{end_date}'
 
 def process_5_blocks(blocks) -> str:
     for i in [1, 3]:
@@ -214,9 +214,9 @@ def process_5_blocks(blocks) -> str:
     if not all(b.isdigit() for b in blocks):
         return str()
     
-    start_date = f"{blocks[4]}-{blocks[1]}-{blocks[0].zfill(2)}"
-    end_date = f"{blocks[4]}-{blocks[3]}-{blocks[2].zfill(2)}"
-    return f"{start_date}:{end_date}"
+    start_date = f'{blocks[4]}-{blocks[1]}-{blocks[0].zfill(2)}'
+    end_date = f'{blocks[4]}-{blocks[3]}-{blocks[2].zfill(2)}'
+    return f'{start_date}:{end_date}'
 
 def process_4_blocks(blocks) -> str:
     if blocks[2].isalpha():
@@ -227,9 +227,9 @@ def process_4_blocks(blocks) -> str:
     if not all(b.isdigit() for b in blocks):
         return str()
     
-    start_date = f"{blocks[3]}-{blocks[2]}-{blocks[0].zfill(2)}"
-    end_date = f"{blocks[3]}-{blocks[2]}-{blocks[1].zfill(2)}"
-    return f"{start_date}:{end_date}"
+    start_date = f'{blocks[3]}-{blocks[2]}-{blocks[0].zfill(2)}'
+    end_date = f'{blocks[3]}-{blocks[2]}-{blocks[1].zfill(2)}'
+    return f'{start_date}:{end_date}'
 
 def process_3_blocks(blocks) -> str:
     if blocks[1].isalpha():
@@ -240,7 +240,7 @@ def process_3_blocks(blocks) -> str:
     if not all(b.isdigit() for b in blocks):
         return str()
     
-    return f"{blocks[2]}-{blocks[1]}-{blocks[0].zfill(2)}"
+    return f'{blocks[2]}-{blocks[1]}-{blocks[0].zfill(2)}'
 
 
 def get_collectors(text: str) -> list:
@@ -302,9 +302,9 @@ def get_numbers_species(text: str) -> dict:
         for count, gender in re.findall(adult_pattern, text):
             try:
                 count = int(count)
-                if gender in ["♂", "male", "m", "M", "самец", "самца", "самцов"]:
+                if gender in ['♂', 'male', 'm', 'M', 'самец', 'самца', 'самцов']:
                     species_count['male'] += count
-                elif gender in ["♀", "female", "f", "F", "самка", "самки", "самок"]:
+                elif gender in ['♀', 'female', 'f', 'F', 'самка', 'самки', 'самок']:
                     species_count['female'] += count
             except (IndexError, ValueError) as e:
                 logger.error(f'Error parsing: {e}', exc_info=True)
@@ -315,9 +315,9 @@ def get_numbers_species(text: str) -> dict:
         for count, gender in re.findall(subadult_pattern, text):
             try:
                 count = int(count)
-                if gender in ["sub♂", "submale", "subm", "subM", "sM", "субсамец"]:
+                if gender in ['sub♂', 'submale', 'subm', 'subM', 'sM', 'субсамец']:
                     species_count['sub_male'] += count
-                elif gender in ["sub♀", "subfemale", "subf", "subF", "sF", "субсамка"]:
+                elif gender in ['sub♀', 'subfemale', 'subf', 'subF', 'sF', 'субсамка']:
                     species_count['sub_female'] += count
             except (IndexError, ValueError) as e:
                 logger.error(f'Error parsing: {e}', exc_info=True)
@@ -342,9 +342,9 @@ def get_numbers_species(text: str) -> dict:
         for match in re.findall(double_sign_pattern, text):
             try:
                 count = int(match[0]) if match[0] else 1
-                if "♀" in match[1]:
+                if '♀' in match[1]:
                     species_count['female'] += count
-                elif "♂" in match[1]:
+                elif '♂' in match[1]:
                     species_count['male'] += count
             except (IndexError, ValueError) as e:
                 logger.error(f'Error parsing: {e}', exc_info=True)
@@ -362,10 +362,10 @@ def check_full_location_data(data: Data) -> None:
             location_info = get_location_info(data.coordinate_north.get('decimal', 0), data.coordinate_east.get('decimal', 0))
             address = location_info.get('address', {})
 
-            data.country = data.country or address.get('country', "")
-            data.region = data.region or address.get('region', "")
-            data.district = data.district or address.get('district', "")
-            data.gathering_place = data.gathering_place or location_info.get('display_name', "")
+            data.country = data.country or address.get('country', '')
+            data.region = data.region or address.get('region', '')
+            data.district = data.district or address.get('district', '')
+            data.gathering_place = data.gathering_place or location_info.get('display_name', '')
     except Exception as e:
         logger.error(f'Error when checking full location data: {e}', exc_info=True)
         raise
@@ -407,8 +407,3 @@ def get_separated_parameters(text: str) -> Data:
         raise
 
     return data
-
-
-if __name__ == '__main__':
-    get_separated_parameters(
-        "Gnaphosa steppica Ovtsharenko, Platnick et Song 1992 (pro parte; the specimens from Azerbaijan only): 37. Holotype # (ZMMU), Azerbaijan, Gyandzha (=Kirovobad) Distr., ca 2 km S of Khanlar (40°41N, 46°21E), 8.V.1986, leg. P.M. Dunin.").print()

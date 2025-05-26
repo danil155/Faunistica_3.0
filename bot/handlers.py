@@ -29,31 +29,28 @@ class Handlers:
         self.register_handlers()
 
     def register_handlers(self):
-        # Command handlers
-        self.router.message.register(self.start_command, Command("start"))
-        self.router.message.register(self.register_command, Command("register"))
-        self.router.message.register(self.auth_command, Command("auth"))
-        self.router.message.register(self.next_publ_command, Command("next_publ"))
-        self.router.message.register(self.menu_command, Command("menu"))
-        self.router.message.register(self.stats_command, Command("stats"))
-        self.router.message.register(self.rename_command, Command("rename"))
-        self.router.message.register(self.support_command, Command("support"))
-        self.router.message.register(self.sociology_command, Command("sociology"))
-        self.router.message.register(self.cancel_command, Command("cancel"))
-        self.router.message.register(self.reply_to_user_command, Command("reply"))
-        self.router.message.register(self.send_logs_command, Command("logs"))
+        self.router.message.register(self.start_command, Command('start'))
+        self.router.message.register(self.register_command, Command('register'))
+        self.router.message.register(self.auth_command, Command('auth'))
+        self.router.message.register(self.next_publ_command, Command('next_publ'))
+        self.router.message.register(self.menu_command, Command('menu'))
+        self.router.message.register(self.stats_command, Command('stats'))
+        self.router.message.register(self.rename_command, Command('rename'))
+        self.router.message.register(self.support_command, Command('support'))
+        self.router.message.register(self.sociology_command, Command('sociology'))
+        self.router.message.register(self.cancel_command, Command('cancel'))
+        self.router.message.register(self.reply_to_user_command, Command('reply'))
+        self.router.message.register(self.send_logs_command, Command('logs'))
 
-        # Text message handlers
         self.router.message.register(
             self.menu_command,
-            lambda msg: "меню" in msg.text.lower()
+            lambda msg: 'меню' in msg.text.lower()
         )
         self.router.message.register(
             self.sociology_command,
-            lambda msg: "опрос" in msg.text.lower()
+            lambda msg: 'опрос' in msg.text.lower()
         )
 
-        # Registration states handlers
         self.router.message.register(
             self.reg_accept_handler,
             lambda msg: msg.text.lower() in config_vars.YES_WORDS,
@@ -81,19 +78,16 @@ class Handlers:
             RegistrationStates.waiting_for_language
         )
 
-        # Support state handler
         self.router.message.register(
             self.support_question_handler,
             SupportStates.waiting_for_question
         )
 
-        # Rename state handler
         self.router.message.register(
             self.rename_name_handler,
             RenameStates.waiting_for_new_name
         )
 
-        # Sociology states handlers
         self.router.message.register(
             self.sociology_age_handler,
             SociologyStates.waiting_for_age
@@ -123,7 +117,6 @@ class Handlers:
             SociologyStates.waiting_for_email
         )
 
-        # Other content handler
         self.router.message.register(self.other_content_handler)
 
     # ========== COMMAND HANDLERS ========== #
@@ -133,7 +126,7 @@ class Handlers:
             return
         await message.answer(
             Messages.start(message.from_user.first_name),
-            parse_mode="HTML",
+            parse_mode='HTML',
             disable_web_page_preview=True,
             reply_markup=Keyboards.remove()
         )
@@ -154,7 +147,7 @@ class Handlers:
                 await message.answer(
                     Messages.registration_start(),
                     reply_markup=Keyboards.yes_no(),
-                    parse_mode="HTML",
+                    parse_mode='HTML',
                     disable_web_page_preview=True
                 )
                 await state.set_state(RegistrationStates.waiting_for_agreement)
@@ -170,7 +163,7 @@ class Handlers:
                 await message.answer(
                     Messages.registration_start(),
                     reply_markup=Keyboards.yes_no(),
-                    parse_mode="HTML",
+                    parse_mode='HTML',
                     disable_web_page_preview=True
                 )
                 await state.set_state(RegistrationStates.waiting_for_agreement)
@@ -196,8 +189,8 @@ class Handlers:
                 await log_action(
                     session=session,
                     user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="not_reg_start"
+                    action='bot_auth',
+                    object='not_reg_start'
                 )
             elif user.reg_stat is None:
                 await message.answer(Messages.register_for_old())
@@ -206,15 +199,15 @@ class Handlers:
                 await log_action(
                     session=session,
                     user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="not_reg_end"
+                    action='bot_auth',
+                    object='not_reg_end'
                 )
             elif user.reg_stat == 7:
                 await message.answer(Messages.support_call_not_finished())
             else:
                 await message.answer(
                     text=Messages.auth_success(),
-                    parse_mode="HTML")
+                    parse_mode='HTML')
 
                 if not user.items:
                     await message.answer(Messages.no_publications_left())
@@ -227,7 +220,7 @@ class Handlers:
                     publ = await get_publication(session, publ_id)
                     await message.answer(
                         text=Messages.current_publication(publ),
-                        parse_mode="HTML",
+                        parse_mode='HTML',
                         disable_web_page_preview=True
                     )
 
@@ -244,7 +237,7 @@ class Handlers:
 
                     await message.answer(
                         Messages.new_password(password, user.name),
-                        parse_mode="Markdown",
+                        parse_mode='Markdown',
                         disable_web_page_preview=True
                     )
 
@@ -256,8 +249,8 @@ class Handlers:
                 await log_action(
                     session=session,
                     user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="success"
+                    action='bot_auth',
+                    object='success'
                 )
 
     async def next_publ_command(self, message: Message):
@@ -272,8 +265,8 @@ class Handlers:
                 await log_action(
                     session=session,
                     user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="not_reg_start"
+                    action='bot_auth',
+                    object='not_reg_start'
                 )
             elif user.reg_stat is None:
                 await message.answer(Messages.register_for_old())
@@ -282,8 +275,8 @@ class Handlers:
                 await log_action(
                     session=session,
                     user_id=message.from_user.id,
-                    action="bot_auth",
-                    object="not_reg_end"
+                    action='bot_auth',
+                    object='not_reg_end'
                 )
             elif user.reg_stat == 7:
                 await message.answer(Messages.support_call_not_finished())
@@ -309,7 +302,7 @@ class Handlers:
                     publ = await get_publication(session, user.publ_id)
                     await message.answer(
                         text=Messages.current_publication(publ),
-                        parse_mode="HTML",
+                        parse_mode='HTML',
                         disable_web_page_preview=True
                     )
                 else:
@@ -321,7 +314,7 @@ class Handlers:
 
         await message.answer(
             Messages.called_menu(),
-            parse_mode="HTML"
+            parse_mode='HTML'
         )
 
     async def stats_command(self, message: Message):
@@ -338,7 +331,7 @@ class Handlers:
 
             await message.answer(
                 Messages.statistics(general_stats, user_stats),
-                parse_mode="HTML",
+                parse_mode='HTML',
                 reply_markup=Keyboards.remove()
             )
 
@@ -387,7 +380,7 @@ class Handlers:
             elif 1 < user.reg_stat <= 6:
                 await message.answer(
                     Messages.unavailable_during_registration(),
-                    parse_mode="Markdown",
+                    parse_mode='Markdown',
                     disable_web_page_preview=True
                     )
                 return
@@ -432,7 +425,7 @@ class Handlers:
 
                 await message.answer(
                     f'{Messages.any_question(missing_fields)}\n{Messages.go_back_to_sociology()}',
-                    parse_mode="HTML"
+                    parse_mode='HTML'
                 )
 
                 next_question = missing_fields[0]
@@ -469,7 +462,7 @@ class Handlers:
             elif 1 < user.reg_stat <= 6:
                 await message.answer(
                     Messages.unavailable_during_registration(),
-                    parse_mode="Markdown",
+                    parse_mode='Markdown',
                     disable_web_page_preview=True
                 )
                 return
@@ -496,14 +489,14 @@ class Handlers:
             await message.answer(Messages.using_command_reply())
             return
 
-        reply_text = message.text.replace("/reply@FaunisticaV3Bot", "").replace("/reply", "").strip()
+        reply_text = message.text.replace('/reply@FaunisticaV3Bot', '').replace('/reply', '').strip()
         if not reply_text:
             await message.answer(Messages.empty_response_to_user())
             return
 
         original_message = message.reply_to_message.text
         try:
-            user_id = int(original_message.replace('\n', ' ').split("ID: ")[1].split(" ")[0])
+            user_id = int(original_message.replace('\n', ' ').split('ID: ')[1].split(' ')[0])
         except (IndexError, ValueError):
             await message.answer(Messages.could_not_extract_id())
             return
@@ -546,7 +539,7 @@ class Handlers:
                 for file in config.LOGS_DIR.glob('*.log*'):
                     try:
                         date_part = file.name.split('.')[-1]
-                        datetime.strptime(date_part, "%Y-%m-%d")
+                        datetime.strptime(date_part, '%Y-%m-%d')
                         dates.add(f'\n{date_part}')
                     except ValueError:
                         continue
@@ -579,7 +572,7 @@ class Handlers:
             await message.answer(
                 Messages.registration_start(),
                 reply_markup=Keyboards.yes_no(),
-                parse_mode="HTML",
+                parse_mode='HTML',
                 disable_web_page_preview=True
             )
         elif reg_stat == 3:
@@ -665,7 +658,7 @@ class Handlers:
         elif int(age_msg) > 99:
             await message.answer(
                 Messages.age_too_high(),
-                parse_mode="Markdown",
+                parse_mode='Markdown',
                 disable_web_page_preview=True
             )
         elif int(age_msg) < 14:
@@ -701,19 +694,19 @@ class Handlers:
         await state.set_state(RegistrationStates.waiting_for_language)
 
     async def reg_lang_handler(self, message: Message, state: FSMContext):
-        lang_msg = message.text.strip().replace(" ", "").replace(",", "").replace(".", "")
+        lang_msg = message.text.strip().replace(' ', '').replace(',', '').replace('.', '')
 
-        if len(lang_msg) > 1 or lang_msg not in ["1", "2", "3"]:
+        if len(lang_msg) > 1 or lang_msg not in ['1', '2', '3']:
             await message.answer(Messages.selection_not_recognized())
             await message.answer(Messages.ask_language())
             return
 
-        lang_map = {"1": "all", "2": "eng", "3": "rus"}
+        lang_map = {'1': 'all', '2': 'eng', '3': 'rus'}
         lang_value = lang_map[lang_msg]
 
         async for session in self.db_session_factory():
             items = await get_publications_for_language(session, lang_value)
-            items_str = "|".join(list(str(item) for item in items))
+            items_str = '|'.join(list(str(item) for item in items))
 
             if not items:
                 await message.answer(Messages.no_publication())
@@ -766,7 +759,7 @@ class Handlers:
         await message.answer(
             Messages.support_request_received(),
             reply_markup=Keyboards.remove(),
-            parse_mode="HTML"
+            parse_mode='HTML'
         )
 
         await self.bot.send_message(
@@ -798,8 +791,8 @@ class Handlers:
                 await log_action(
                     session=session,
                     user_id=message.from_user.id,
-                    action="bot_rename",
-                    object=f"{old_name}>{name_msg}"
+                    action='bot_rename',
+                    object=f'{old_name}>{name_msg}'
                 )
 
                 await update_user(
@@ -823,7 +816,7 @@ class Handlers:
         elif int(age_msg) > 99:
             await message.answer(
                 Messages.age_too_high(),
-                parse_mode="Markdown",
+                parse_mode='Markdown',
                 disable_web_page_preview=True
             )
         elif int(age_msg) < 14:
@@ -845,13 +838,13 @@ class Handlers:
             await state.clear()
 
     async def sociology_lang_handler(self, message: Message, state: FSMContext):
-        lang_msg = message.text.strip().replace(" ", "").replace(",", "").replace(".", "")
+        lang_msg = message.text.strip().replace(' ', '').replace(',', '').replace('.', '')
 
-        if len(lang_msg) > 1 or lang_msg not in ["1", "2", "3"]:
+        if len(lang_msg) > 1 or lang_msg not in ['1', '2', '3']:
             await message.answer(Messages.selection_not_recognized())
             return
 
-        lang_map = {"1": "all", "2": "eng", "3": "rus"}
+        lang_map = {'1': 'all', '2': 'eng', '3': 'rus'}
         lang_value = lang_map[lang_msg]
 
         async for session in self.db_session_factory():
@@ -882,10 +875,10 @@ class Handlers:
     async def sociology_gender_handler(self, message: Message, state: FSMContext):
         gender_msg = message.text.lower()
 
-        if "жен" in gender_msg or "female" in gender_msg:
-            gender_value = "ff"
-        elif "муж" in gender_msg or "male" in gender_msg:
-            gender_value = "mm"
+        if 'жен' in gender_msg or 'female' in gender_msg:
+            gender_value = 'ff'
+        elif 'муж' in gender_msg or 'male' in gender_msg:
+            gender_value = 'mm'
         else:
             await message.answer(Messages.selection_not_recognized())
             return
@@ -947,7 +940,7 @@ class Handlers:
     async def sociology_email_handler(self, message: Message, state: FSMContext):
         email_msg = message.text.strip().lower()
 
-        if "@" not in email_msg or "." not in email_msg:
+        if '@' not in email_msg or '.' not in email_msg:
             await message.answer(Messages.not_email())
             return
 
@@ -973,7 +966,7 @@ class Handlers:
             await log_action(
                 session=session,
                 user_id=message.from_user.id,
-                action="bot_fun.other",
+                action='bot_fun.other',
                 object=message.content_type
             )
         await message.answer(

@@ -19,7 +19,6 @@ def _load_location_data():
         try:
             with open(json_path, 'r', encoding='utf-8') as f:
                 _LOCATION_DATA = json.load(f)
-            logger.info(f"Successfully loaded location data from {json_path}")
         except Exception as e:
             logger.error(f"Failed to load location data: {e}", exc_info=True)
             _LOCATION_DATA = []

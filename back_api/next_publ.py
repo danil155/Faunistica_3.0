@@ -2,7 +2,6 @@ from fastapi import APIRouter, HTTPException, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 import logging
 
-from .schemas import InfoRequest, InfoResponse
 from database.database import get_session
 from database.crud import get_user, is_publ_filled, update_user
 from .rate_limiter import limiter
