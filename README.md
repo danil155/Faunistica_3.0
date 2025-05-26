@@ -67,8 +67,9 @@ def check_pass(user_pass, db_hash):
         return False
 
 
-def derive_user_key(user_id: int) -> bytes:  
+def derive_user_key(user_id: int) -> bytes:
     key = ...
+    # Используем user_id для обфускации
     return ...(key)
 
 
