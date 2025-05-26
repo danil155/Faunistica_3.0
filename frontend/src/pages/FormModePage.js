@@ -154,22 +154,24 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
         const newList = [];
         if (savedOrder) {
             const list = JSON.parse(savedOrder);
-            const seen = new Set();
-            const newList = [];
 
-            for (const item of list) {
-                const mapped = keyMap[item] || item; // Replace if in keyMap
-                if (allowedNewKeys.includes(mapped) && !seen.has(mapped)) {
-                    newList.push(mapped);
-                    seen.add(mapped);
+            if (Array.isArray(list) && list.length > 0) {
+                const seen = new Set();
+                const newList = [];
+
+                for (const item of list) {
+                    const mapped = keyMap[item] || item; // Replace if in keyMap
+                    if (allowedNewKeys.includes(mapped) && !seen.has(mapped)) {
+                        newList.push(mapped);
+                        seen.add(mapped);
+                    }
                 }
+                localStorage.setItem('sectionOrder', JSON.stringify(newList));
+                return newList;
             }
-
-            localStorage.setItem('sectionOrder', JSON.stringify(newList));
-            return newList;
-        } else {
-            return defaultOrder;
         }
+        localStorage.setItem('sectionOrder', JSON.stringify(defaultOrder));
+        return defaultOrder;
     });
 
     const moveSectionUp = (sectionName) => {
