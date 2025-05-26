@@ -155,6 +155,7 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
         if (savedOrder) {
             const list = JSON.parse(savedOrder);
             const seen = new Set();
+            const newList = [];
 
             for (const item of list) {
                 const mapped = keyMap[item] || item; // Replace if in keyMap
@@ -163,10 +164,12 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                     seen.add(mapped);
                 }
             }
+
+            localStorage.setItem('sectionOrder', JSON.stringify(newList));
+            return newList;
+        } else {
+            return defaultOrder;
         }
-        localStorage.setItem('sectionOrder', JSON.stringify(newList));
-        const finaldOrder = localStorage.getItem('sectionOrder');
-        return finaldOrder ? JSON.parse(finaldOrder) : defaultOrder;
     });
 
     const moveSectionUp = (sectionName) => {
