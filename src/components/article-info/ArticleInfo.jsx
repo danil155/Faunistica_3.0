@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiService } from "../../api";
 import PublicationErrorModal from "../PublicationErrorModal";
-import { useTranslation } from 'react-i18next';
 import { Link, useParams } from "react-router-dom";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
 const ArticleInfo = ({isEditMode = false}) => {
-    const {t} = useTranslation('articleInfo');
+    const {t} = useTranslation('articleInfo');    
+    const {t: tApi} = useTranslation('api');
     const [publication, setPublication] = useState(null);
     const [showPublicationError, setShowPublicationError] = useState(false);
     const {hash} = useParams();
@@ -48,7 +49,7 @@ const ArticleInfo = ({isEditMode = false}) => {
 
     const handleChangePublication = async () => {
         try {
-            const result = await apiService.ChangePublication();
+            const result = await apiService.ChangePublication(tApi);
             if (result) {
                 window.location.reload();
             } else {

@@ -1,13 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import { apiService } from "../api";
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
-import { useTranslation } from 'react-i18next';
 import { FaPen, FaTimes } from 'react-icons/fa';
 import { Modal, ConfirmationModal } from "../components/modal/confirmModal"
 import '../styles/profile.css';
 
 const ProfilePage = () => {
     const {t} = useTranslation('profile');
+    const {t: tApi} = useTranslation('api');
     const navigate = useNavigate();
     const [profile, setProfile] = useState({
         username: "",
@@ -69,7 +70,7 @@ const ProfilePage = () => {
             if (action === 'edit') {
                 navigate(`/edit/${hash}`);
             } else if (action === 'delete') {
-                await apiService.deleteRecord(hash);
+                await apiService.deleteRecord(hash, tApi);
                 setModal({
                     isOpen: true,
                     type: 'success',
@@ -102,7 +103,7 @@ const ProfilePage = () => {
     const fetchProfile = async () => {
         try {
             setLoading(true);
-            const per_stats = await apiService.getProfile();
+            const per_stats = await apiService.getProfile(tApi);
 
             let avatarUrl = null;
 
@@ -154,7 +155,7 @@ const ProfilePage = () => {
                 success: false
             });
 
-            const response = await apiService.downloadRecords();
+            const response = await apiService.downloadRecords(tApi);
 
             const url = window.URL.createObjectURL(new Blob([response.data]));
             const link = document.createElement('a');

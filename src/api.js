@@ -2,24 +2,24 @@ import axios from 'axios';
 import i18n from 'i18next';
 
 const api = axios.create({
-    // baseURL: "http://localhost:5001",
+    baseURL: "http://localhost:5001",
     withCredentials: true
 });
 
 let refreshTokenPromise = null;
 
 const apiService = {
-    login: async (username, password) => {
+    login: async (username, password, t) => {
         try {
             const response = await api.post('/api/get_user', {username, password});
             return response.data;
         } catch (error) {
             if (error.response?.status === 401) {
-                throw new Error(i18n.t('api.errors.login.invalid_password'));
+                throw new Error(t('errors.login.invalid_password'));
             } else if (error.response?.status === 404) {
-                throw new Error(i18n.t('api.errors.login.user_not_found'));
+                throw new Error(t('errors.login.user_not_found'));
             } else if (error.response?.status === 429) {
-                throw new Error(i18n.t('api.errors.login.too_many_attempts'));
+                throw new Error(t('errors.login.too_many_attempts'));
             }
             throw error;
         }
@@ -49,17 +49,17 @@ const apiService = {
         return response.data;
     },
 
-    getGeneralStats: async () => {
+    getGeneralStats: async (t) => {
         try {
             const response = await api.get('/api/get_gen_stats');
             return response.data;
         } catch (error) {
             if (error.response) {
-                throw new Error(error.response.data.message || i18n.t('api.errors.stats.general_error'));
+                throw new Error(error.response.data.message || t('errors.stats.general_error'));
             } else if (error.request) {
-                throw new Error(i18n.t('api.errors.common.server_unavailable'));
+                throw new Error(t('errors.common.server_unavailable'));
             } else {
-                throw new Error(i18n.t('api.errors.stats.request_error'));
+                throw new Error(t('errors.stats.request_error'));
             }
         }
     },
@@ -132,18 +132,18 @@ const apiService = {
         }
     },
 
-    ChangePublication: async () => {
+    ChangePublication: async (t) => {
         try {
             const response = await api.get('/api/next_publ');
             return response.data;
         } catch (error) {
             if (error.response?.status === 409) {
-                throw new Error(i18n.t('api.errors.publication.not_filled'));
+                throw new Error(t('errors.publication.not_filled'));
             }
             if (error.response?.status === 404) {
-                throw new Error(i18n.t('api.errors.publication.not_available'));
+                throw new Error(t('errors.publication.not_available'));
             }
-            throw new Error(i18n.t('api.errors.publication.general_error'));
+            throw new Error(t('errors.publication.general_error'));
         }
     },
 
@@ -157,31 +157,31 @@ const apiService = {
         }
     },
 
-    postSupport: async (data) => {
+    postSupport: async (data, t) => {
         try {
             await api.post('/api/support', data);
         } catch (error) {
             if (error.response) {
-                throw new Error(error.response.data.message || i18n.t('api.errors.support.request_error'));
+                throw new Error(error.response.data.message || t('errors.support.request_error'));
             } else if (error.request) {
-                throw new Error(i18n.t('api.errors.common.server_unavailable'));
+                throw new Error(t('errors.common.server_unavailable'));
             } else {
-                throw new Error(i18n.t('api.errors.support.general_error'));
+                throw new Error(t('errors.support.general_error'));
             }
         }
     },
 
-    getProfile: async () => {
+    getProfile: async (t) => {
         try {
             const response = await api.get('/api/get_pers_stats');
             return response;
         } catch (error) {
             if (error.response) {
-                throw new Error(error.response.data.message || i18n.t('api.errors.support.request_error'));
+                throw new Error(error.response.data.message || t('errors.support.request_error'));
             } else if (error.request) {
-                throw new Error(i18n.t('api.errors.common.server_unavailable'));
+                throw new Error(t('errors.common.server_unavailable'));
             } else {
-                throw new Error(i18n.t('api.errors.support.general_error'));
+                throw new Error(t('errors.support.general_error'));
             }
         }
     },
@@ -200,7 +200,7 @@ const apiService = {
         }
     },
 
-    downloadRecords: async () => {
+    downloadRecords: async (t) => {
         try {
             const response = await api.post('/api/get_records_data', {}, {
                 responseType: 'blob'
@@ -208,65 +208,65 @@ const apiService = {
             return response;
         } catch (error) {
             if (error.response?.status === 429) {
-                throw new Error(i18n.t('api.errors.records.wait_before_download'));
+                throw new Error(t('errors.records.wait_before_download'));
             } else if (error.response?.status === 404) {
-                throw new Error(i18n.t('api.errors.records.not_found'));
+                throw new Error(t('errors.records.not_found'));
             }
             throw error;
         }
     },
 
-    getRecord: async (hash) => {
+    getRecord: async (hash, t) => {
         try {
             const response = await api.post('/api/get_record', {hash});
             return response.data;
         } catch (error) {
             if (error.response?.status === 400) {
-                throw new Error(i18n.t('api.errors.records.invalid_token'));
+                throw new Error(t('errors.records.invalid_token'));
             }
             if (error.response?.status === 404) {
-                throw new Error(i18n.t('api.errors.records.not_found_or_no_access'));
+                throw new Error(t('errors.records.not_found_or_no_access'));
             }
             if (error.response?.status === 500) {
-                throw new Error(i18n.t('api.errors.common.server_error'));
+                throw new Error(t('errors.common.server_error'));
             }
-            throw new Error(i18n.t('api.errors.records.connection_error'));
+            throw new Error(t('errors.records.connection_error'));
         }
     },
 
-    deleteRecord: async (hash) => {
+    deleteRecord: async (hash, t) => {
         try {
             const response = await api.post('/api/del_record', {hash});
             return response.data;
         } catch (error) {
             if (error.response?.status === 400) {
-                throw new Error(i18n.t('api.errors.records.invalid_token'));
+                throw new Error(t('errors.records.invalid_token'));
             }
             if (error.response?.status === 404) {
-                throw new Error(i18n.t('api.errors.records.not_found_or_no_access'));
+                throw new Error(t('errors.records.not_found_or_no_access'));
             }
             if (error.response?.status === 500) {
-                throw new Error(i18n.t('api.errors.common.server_error'));
+                throw new Error(t('errors.common.server_error'));
             }
-            throw new Error(i18n.t('api.errors.records.connection_error'));
+            throw new Error(t('errors.records.connection_error'));
         }
     },
 
-    editRecord: async (hash, recordData) => {
+    editRecord: async (hash, recordData, t) => {
         try {
             const response = await api.post('/api/edit_record', {hash, ...recordData});
             return response.data;
         } catch (error) {
             if (error.response?.status === 400) {
-                Error(i18n.t('api.errors.records.invalid_token'));
+                Error(t('errors.records.invalid_token'));
             }
             if (error.response?.status === 404) {
-                throw new Error(i18n.t('api.errors.records.not_found_or_no_access'));
+                throw new Error(t('errors.records.not_found_or_no_access'));
             }
             if (error.response?.status === 500) {
-                throw new Error(i18n.t('api.errors.common.server_error'));
+                throw new Error(t('errors.common.server_error'));
             }
-            throw new Error(i18n.t('api.errors.records.connection_error'));
+            throw new Error(t('errors.records.connection_error'));
         }
     }
 };

@@ -1,9 +1,10 @@
-import { apiService } from "../api";
 import { useState } from "react";
 import { useTranslation } from 'react-i18next';
+import { apiService } from "../api";
 
 const FeedbackPage = () => {
     const {t} = useTranslation('feedback');
+    const {t: tApi} = useTranslation('api');
     const [error, setError] = useState(null);
     const [feedback, setFeedback] = useState({
         link: "",
@@ -37,7 +38,7 @@ const FeedbackPage = () => {
 
         try {
             setLoading(true);
-            await apiService.postSupport(feedback);
+            await apiService.postSupport(feedback, tApi);
             setSuccess(true);
         } catch (error) {
             console.error("Error:", error);

@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { apiService } from '../api';
 import FormModePage from './FormModePage';
 import { FormProvider, defaultState } from './FormContext';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../styles/editPage.css';
 import { useTranslation } from 'react-i18next';
+import { apiService } from '../api';
 
 const EditRecordPage = () => {
     const {t} = useTranslation('editRecord');
+    const {t: tApi} = useTranslation('api');
     const {hash} = useParams();
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -136,7 +137,7 @@ const EditRecordPage = () => {
     useEffect(() => {
         const fetchRecord = async () => {
             try {
-                const record = await apiService.getRecord(hash);
+                const record = await apiService.getRecord(hash, tApi);
                 const formState = mapRecordToFormState(record);
                 setInitialFormState(formState);
                 setLoading(false);
@@ -293,7 +294,7 @@ const EditRecordPage = () => {
                 type_status: cleanValue(formData.type_status)
             };
 
-            await apiService.editRecord(hash, updatedRecord);
+            await apiService.editRecord(hash, updatedRecord, tApi);
             toast.success(t('success.saved'));
             navigate('/profile');
         } catch (error) {

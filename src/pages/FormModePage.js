@@ -5,6 +5,7 @@ import SpecimenForm from "../components/specimen-form/SpecimenForm";
 import "../styles/formMode.css";
 import PinToggle from "../components/pin-toggle/PinToggle";
 import DateSelect from "../components/DateSelect";
+import { useTranslation } from 'react-i18next';
 import { apiService } from '../api'
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import TaxonDropdown from "../components/cascading-dropdown/TaxonDropdown";
@@ -13,7 +14,6 @@ import { CoordinatesInput } from "../components/CoordinatesInput";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaArrowUp, FaArrowDown } from 'react-icons/fa';
-import { useTranslation } from 'react-i18next';
 
 const FIELD_GROUPS = {
     administrative: ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
@@ -132,6 +132,15 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
         });
     };
 
+    const keyMap = {
+        "Административное положение": "administrative",
+        "Географическое положение": "geographical",
+        "Сбор материала": "material_collection",
+        "Таксономия": "taxonomy"
+    };
+
+    const allowedNewKeys = Object.values(keyMap);
+
     const [sectionOrder, setSectionOrder] = useState(() => {
         const defaultOrder = [
             SECTION_IDS.GEOGRAPHICAL,
@@ -142,7 +151,22 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
         ];
 
         const savedOrder = localStorage.getItem('sectionOrder');
-        return savedOrder ? JSON.parse(savedOrder) : defaultOrder;
+        const newList = [];
+        if (savedOrder) {
+            const list = JSON.parse(savedOrder);
+            const seen = new Set();
+
+            for (const item of list) {
+                const mapped = keyMap[item] || item; // Replace if in keyMap
+                if (allowedNewKeys.includes(mapped) && !seen.has(mapped)) {
+                    newList.push(mapped);
+                    seen.add(mapped);
+                }
+            }
+        }
+        localStorage.setItem('pinnedOrder', JSON.stringify(newList));
+        const finaldOrder = localStorage.getItem('sectionOrder');
+        return finaldOrder ? JSON.parse(finaldOrder) : defaultOrder;
     });
 
     const moveSectionUp = (sectionName) => {

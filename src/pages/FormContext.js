@@ -88,14 +88,51 @@ export const FormProvider = ({children, initialState, isEditMode = false}) => {
         return defaultState;
     });
 
+    const keyMap = {
+        "Административное положение": "administrative",
+        "Географическое положение": "geographical",
+        "Сбор материала": "material_collection",
+        "Таксономия": "taxonomy"
+    };
+
+    const allowedNewKeys = Object.values(keyMap);
+
     const [pinnedSections, setPinnedSections] = useState(() => {
         const saved = localStorage.getItem('pinnedSections');
-        return saved ? JSON.parse(saved) : {};
+        let newData = {};
+        if (saved) {
+            const data = JSON.parse(saved);
+
+            for (const [oldKey, newKey] of Object.entries(keyMap)) {
+                if (Object.prototype.hasOwnProperty.call(data, newKey)) {
+                    newData[newKey] = data[newKey];
+                } else if (Object.prototype.hasOwnProperty.call(data, oldKey)) {
+                    newData[newKey] = data[oldKey];
+                }
+            }
+        }
+        localStorage.setItem('pinnedSections', JSON.stringify(newData));
+        const finalData = localStorage.getItem('pinnedSections');
+        return finalData ? JSON.parse(finalData) : {};
     });
 
     const [collapsedSections, setCollapsedSections] = useState(() => {
         const saved = localStorage.getItem('collapsedSections');
-        return saved ? JSON.parse(saved) : {};
+        let newData = {};
+        if (saved) {
+            const data = JSON.parse(saved);
+
+            for (const [oldKey, newKey] of Object.entries(keyMap)) {
+                if (Object.prototype.hasOwnProperty.call(data, newKey)) {
+                    newData[newKey] = data[newKey];
+                } else if (Object.prototype.hasOwnProperty.call(data, oldKey)) {
+                    newData[newKey] = data[oldKey];
+                }
+            }
+        }
+        localStorage.setItem('collapsedSections', JSON.stringify(newData));
+        const finalData = localStorage.getItem('collapsedSections');
+        return finalData ? JSON.parse(finalData) : {};
     });
 
     const resetForm = (keepPinned = true) => {

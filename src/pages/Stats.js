@@ -6,6 +6,7 @@ import { apiService } from "../api";
 
 const StatsPage = () => {
     const {t} = useTranslation('stats');
+    const {t: tApi} = useTranslation('api');
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -14,7 +15,7 @@ const StatsPage = () => {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                const data = await apiService.getGeneralStats();
+                const data = await apiService.getGeneralStats(tApi);
                 setStats(data);
             } catch (err) {
                 setError(err.message);
