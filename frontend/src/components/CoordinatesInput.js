@@ -204,6 +204,10 @@ export const CoordinatesInput = ({isDisabled}) => {
                 </select>
             </div>
 
+            <div className="form-group" id={"coordinates"}>
+
+
+
             {coordFormat === "grads" ? (
                 <div className="form-group">
                     <label htmlFor="grads-north">{t("formats.lat")} N°</label>
@@ -324,22 +328,23 @@ export const CoordinatesInput = ({isDisabled}) => {
                     </div>
                 </div>
             )}
-
-            <div className="form-group location-wrapper">
-                <button
-                    type="button"
-                    onClick={getLocationFromCoordinates}
-                    disabled={isLoading || disabled || isDisabled}
-                    className="location-pin-button"
-                    title={t("detect_location")}
-                >
-                    {isLoading ? (
-                        <span className="pulse-icon">✈️</span>
-                    ) : (
-                        <span className="pin-icon">✈️</span>
-                    )}
-                </button>
-                {error && <div className="location-error">{error}</div>}
+                <div className="location-wrapper">
+                    <p id={"find-location"}>Определить локацию</p>
+                    <button
+                        type="button"
+                        onClick={getLocationFromCoordinates}
+                        disabled={isLoading || disabled || isDisabled}
+                        className="location-pin-button"
+                        title={t("detect_location")}
+                    >
+                        {isLoading ? (
+                            <span className="pulse-icon">✈️</span>
+                        ) : (
+                            <span className="pin-icon">✈️</span>
+                        )}
+                    </button>
+                    {error && <div className="location-error">{error}</div>}
+                </div>
             </div>
         </>
     );

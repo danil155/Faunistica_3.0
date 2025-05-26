@@ -80,12 +80,13 @@ const EditRecordPage = () => {
             return defaultState;
         }
 
-        const beginDate = record.eve_YY
-            ? `${record.eve_YY}-${record.eve_MM ? String(record.eve_MM).padStart(2, '0') : '01'}-${record.eve_DD ? String(record.eve_DD).padStart(2, '0') : '01'}`
-            : '';
-        const endDate = record.eve_YY_end
-            ? `${record.eve_YY_end}-${record.eve_MM_end ? String(record.eve_MM_end).padStart(2, '0') : '01'}-${record.eve_DD_end ? String(record.eve_DD_end).padStart(2, '0') : '01'}`
-            : '';
+        const beginDate = '';
+        const endDate = '';
+
+        const hasBeginDay = record.eve_DD !== null && record.eve_DD !== undefined;
+        const hasBeginMonth = record.eve_MM !== null && record.eve_MM !== undefined;
+        const hasEndDay = record.eve_DD_end !== null && record.eve_DD_end !== undefined;
+        const hasEndMonth = record.eve_MM_end !== null && record.eve_MM_end !== undefined;
 
         const north = parseCoordinate(record.geo_nn_raw);
         const east = parseCoordinate(record.geo_ee_raw);
@@ -108,15 +109,15 @@ const EditRecordPage = () => {
             geo_origin: record.geo_origin || 'original',
             geo_REM: record.geo_REM || '',
             geo_uncert: record.geo_uncert || '',
-            begin_date: beginDate,
-            end_date: endDate,
+            begin_date: '',
+            end_date: '',
             begin_year: record.eve_YY || '',
-            begin_month: record.eve_MM || '',
-            begin_day: record.eve_DD || '',
+            begin_month: hasBeginMonth ? record.eve_MM : '',
+            begin_day: hasBeginDay ? record.eve_DD : '',
             end_year: record.eve_YY_end || '',
-            end_month: record.eve_MM_end || '',
-            end_day: record.eve_DD_end || '',
-            eve_day_def: record.eve_DD !== null,
+            end_month: hasEndMonth ? record.eve_MM_end : '',
+            end_day: hasEndDay ? record.eve_DD_end : '',
+            eve_day_def: hasBeginDay,
             biotope: record.eve_habitat || '',
             collector: record.abu_coll || '',
             measurement_units: 'Особи, шт.',
@@ -256,8 +257,8 @@ const EditRecordPage = () => {
 
     const handleSubmit = async (formData) => {
         try {
-            const north = safeCoordParse(formData.coordinate_north);
-            const east = safeCoordParse(formData.coordinate_east);
+            const north = safeCoordParse(formData.north);
+            const east = safeCoordParse(formData.east);
             const [specimenDetails, specimenCount] = specimenParse(formData.specimens);
 
             const updatedRecord = {
@@ -269,27 +270,29 @@ const EditRecordPage = () => {
                 adm_country: cleanValue(formData.country),
                 adm_region: cleanValue(formData.region),
                 adm_district: cleanValue(formData.district),
-                adm_loc: cleanValue(formData.gathering_place),
-                geo_nn_raw: cleanValue(formData.coordinate_north),
-                geo_ee_raw: cleanValue(formData.coordinate_east),
+                adm_loc: cleanValue(formData.place),
+                geo_nn: cleanValue(north),
+                geo_ee: cleanValue(east),
+                geo_nn_raw: cleanValue(formData.north),
+                geo_ee_raw: cleanValue(formData.east),
                 geo_origin: cleanValue(formData.geo_origin),
                 geo_REM: cleanValue(formData.geo_REM),
                 geo_uncert: cleanValue(formData.geo_uncert),
-                eve_YY: cleanValue(formData.eve_YY),
-                eve_YY_end: cleanValue(formData.eve_YY_end),
-                eve_MM: cleanValue(formData.eve_MM),
-                eve_MM_end: cleanValue(formData.eve_MM_end),
-                eve_DD: cleanValue(formData.eve_DD),
-                eve_DD_end: cleanValue(formData.eve_DD_end),
-                eve_day_def: cleanValue(formData.eve_DD !== null),
+                eve_YY: cleanValue(formData.begin_year),
+                eve_YY_end: cleanValue(formData.end_year),
+                eve_MM: cleanValue(formData.begin_month),
+                eve_MM_end: cleanValue(formData.end_month),
+                eve_DD: cleanValue(formData.begin_day),
+                eve_DD_end: cleanValue(formData.end_day),
+                eve_day_def: cleanValue(formData.end_day !== null),
                 eve_habitat: cleanValue(formData.biotope),
                 eve_effort: cleanValue(formData.selective_gain),
                 eve_REM: cleanValue(formData.eve_REM),
                 tax_fam: cleanValue(formData.family),
                 tax_gen: cleanValue(formData.genus),
                 tax_sp: cleanValue(formData.species),
-                tax_sp_def: !cleanValue(formData.tax_sp_def),
-                tax_nsp: cleanValue(formData.tax_nsp),
+                tax_sp_def: cleanValue(formData.is_defined_species),
+                tax_nsp: cleanValue(formData.is_in_wsc),
                 tax_REM: cleanValue(formData.taxonomic_notes),
                 type_status: cleanValue(formData.type_status)
             };

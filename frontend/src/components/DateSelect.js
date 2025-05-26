@@ -8,8 +8,12 @@ const DateSelect = ({disabled}) => {
     const {t} = useTranslation('dateSelect');
     const {formState, setFormState, pinnedSections} = useFormContext();
 
+    const initialPrecision = formState.eve_day_def ? 'exact' : 
+                           formState.begin_month ? 'month' : 
+                           'year';
+
     const [isInterval, setIsInterval] = useState(false);
-    const [precision, setPrecision] = useState('exact');
+    const [precision, setPrecision] = useState(initialPrecision);
 
     function resetForm() {
         setFormState(prev => ({

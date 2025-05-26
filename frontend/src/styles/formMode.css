@@ -137,7 +137,7 @@ a {
 
 .location-wrapper {
   position: relative;
-  display: inline-block;
+  display: flex;
   margin-top: 18px;
 }
 
@@ -170,7 +170,6 @@ a {
 .location-pin-button:hover {
   opacity: 1;
   visibility: visible;
-  margin-bottom: 12px;
 }
 
 .pulse-icon {
@@ -234,11 +233,6 @@ a {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   overflow: hidden;
-}
-
-.section:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
 }
 
 .section.pinned {
@@ -306,10 +300,15 @@ a {
 	width: auto;
 }
 
-.form-group label {
+.form-group label, #find-location {
   font-size: 14px;
   color: #555;
 }
+
+#coordinates {
+  width: 180px;
+}
+
 .form-group .text-input,
 .form-group textarea,
 .form-group select  {

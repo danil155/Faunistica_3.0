@@ -55,7 +55,7 @@
     row-gap: 2rem;
     column-gap: 2rem;
     max-width: 1400px;
-    padding: 100px;
+    padding: 20px;
     margin: 0  auto 10px auto ;
 }
 
@@ -108,7 +108,7 @@ img.full-width {
 
 @media (max-width: 1040px) {
     .instruction-content .section {
-        padding: 50px;
+        padding: 25px 15px;
     }
     .horizontal p {
         width: 100%;
