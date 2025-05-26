@@ -9,17 +9,17 @@ const api = axios.create({
 let refreshTokenPromise = null;
 
 const apiService = {
-    login: async (username, password, t) => {
+    login: async (username, password) => {
         try {
             const response = await api.post('/api/get_user', {username, password});
             return response.data;
         } catch (error) {
             if (error.response?.status === 401) {
-                throw new Error(t('errors.login.invalid_password'));
+                throw new Error('wrong_pass');
             } else if (error.response?.status === 404) {
-                throw new Error(t('errors.login.user_not_found'));
+                throw new Error('not_user');
             } else if (error.response?.status === 429) {
-                throw new Error(t('errors.login.too_many_attempts'));
+                throw new Error('many_attempts');
             }
             throw error;
         }

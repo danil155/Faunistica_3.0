@@ -136,7 +136,8 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
         "Административное положение": "administrative",
         "Географическое положение": "geographical",
         "Сбор материала": "material_collection",
-        "Таксономия": "taxonomy"
+        "Таксономия": "taxonomy",
+        "Добавление особей": "add_specimens"
     };
 
     const allowedNewKeys = Object.values(keyMap);
@@ -166,6 +167,14 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                         seen.add(mapped);
                     }
                 }
+
+                for (const key of allowedNewKeys) {
+                    if (!seen.has(key)) {
+                        newList.push(key);
+                        seen.add(key);
+                    }
+                }
+
                 localStorage.setItem('sectionOrder', JSON.stringify(newList));
                 return newList;
             }

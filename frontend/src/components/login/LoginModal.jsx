@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ReactComponent as QrCode } from '../../img/qr-code.svg';
 import { useNavigate } from 'react-router-dom';
 import "./LoginModal.css";
+import { apiService } from '../../api';
 
 const LoginModal = ({onClose, onLogin}) => {
     const {t} = useTranslation('loginModal');
@@ -19,20 +20,21 @@ const LoginModal = ({onClose, onLogin}) => {
         setError('');
 
         try {
-            const loginSuccess = await onLogin(username, password);
+            const loginSuccess = await apiService.login(username, password);
 
             if (loginSuccess) {
                 onClose();
                 navigate('/form');
+                window.location.reload();
             }
         } catch (err) {
             console.error('Login error: ', err);
 
-            if (err.message === 'Неверный пароль') {
+            if (err.message === "wrong_pass") {
                 setError(t("error.wrong_pass"));
-            } else if (err.message === 'Пользователь не найден') {
+            } else if (err.message === "not_user") {
                 setError(t("error.no_user"))
-            } else if (err.message === 'Количество попыток превышено') {
+            } else if (err.message === "many_attempts") {
                 setIsTooManyRequests(true);
                 setError(t("error.request_limit"));
                 setTimeout(() => {
