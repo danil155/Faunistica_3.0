@@ -55,7 +55,7 @@ with open('requirements.txt', 'r', encoding='utf-8') as file:
 
 for lib_name in lib_names:
     lib_logger = logging.getLogger(lib_name)
-    if lib_name == 'aiogram':
+    if 'aiogram' in lib_name:
         lib_logger.setLevel(logging.CRITICAL)
     else:
         lib_logger.setLevel(logging.WARNING)
