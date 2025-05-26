@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+
+echo "Running init.sh script to setup user and grant privileges..."
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" <<-EOSQL
+DO
+\$do\$
+BEGIN
+    IF NOT EXISTS (
+        SELECT FROM pg_catalog.pg_roles WHERE rolname = '${DB_USER}'
+    ) THEN
+        CREATE ROLE "${DB_USER}" LOGIN PASSWORD '${DB_PASSWORD}';
+    END IF;
+END
+\$do\$;
+EOSQL
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname="$DB_NAME" <<-EOSQL
+
+-- Grant all priveleges
+GRANT ALL PRIVILEGES ON DATABASE "${DB_NAME}" TO "${DB_USER}";
+GRANT USAGE ON SCHEMA public TO "${DB_USER}";
+GRANT CREATE ON SCHEMA public TO "${DB_USER}";
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO "${DB_USER}";
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO "${DB_USER}";
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA public TO "${DB_USER}";
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO "${DB_USER}";
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO "${DB_USER}";
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON FUNCTIONS TO "${DB_USER}";
+EOSQL
+
+echo "User ${DB_USER} and privileges on database ${DB_NAME} are ready."
+
