@@ -1,5 +1,5 @@
 fastapi==0.115.12
-slowap==0.1.9
+slowapi==0.1.9
 geopy==2.4.1
 pygbif==0.6.5
 sqlalchemy==2.0.41
