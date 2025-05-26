@@ -68,24 +68,24 @@ def check_pass(user_pass, db_hash):
 
 
 def derive_user_key(user_id: int) -> bytes:  
-	hash_input = f"{ENCRYPT_SECRET}-{user_id}".encode()  
-	key = ...
-	return ...(key)
+    hash_input = f"{ENCRYPT_SECRET}-{user_id}".encode()  
+    key = ...
+    return ...(key)
 
 
 def encrypt_id(some_id: int, user_id: int) -> str:  
-	key = derive_user_key(user_id)  
-	# *Ваш метод шифрования*  
-	return token.decode()
+    key = derive_user_key(user_id)  
+    # *Ваш метод шифрования*  
+    return token.decode()
 
 
 def decrypt_id(token: str, user_id: int) -> int | None:  
-	key = derive_user_key(user_id)  
-	# *Ваш метод дешифрования*  
-	try:   
-		return int(decrypted.decode())  
-	except InvalidToken:  
-		return None
+    key = derive_user_key(user_id)  
+    # *Ваш метод дешифрования*  
+    try:   
+        return int(decrypted.decode())  
+    except InvalidToken:  
+	return None
 ```
 > Подробнее о JWT токенах и алгоритмах можно прочитать [здесь](https://pyjwt.readthedocs.io/en/latest/usage.html)
 ---
