@@ -68,7 +68,6 @@ def check_pass(user_pass, db_hash):
 
 
 def derive_user_key(user_id: int) -> bytes:  
-    hash_input = f"{ENCRYPT_SECRET}-{user_id}".encode()  
     key = ...
     return ...(key)
 
