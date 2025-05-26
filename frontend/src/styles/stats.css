@@ -1,0 +1,88 @@
+.stats-container {
+    margin: 25px auto;
+    padding: 0 25px;
+    max-width: 100vw;
+}
+
+#stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content:center;
+}
+
+.info-container {
+    max-width: 600px;
+    min-width: 300px;
+    margin: 10px;
+    min-height: 100px;
+    background-color: white;
+    border-radius: 8px;
+    border: 15px solid white;
+}
+
+.info-container h3 {
+    font-size: 64px;
+}
+
+.progress-bar {
+    appearance: none;
+    width: 100%;
+    height: 25px;
+    margin-top: 15px;
+    background-color: white;
+    position: relative;
+}
+
+.progress-bar::-webkit-progress-bar {
+    background-color: white;
+    border: 1px solid grey;
+    border-radius: 8px;
+}
+
+.progress-bar::-webkit-progress-value {
+    background-color: #2196F3;
+    border-radius: 6px;
+}
+
+.progress-bar::after {
+    content: attr(value) '%';
+    position: absolute;
+    top: 13%;
+    width: 50px;
+    margin-left: 10px;
+    color: white;
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 0.9em;
+  }
+  
+.stats-table tr:not(:last-child) {
+    text-align: left;
+    border-bottom: 1px solid #dddddd;
+}
+
+.stats-table th,
+.stats-table td {
+    padding: 12px 15px;
+    min-width: 100px;
+}
+
+.stats-table th:not(:last-child),
+.stats-table td:not(:last-child) {
+    border-right: 1px solid #dddddd;
+}
+
+@media (max-width: 561px) {
+    .info-container div svg {
+        max-width: 100%;
+    }
+
+    .stats-table {
+        display: block;
+        overflow-x: auto;
+    }
+}

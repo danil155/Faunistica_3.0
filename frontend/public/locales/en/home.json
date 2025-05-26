@@ -1,0 +1,32 @@
+{
+    "hero": {
+        "title": "Become our volunteer!",
+        "participant": "Hurray! You're a participant!",
+        "participate_button": "Participate",
+        "spider_alt": "Spider"
+    },
+    "mission": {
+        "title": "Help digitize scientific research about the fauna of Perm Krai",
+        "question": "What do we do?"
+    },
+    "activities": {
+        "platform": "Development of data digitization platform",
+        "platform_icon_alt": "people icon",
+        "database": "Collection of database on discovered species",
+        "database_icon_alt": "database icon",
+        "access": "Providing free access to the obtained data",
+        "access_icon_alt": "community icon"
+    },
+    "volunteer": {
+        "title": "Volunteer role",
+        "description": "We need volunteers' help in recognizing and structuring information about spider finds from proposed scientific articles: who, where, when and who found them.",
+        "learn_more": "Learn more",
+        "spider_alt": "volunteer spider"
+    },
+    "how_to_help": {
+        "title": "How can you help?",
+        "step1": "Register via our <1>telegram bot</1>",
+        "step2": "Carefully study the <1>instructions</1>",
+        "step3": "Fill out your first <1>form</1>"
+    }
+}

@@ -1,0 +1,59 @@
+{
+    "edit": {
+        "title": "Editing a record",
+        "message": "Are you sure you want to edit this entry?",
+        "success": "The entry has been successfully updated"
+    },
+
+    "del": {
+        "title": "Deleting a record",
+        "message": "Are you sure you want to delete this record? This action cannot be cancelled.",
+        "success": "The record was successfully deleted"
+    },
+
+    "user": {
+        "no_username": "Unspecified",
+        "pfp": "User's profile picture",
+        "loading": "Loading data"
+    },
+
+    "summary": {
+        "title": "Basic statistics",
+        "publ_processed": "Publications processed",
+        "publ_correct": "Correct entries",
+        "check_coef": "Verification rate",
+        "species_found": "Species found",
+        "MVSpecies": "Most frequent species"
+    },
+
+    "table": {
+        "title": "Latest entries",
+        "displayed": "Displayed",
+        "out_of": "out of",
+        "records": "entries",
+        "cols": {
+            "date": "Date and time",
+            "author": "Author",
+            "species": "Species",
+            "count": "Count",
+            "location": "Loaction",
+            "collection_date": "Collection date",
+            "actions": "Actions"
+        },
+        "no_records": "No records available"
+    },
+
+    "download": {
+        "downloading": "Downloading...",
+        "button": "Download all entries",
+        "success": "The file has been successfully downloaded!"
+    },
+
+    "errors": {
+        "edit": "Error while saving",
+        "del": "An error occurred",
+        "user": "An error occurred while loading data",
+        "download": "Error loading records",
+        "MVSpecies": "No data"
+    }
+}

@@ -1,0 +1,411 @@
+/* Общие стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@font-face {
+    font-family: Onest;
+    src: url(../fonts/onest.ttf);
+}
+
+body {
+    font-family: Onest, serif;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+h3 {
+    font-weight: 500;
+}
+
+main {
+    width: inherit;
+}
+
+#root {
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--main-bg-color);
+}
+
+.App {
+    width: 100%;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+}
+
+/* Контейнер */
+.main-container {
+    margin: 0 auto; /* Центрирование */
+}
+
+/* Hero Section */
+.hero {
+    background-attachment: fixed;
+    position: relative;
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+}
+
+.hero-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.spider-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.participant {
+    color: white;
+}
+
+.hero-text {
+    position: absolute;
+    padding: 10px 20px;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    background-color: rgba(207, 174, 165, 0.213);
+    backdrop-filter: blur(8px);
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px;
+}
+
+.hero-text h1 {
+    font-size: 30px;
+    margin-bottom: 10px;
+    font-weight: 550;
+}
+
+.join-button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: inline-block;
+    width: fit-content;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.hero .join-button {
+    margin-bottom: 10px;
+}
+
+.join-button:hover {
+    background-color: #45a049;
+}
+
+.add-data {
+    text-align: center;
+}
+
+.add-button:hover, .submit-button:hover {
+    background-color: #45a049;
+}
+
+.change-publ-btn {
+    max-width: 170px;
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    background-color: var(--main-bg-color);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Попап */
+.popup {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    z-index: 1000;
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.popup.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.popup-content label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+.popup-content input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+
+.close-button {
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+}
+
+.content-section {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeIn 0.5s forwards;
+}
+
+.content-section.active {
+    display: block;
+}
+
+/* Анимация */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Поле ввода текста */
+.text-area {
+    width: 100%;
+    min-height: 300px;
+    max-height: 800px;
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.text-area:focus {
+    border-color: #4CAF50;
+    box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.form-element {
+    resize: none;
+    font-size: 14px;
+    padding: 7px;
+    max-height: 36px;
+
+}
+
+.form-row{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    gap: 1rem;
+}
+
+/* Форма */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.submit {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+.what-we-do {
+    text-align: center;
+    padding: 20px;
+}
+
+.about-project {
+    display:flex;
+    justify-content: space-around;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+.proj-step {
+    text-align: center;
+    width: 350px;
+}
+
+#volunteer-spider {
+    width: 300px;
+}
+
+#volunteer-info {
+    display: flex;
+    justify-content:flex-start;
+    gap: 60px;
+    padding: 20px 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+#volunteer-info-container {
+    background-color: #e8f5e9;
+}
+
+.what-we-do span {
+    font-size: 50px;
+    font-weight: bold;
+}
+
+.what-we-do p {
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 16px;
+}
+
+#volunteer-info-text {
+    max-width: 500px;
+    margin: auto 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+}
+
+header a{
+    text-decoration: none;
+    padding: 3px 10px;
+    margin: 10px;
+}
+
+.text-container {
+    width: 100%;
+    padding: 0 50px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+.toggle-button {
+    margin: 0 10px;
+    background-color: var(--main-bg-color);
+    color: white;
+    height: 100%;
+}
+
+.publ-err-btn {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.button_submit_text:disabled {
+    background-color: #8eb98f;
+}
+
+.button_submit_text {
+    background-color: var(--main-bg-color);
+    color: white;
+    margin-bottom: 20px;
+}
+
+.content {
+    max-width: 1440px;
+    margin-bottom: 40px;
+}
+
+.article-card {
+    display: flex;
+    justify-content: flex-start;
+    gap: 15px
+}
+
+.form-mode-container {
+    padding: 0 50px;
+}
+
+.feedback {
+    margin: 20px 50px;
+    padding: 10px 50px;
+    background-color: white;
+    border-radius: 15px;
+}
+
+.feedback form {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.feedback h1 {
+    border-bottom:  1px solid #eee;
+}
+
+.feedback .submit-button {
+    width: 200px;
+}
+
+.coord {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.coord.sec {
+    width: 70px;
+}

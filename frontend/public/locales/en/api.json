@@ -1,0 +1,38 @@
+{
+  "errors": {
+    "common": {
+      "server_unavailable": "Server unavailable. Please try again later.",
+      "server_error": "Server error occurred. Please try again later.",
+      "request_error": "An error occurred while processing your request"
+    },
+    "login": {
+      "invalid_password": "Invalid password",
+      "user_not_found": "User not found",
+      "too_many_attempts": "Too many attempts. Please try again later."
+    },
+    "stats": {
+      "general_error": "Error getting general statistics",
+      "request_error": "Error requesting statistics"
+    },
+    "publication": {
+      "not_filled": "Current publication is not filled yet",
+      "not_available": "No publications available",
+      "general_error": "Failed to get publication data"
+    },
+    "support": {
+      "request_error": "An error occurred while sending your request",
+      "general_error": "Failed to send support request"
+    },
+    "profile": {
+      "general_error": "Error getting profile",
+      "request_error": "Error requesting profile data"
+    },
+    "records": {
+      "wait_before_download": "Please wait a minute before next download",
+      "not_found": "Records not found",
+      "invalid_token": "Invalid record token. The link may be expired or corrupted.",
+      "not_found_or_no_access": "Record not found or you don't have access",
+      "connection_error": "Failed to get record data. Check your network connection."
+    }
+  }
+}

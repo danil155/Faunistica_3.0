@@ -1,0 +1,254 @@
+nav {
+    background-color: #4CAF50;
+    position: relative;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.logo {
+    font-weight: 650;
+    font-size: 24px;
+    color: white;
+    text-decoration: none;
+    z-index: 1001;
+    white-space: nowrap;
+}
+
+.nav-links {
+    display: flex;
+    margin-left: 50px;
+    transition: all 0.5s ease;
+}
+
+.nav-links.open {
+    max-height: 300px;
+    padding: 15px 0;
+}
+
+.nav-list {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: auto;
+    margin-right: 50px;
+}
+
+.nav-list li {
+    margin-right: 20px;
+}
+
+.nav-list a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 5px 0;
+}
+
+.nav-list a:hover {
+    text-decoration: underline;
+}
+
+.user-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 15px;
+    z-index: 1001;
+}
+
+.auth-buttons a,
+.user-menu a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+}
+
+/* Burger menu styles */
+.burger-menu {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    z-index: 1001;
+}
+
+.burger-line {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4px 0;
+    transition: all 0.5s ease;
+}
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-left: auto;
+}
+
+.language-switcher {
+  display: flex;
+  gap: 5px;
+}
+
+.language-switcher button {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.language-switcher button:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.language-switcher button.active {
+  background: rgba(255,255,255,0.3);
+  font-weight: bold;
+}
+
+.auth-button {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.auth-button:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+
+/* Mobile styles */
+@media (max-width: 950px) {
+    nav {
+        margin-bottom: 30px;
+    }
+
+    .nav-content {
+        flex-wrap: wrap;
+        padding: 5px 25px;
+        height: 15px;
+    }
+
+    .nav-content.open {
+        margin-bottom: 305px;
+        transition: margin-bottom 0.5s ease;
+    }
+
+    .burger-menu {
+        display: block;
+        order: 1;
+    }
+
+    .logo {
+        order: 0;
+        white-space: nowrap;
+        margin-right: auto;
+    }
+
+    .nav-links {
+        position: absolute;
+        margin-left: 0;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: #4CAF50;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+        max-height: 0;
+        overflow: hidden;
+        z-index: 1000;
+        width: 100%;
+        transition: max-height 0.5s ease, padding 0.5s ease;
+    }
+
+    .nav-links.open {
+        max-height: 335px;
+        padding: 20px 0;
+    }
+
+    .nav-list {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        margin: 10px 0;
+    }
+
+    .nav-list li {
+        margin: 10px 0;
+    }
+
+    .mobile-auth-button {
+        display: block;
+        width: 80%;
+        margin: 10px auto;
+        padding: 10px;
+        background-color: #3a8b3f;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .mobile-auth-button:hover {
+        background-color: #2e7032;
+        text-decoration: none;
+    }
+
+    .burger-line.open:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .burger-line.open:nth-child(2) {
+        opacity: 0;
+    }
+
+    .burger-line.open:nth-child(3) {
+        transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    .user-controls {
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+        padding: 0 20px;
+    }
+  
+    .language-switcher {
+        justify-content: center;
+        width: 100%;
+    }
+      
+    .auth-button {
+        width: 100%;
+        padding: 12px;
+    }
+}
+
+@media (min-width: 951px) {
+    .nav-list li {
+        display: flex;
+        align-items: center;
+    }
+
+}

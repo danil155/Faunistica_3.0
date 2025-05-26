@@ -1,0 +1,32 @@
+.footer {
+    background-color: #333;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.footer .social-media a {
+    color: white;
+    display: flex;
+    text-decoration: none;
+    gap: 3px;
+}
+
+.social-media {
+    display: flex;
+    justify-content: center;
+}
+
+.footer .social-media a:hover,
+.footer .policies a:hover {
+    text-decoration: underline;
+}
+
+.footer .social-media a {
+    margin-right: 10px;
+}
+
+.social-media-logo {
+    width: 25px;
+}
+

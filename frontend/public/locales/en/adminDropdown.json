@@ -1,0 +1,10 @@
+{
+    "country": "Country",
+    "region": "Region",
+    "district": "District",
+    "placehold_cou": "Start typing country...",
+    "placehold_reg": "Start typing region...",
+    "placehold_dis": "Start typing district...",
+    "undefined": "Not defined",
+    "input": "Input"
+}

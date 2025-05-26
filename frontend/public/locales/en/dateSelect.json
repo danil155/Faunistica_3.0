@@ -1,0 +1,17 @@
+{
+    "locale": "en-US",
+    "type": "Date type:",
+    "single": "Singular date",
+    "interval": "Date interval",
+    "precision": "Precision:",
+    "exact": "Exact date",
+    "up_to_month": "Date up to a month",
+    "up_to_year": "Date up to a year",
+    "date": "Date:",
+    "month": "Month:",
+    "select_month": "Select month",
+    "year": "Year:",
+    "end_date": "End date:",
+    "end_month": "End month:",
+    "end_year": "End year:"
+}

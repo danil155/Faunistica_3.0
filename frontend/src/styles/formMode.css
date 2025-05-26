@@ -1,0 +1,587 @@
+:root {
+  --main-bg-color: #4CAF50;
+  --main-blue-color: #2196F3;
+}
+
+.form-mode-container {
+  max-width: 100vw;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+}
+
+.article-card {
+  margin-bottom: 20px;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+.article-card img {
+  height: fit-content;
+  width: 150px;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+h3, h4 {
+  color: #2c3e50;
+  margin: 10px;
+  font-size: 16px;
+}
+
+p {
+  color: #7f8c8d;
+  margin: 10px 0;
+}
+
+/* Кнопки */
+button, .publ-error-btn-left {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 15px;
+  font-size: 14px;
+}
+
+a {
+  color: var(--main-blue-color);
+  text-decoration: none;
+}
+
+.collapse-toggle, .switch-mode-button, .submit-button, .publ-error-btn-left {
+  background-color: var(--main-bg-color);
+  transition: transform 0.3s ease;
+  color: white;
+}
+
+.collapse-toggle.collapsed {
+  transform: rotate(180deg);
+}
+
+
+.toggle-button:hover, .switch-mode-button:hover, .publ-error-btn-left:hover {
+  background-color: var(--main-blue-color);
+  text-decoration: underline;
+}
+
+.reset-button {
+  background-color: white;
+  border: 1px solid #ddd;
+}
+
+.reset-button.soft-reset {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.reset-button.soft-reset:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.switch-mode-button {
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.switch-mode-button p {
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.reset-button.hard-reset {
+  color: #c0392b;
+  border-color: #c0392b;
+}
+
+.reset-button.hard-reset:hover {
+  background-color: #c0392b;
+  color: white;
+}
+
+.location-button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.location-button:hover {
+    background-color: #45a049;
+}
+
+.location-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.location-error {
+    color: #d32f2f;
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+.location-wrapper {
+  position: relative;
+  display: inline-block;
+  margin-top: 18px;
+}
+
+.location-pin-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  position: relative;
+  color: #4CAF50;
+}
+
+.location-pin-button:hover {
+  background-color: rgba(76, 175, 80, 0.1);
+}
+
+.location-pin-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  color: #cccccc;
+}
+
+.location-pin-button:hover {
+  opacity: 1;
+  visibility: visible;
+  margin-bottom: 12px;
+}
+
+.pulse-icon {
+  animation: pulse 1.5s infinite ease-in-out;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.location-pin-button::after {
+  display: none;
+}
+
+.location-pin-button:hover::after {
+  opacity: 1;
+  visibility: visible;
+}
+
+.move-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+	margin-right: 5px;
+}
+
+.move-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.move-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Форма */
+.specimen-form {
+  max-width: 90%;
+  margin-left: 5%;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.section, .form-actions {
+  background-color: white;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.section:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2);
+}
+
+.section.pinned {
+  border-left: 4px solid #27ae60;
+  background-color: #f1f8fe;
+}
+
+.section.pinned label{
+  color: #7f8c8d;
+}
+.section.pinned input {
+  color: #aaa;
+}
+
+.section-header {
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.pin-toggle {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+.pin-toggle input {
+  margin: 0;
+}
+
+.pin-toggle:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s ease;
+}
+
+/* Сетка формы */
+.form-grid {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  column-gap: 15px;
+  row-gap: 30px;
+
+}
+
+.form-group {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 5px;
+  transition:
+          opacity 0.3s ease 0.1s,
+          transform 0.3s ease 0.1s;
+}
+
+.telegram-login-modal form .form-group {
+	width: auto;
+}
+
+.form-group label {
+  font-size: 14px;
+  color: #555;
+}
+.form-group .text-input,
+.form-group textarea,
+.form-group select  {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.form-group textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Действия формы */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #eee;
+}
+
+.reset-buttons {
+  display: flex;
+  margin-left: auto;
+  gap: 10px;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition:
+          opacity 0.3s ease,
+          transform 0.3s ease;
+}
+
+.modal-overlay {
+  transition: background-color 0.3s ease;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+}
+
+.confirm-button {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #bdc3c7;
+  color: #333;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    justify-content: center;
+  }
+  .form-group {
+    width: min(100%, 400px);
+  }
+  
+  
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 15px;
+  }
+  
+  .reset-buttons {
+    width: 100%;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .reset-buttons button {
+    width: 100%;
+  }
+  
+  .submit-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .form-mode-container header h3 {
+    max-width: 130px;
+  }
+	
+	.collapse-toggle {
+    padding: 8px 10px;
+    font-size: 12px;
+    margin-left: 0;
+  }
+
+  .section-controls {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .section-title {
+    flex-wrap: wrap;
+  }
+
+  .section-buttons {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+}
+
+/* Стили для сворачиваемых секций */
+.section-header.clickable {
+  cursor: pointer;
+  padding: 15px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+
+.section-header.clickable:hover {
+  background-color: #e9e9e9;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.section-controls h4 {
+  margin: 0;
+  flex-grow: 1;
+}
+
+.section-buttons {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.collapse-toggle {
+  margin-left: 10px;
+}
+
+.pin-status {
+  font-size: 0.8em;
+  color: #666;
+  font-style: italic;
+}
+
+.section-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 5px;
+}
+
+.collapse-button:hover {
+  text-decoration: underline;
+}
+
+.section-content {
+  overflow: hidden;
+  transition:
+          max-height 0.4s ease-in-out,
+          opacity 0.3s ease,
+          padding 0.3s ease;
+  max-height: 2000px;
+  opacity: 1;
+  padding: 15px;
+  margin: 0;
+  border-radius: 0 0 6px 6px;
+}
+
+.section-collapsed .section-content {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.section-expanded .section-content {
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.section-header.collapsed {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.coord {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  flex: 1;
+  min-width: 0;
+  margin: 0 2px;
+  background-color: rgba(0, 0, 0, 0);
+}
+
+/* Контейнер для строк с полями ввода */
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Отступы между элементами */
+  width: 100%;
+}
+
+.collapsed .form-group {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.form-grid {
+  display: flex;
+  padding: 15px 0;
+}
+
+/* Анимация для секций */
+.section-header + .form-grid {
+  overflow: hidden;
+  transition:
+          max-height 0.4s ease-in-out,
+          opacity 0.3s ease,
+          padding 0.3s ease;
+  max-height: 1500px;
+  opacity: 1;
+}
+
+.section-header.collapsed + .form-grid {
+  max-height: 0;
+  opacity: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.section-header.collapsed + .form-grid .form-group {
+  opacity: 0;
+  transform: translateY(-10px);
+}

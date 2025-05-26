@@ -1,0 +1,31 @@
+{
+  "title": "Feedback Form",
+  "success": {
+    "message": "Your message has been sent successfully! Please wait for the administrator/project organizer to contact you."
+  },
+  "errors": {
+    "invalid_telegram": "Please enter a valid Telegram ID (e.g., @username or t.me/username)",
+    "required_fields": "Please fill in all required fields!",
+    "submission_error": "An error occurred while submitting"
+  },
+  "form": {
+    "telegram_label": "Your Telegram link:",
+    "telegram_placeholder": "@username or t.me/username",
+    "username_label": "Your nickname in the bot (optional)",
+    "issue_label": "What issue are you experiencing?",
+    "issue_types": {
+      "authorisation-website": "Website authorization issues",
+      "authorisation-tg": "Bot authorization issues",
+      "registration": "Bot registration issues",
+      "get-publication": "Problems getting publications",
+      "autofill": "Autofill problems",
+      "fill-by-hand": "Manual form filling issues",
+      "confirmation": "Form submission problems",
+      "other": "Other"
+    },
+    "problem_label": "Describe your problem here:",
+    "problem_placeholder": "Enter your problem here...",
+    "submitting": "Submitting...",
+    "submit_button": "Report Problem"
+  }
+}

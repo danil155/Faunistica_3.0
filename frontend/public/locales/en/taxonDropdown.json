@@ -1,0 +1,10 @@
+{
+    "family": "Family",
+    "genus": "Genus",
+    "species": "Species",
+    "placehold_fam": "Start typing family...",
+    "placehold_gen": "Start typing genus...",
+    "placehold_sp": "Start typing species...",
+    "undefined": "Not defined",
+    "input": "Input"
+}

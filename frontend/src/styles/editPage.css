@@ -1,0 +1,23 @@
+.edit-record-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.form-mode-container {
+  padding: 0;
+}
+
+.cancel-button {
+  background-color: #f0f0f0;
+  color: #333;
+  margin-left: auto;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button:hover {
+  background-color: #e0e0e0;
+}

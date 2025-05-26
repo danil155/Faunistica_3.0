@@ -1,0 +1,24 @@
+{
+  "errors": {
+    "load_record": "Ошибка загрузки записи: {{error}}",
+    "save_failed": "Не удалось сохранить изменения",
+    "unknown_code": "Неизвестный код особи: {{code}}",
+    "invalid_coordinate": "Некорректный формат координат: {{coord}}"
+  },
+  "success": {
+    "saved": "Изменения успешно сохранены!"
+  },
+  "status": {
+    "loading": "Загрузка записи...",
+    "preparing_form": "Подготовка формы..."
+  },
+  "specimen_codes": {
+    "male_adult": "mmm",
+    "female_adult": "fff",
+    "male_juvenile": "ssm",
+    "female_juvenile": "ssf",
+    "undefined_adult": "adu",
+    "undefined_juvenile": "juv"
+  },
+  "measurement_units": "Особи, шт."
+}
