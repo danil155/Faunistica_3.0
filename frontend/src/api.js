@@ -44,9 +44,18 @@ const apiService = {
         return response.data;
     },
 
-    insertRecord: async (recordData) => {
-        const response = await api.post('/api/insert_record', recordData);
-        return response.data;
+    insertRecord: async (recordData, t) => {
+        try {
+            const response = await api.post('/api/insert_record', recordData);
+            return response.data;
+        } catch (error) {
+            if (error.response?.status === 422) {
+                throw new Error(error);
+            } else if (error.response?.status === 500) {
+                throw new Error(t("errors.records.server_error"))
+            }
+        }
+        
     },
 
     getGeneralStats: async (t) => {

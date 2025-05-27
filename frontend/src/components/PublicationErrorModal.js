@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 
 const PublicationErrorModal = ({onRetry}) => {
-    const {t} = useTranslation('PublicationError');
+    const {t} = useTranslation('publicationError');
     const [error, setError] = React.useState(null);
 
     const handleRetry = () => {

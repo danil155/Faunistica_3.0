@@ -216,6 +216,20 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
             return;
         }
 
+        const format = formState.coordinate_format
+        let north = ''
+        let east = ''
+        if (format == "grads") {
+            north = formState.grads_north + '°';
+            east = formState.grads_north + '°';
+        } else if (format == "mins") {
+            north = formState.grads_north + '°' + formState.mins_north + "'";
+            east = formState.grads_east + '°' + formState.mins_east + "'";
+        } else if (format == "secs") {
+            north = formState.grads_north + '°' + formState.mins_north + "'" + formState.secs_north + '"';
+            east = formState.grads_east + '°' + formState.mins_east + "'" + formState.secs_east + '"';
+        }
+
         try {
             const recordData = {
                 abu_ind_rem: formState.abu_ind_rem,
@@ -227,14 +241,14 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                 collector: formState.collector,
                 country: formState.country,
                 district: formState.district,
-                east: formState.coordinate_east || formState.grads_east + (formState.grads_east && '°'),
+                east: east,
                 end_year: formState.end_year || (parseInt(formState.end_date.split('-')[0]) || null),
                 end_month: formState.end_month || (parseInt(formState.end_date.split('-')[1]) || null),
                 end_day: formState.end_day || (parseInt(formState.end_date.split('-')[2]) || null),
                 eve_REM: formState.eve_REM,
                 family: formState.family,
                 genus: formState.genus,
-                geo_origin: formState.geo_origin === 0 ? 'original' : formState.geo_origin,
+                geo_origin: formState.geo_origin ? formState.geo_origin : 'original',
                 geo_REM: formState.geo_REM,
                 geo_uncert: parseFloat(formState.geo_uncert),
                 is_defined_species: !formState.tax_sp_def,
@@ -242,7 +256,7 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                 is_new_species: formState.is_new_species,
                 matherial_notes: formState.matherial_notes,
                 measurement_units: formState.measurement_units,
-                north: formState.coordinate_north || formState.grads_north + (formState.grads_north && '°'),
+                north: north,
                 place: formState.gathering_place,
                 place_notes: formState.place_notes,
                 region: formState.region,
@@ -440,7 +454,7 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                             <AdminDropdown isDisabled={pinnedSections[sectionName] || false}/>
 
                                             <div className="form-group">
-                                                <label htmlFor="gathering_place">Место сбора:</label>
+                                                <label htmlFor="gathering_place">{t("adm.gathering_place")}</label>
                                                 <input
                                                     disabled={pinnedSections[sectionName] || false}
                                                     id="gathering_place"

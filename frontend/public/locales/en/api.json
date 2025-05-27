@@ -32,7 +32,8 @@
       "not_found": "Records not found",
       "invalid_token": "Invalid record token. The link may be expired or corrupted.",
       "not_found_or_no_access": "Record not found or you don't have access",
-      "connection_error": "Failed to get record data. Check your network connection."
+      "connection_error": "Failed to get record data. Check your network connection.",
+      "server_error": "It seems that there were some issues on the server. Report to administator of the project."
     }
   }
 }

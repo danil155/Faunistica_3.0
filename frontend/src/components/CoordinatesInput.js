@@ -6,15 +6,17 @@ import { apiService } from "../api";
 export const CoordinatesInput = ({isDisabled}) => {
     const {t} = useTranslation('coordinateInput');
     const {formState, setFormState} = useFormContext();
-    const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    const coordFormat = formState.coordinate_format ?? "grads";
+
     let disabled = formState.geo_origin === "nothing";
 
-    const clearCoordFields = () => {
-        setFormState({
-            ...formState,
+    const clearCoordFields = (newFormat) => {
+        setFormState(prev => ({
+            ...prev,
+            coordinate_format: newFormat ?? prev.coordinate_format,
             coordinate_north: '',
             coordinate_east: '',
             grads_north: '',
@@ -23,7 +25,7 @@ export const CoordinatesInput = ({isDisabled}) => {
             mins_east: '',
             secs_north: '',
             secs_east: ''
-        });
+        }));
     };
 
     const handleInputChange = (e) => {
@@ -191,10 +193,7 @@ export const CoordinatesInput = ({isDisabled}) => {
                 <select
                     id="coord-format"
                     name="coordinate_format"
-                    onChange={(e) => {
-                        setCoordFormat(e.target.value);
-                        clearCoordFields();
-                    }}
+                    onChange={(e) => clearCoordFields(e.target.value)}
                     value={coordFormat}
                     disabled={disabled || isDisabled}
                 >
@@ -329,7 +328,7 @@ export const CoordinatesInput = ({isDisabled}) => {
                 </div>
             )}
                 <div className="location-wrapper">
-                    <p id={"find-location"}>Определить локацию</p>
+                    <p id={"find-location"}>{t("detect_location")}</p>
                     <button
                         type="button"
                         onClick={getLocationFromCoordinates}
