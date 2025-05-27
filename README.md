@@ -96,6 +96,9 @@ def decrypt_id(token: str, user_id: int) -> int | None:
 > Если нет, то [здесь](https://docs.docker.com/compose/install/) ссылка на скачивание.
 
 В корневой папке backend через терминал прописываем:
+
+`chmod +x wait-for-postgres.sh`
+`init.sh`
 `docker-compose up -d --build`
 
 ---
