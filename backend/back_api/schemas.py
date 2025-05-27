@@ -39,18 +39,18 @@ class InsertRecordsRequest(BaseModel):
     adm_verbatim: Optional[bool] = None
     begin_day: Optional[int] = None
     begin_month: Optional[int] = None
-    begin_year: Optional[int] = None
+    begin_year: int
     biotope: Optional[str] = None
-    collector: Optional[str] = None
-    country: Optional[str] = None
+    collector: str
+    country: str
     district: Optional[str] = None
     east: Optional[str] = None
     end_day: Optional[int] = None
     end_month: Optional[int] = None
     end_year: Optional[int] = None
     eve_REM: Optional[str] = None
-    family: Optional[str] = None
-    genus: Optional[str] = None
+    family: str
+    genus: str
     geo_origin: Optional[str] = None
     geo_REM: Optional[str] = None
     geo_uncert: Optional[float] = None
@@ -61,10 +61,10 @@ class InsertRecordsRequest(BaseModel):
     north: Optional[str] = None
     place: Optional[str] = None
     place_notes: Optional[str] = None
-    region: Optional[str] = None
+    region: str
     selective_gain: Optional[str] = None
     species: Optional[str] = None
-    specimens: Optional[Dict[str, Optional[float]]] = None
+    specimens: Dict[str, Optional[float]]
     taxonomic_notes: Optional[str] = None
     type_status: Optional[str] = None
 
@@ -183,7 +183,7 @@ class GetRecordResponse(BaseModel):
     tax_nsp: Optional[bool] = None
     type_status: Optional[str] = None
     tax_REM: Optional[str] = None
-    abu: Optional[int] = None
+    abu: Optional[float] = None
     abu_details: Optional[str] = None
     abu_ind_rem: Optional[str] = None
     geo_uncert: Optional[float] = None
@@ -195,31 +195,31 @@ class GetRecordResponse(BaseModel):
 class EditRecordRequest(BaseModel):
     hash: str
     type: Optional[str] = None
-    adm_country: Optional[str] = None
-    adm_region: Optional[str] = None
+    adm_country: str
+    adm_region: str
     adm_district: Optional[str] = None
     adm_loc: Optional[str] = None
     geo_nn_raw: Optional[str] = None
     geo_ee_raw: Optional[str] = None
     geo_origin: Optional[str] = None
     geo_REM: Optional[str] = None
-    eve_YY: Optional[int] = None
+    eve_YY: int
     eve_MM: Optional[int] = None
     eve_DD: Optional[int] = None
     eve_day_def: Optional[bool] = None
     eve_habitat: Optional[str] = None
     eve_effort: Optional[str] = None
-    abu_coll: Optional[str] = None
+    abu_coll: str
     eve_REM: Optional[str] = None
-    tax_fam: Optional[str] = None
-    tax_gen: Optional[str] = None
+    tax_fam: str
+    tax_gen: str
     tax_sp: Optional[str] = None
     tax_sp_def: Optional[bool] = None
     tax_nsp: Optional[bool] = None
     type_status: Optional[str] = None
     tax_REM: Optional[str] = None
-    abu: Optional[int] = None
-    abu_details: Optional[str] = None
+    abu: float
+    abu_details: str
     abu_ind_rem: Optional[str] = None
     geo_uncert: Optional[float] = None
     eve_YY_end: Optional[int] = None

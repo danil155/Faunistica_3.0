@@ -86,7 +86,7 @@ class Record(Base):
     tax_nsp = Column(Boolean)
     type_status = Column(Text)
     tax_REM = Column(Text)
-    abu = Column(Integer)
+    abu = Column(Double)
     abu_details = Column(Text)
     abu_ind_rem = Column(Text)
     geo_uncert = Column(Double)
