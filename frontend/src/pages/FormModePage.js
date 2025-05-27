@@ -95,8 +95,17 @@ const SectionControls = ({
 
 );
 
+const REQUIRED_FIELDS = {
+    geographical: ["geo_origin", "grads_north", "grads_east"],
+    administrative: ["country", "region", "district"],
+    material_collection: ["collector", "measurement_units"],
+    taxonomy: ["family", "genus", "species"],
+    add_specimens: ["specimens"]
+};
+
 const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
     const {t} = useTranslation('formPage');
+    const [validationErrors, setValidationErrors] = useState({});
 
     const {
         formState,
@@ -122,6 +131,42 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
 
             return acc;
         }, {});
+    };
+
+    const validateForm = () => {
+        const errors = {};
+        let isValid = true;
+
+        if (formState.coordinate_format === "grads") {
+            if (!formState.grads_north) errors.grads_north = t("validation.required");
+            if (!formState.grads_east) errors.grads_east = t("validation.required");
+        }
+        else if (formState.coordinate_format === "mins") {
+            if (!formState.grads_north) errors.grads_north = t("validation.required");
+            if (!formState.mins_north) errors.mins_north = t("validation.required");
+            if (!formState.grads_east) errors.grads_east = t("validation.required");
+            if (!formState.mins_east) errors.mins_east = t("validation.required");
+        }
+        else if (formState.coordinate_format === "secs") {
+            if (!formState.grads_north) errors.grads_north = t("validation.required");
+            if (!formState.mins_north) errors.mins_north = t("validation.required");
+            if (!formState.secs_north) errors.secs_north = t("validation.required");
+            if (!formState.grads_east) errors.grads_east = t("validation.required");
+            if (!formState.mins_east) errors.mins_east = t("validation.required");
+            if (!formState.secs_east) errors.secs_east = t("validation.required");
+        }
+
+        Object.entries(REQUIRED_FIELDS).forEach(([section, fields]) => {
+            fields.forEach(field => {
+                if (!formState[field] || Array.isArray(formState[field]) && formState[field].length === 0) {
+                    errors[field] = t("validation.required");
+                    isValid = false;
+                }
+            });
+        });
+
+        setValidationErrors(errors);
+        return isValid;
     };
 
     const pinSection = (sectionName) => {
@@ -211,21 +256,22 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formState.specimens || Object.keys(formState.specimens).length === 0) {
-            toast.error(t("toast.add_specimens"), {autoClose: 3000, position: 'bottom-right'});
+
+        if (!validateForm()) {
+            toast.error(t("validation.fill_required"), {autoClose: 3000, position: 'bottom-right'});
             return;
         }
 
         const format = formState.coordinate_format
         let north = ''
         let east = ''
-        if (format == "grads") {
+        if (format === "grads") {
             north = formState.grads_north + '°';
             east = formState.grads_north + '°';
-        } else if (format == "mins") {
+        } else if (format === "mins") {
             north = formState.grads_north + '°' + formState.mins_north + "'";
             east = formState.grads_east + '°' + formState.mins_east + "'";
-        } else if (format == "secs") {
+        } else if (format === "secs") {
             north = formState.grads_north + '°' + formState.mins_north + "'" + formState.secs_north + '"';
             east = formState.grads_east + '°' + formState.mins_east + "'" + formState.secs_east + '"';
         }
@@ -372,22 +418,30 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
 
                                         <div
                                             className={`form-grid ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
-                                            <CoordinatesInput isDisabled={pinnedSections[sectionName] || false}/>
+                                            <CoordinatesInput
+                                                isDisabled={pinnedSections[sectionName] || false}
+                                                validationErrors={validationErrors}
+                                                showRequired={true}
+                                            />
                                             <div className="form-group">
-                                                <label htmlFor="geo-origin">{t("geo.origin")}</label>
+                                                <label htmlFor="geo-origin">
+                                                    {t("geo.origin")} <span className="required-star">*</span>
+                                                </label>
                                                 <select
                                                     disabled={pinnedSections[sectionName] || false}
                                                     id="geo-origin"
                                                     name="geo_origin"
-                                                    className="form-control"
+                                                    className={"form-control ${validationErrors.geo_origin ? 'error' : ''}"}
                                                     value={formState.geo_origin}
                                                     onChange={handleInputChange}
-                                                    required
                                                 >
                                                     <option value="original">{t("geo.origins.publ")}</option>
                                                     <option value="volunteer">{t("geo.origins.own")}</option>
                                                     <option value="nothing">{t("geo.origins.nothing")}</option>
                                                 </select>
+                                                {validationErrors.geo_origin && (
+                                                    <span className="error-message">{validationErrors.geo_origin}</span>
+                                                )}
                                             </div>
 
                                             <div className="form-group">
@@ -436,6 +490,7 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                             className={`form-grid section-content ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
                                             <div className="form-group">
                                                 <div className="form-row">
+                                                    <label htmlFor="adm_verbatim">{t("adm.ural")}</label>
                                                     <input
                                                         disabled={pinnedSections[sectionName] || false}
                                                         id="adm_verbatim"
@@ -447,7 +502,6 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                                             adm_verbatim: !formState.adm_verbatim
                                                         }))}
                                                     />
-                                                    <label htmlFor="adm_verbatim">{t("adm.ural")}</label>
                                                 </div>
                                             </div>
 
@@ -505,31 +559,39 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <label htmlFor="collector">{t("eve.collector")}</label>
+                                                <label htmlFor="collector">
+                                                    {t("eve.collector")} <span className="required-star">*</span>
+                                                </label>
                                                 <input
                                                     disabled={pinnedSections[sectionName] || false}
                                                     id="collector"
-                                                    className="text-input"
+                                                    className={"text-input ${validationErrors.collector ? 'error' : ''}"}
                                                     type="text"
                                                     name="collector"
                                                     value={formState.collector}
                                                     onChange={handleInputChange}
-                                                    required
                                                 />
+                                                {validationErrors.collector && (
+                                                    <span className="error-message">{validationErrors.collector}</span>
+                                                )}
                                             </div>
 
                                             <div className="form-group">
-                                                <label htmlFor="measurement_units">{t("eve.units")}</label>
+                                                <label htmlFor="measurement_units">
+                                                    {t("eve.units")} <span className="required-star">*</span>
+                                                </label>
                                                 <input
                                                     disabled={pinnedSections[sectionName] || false}
                                                     id="measurement_units"
-                                                    className="text-input"
+                                                    className={"text-input ${validationErrors.collector ? 'error' : ''}"}
                                                     type="text"
                                                     name="measurement_units"
                                                     value={formState.measurement_units || t("eve.def_units")}
                                                     onChange={handleInputChange}
-                                                    required
                                                 />
+                                                {validationErrors.measurement_units && (
+                                                    <span className="error-message">{validationErrors.measurement_units}</span>
+                                                )}
                                             </div>
 
                                             <div className="form-group">
@@ -578,6 +640,7 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                             className={`form-grid section-content ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
                                             <div className="form-group">
                                                 <div className="form-row">
+                                                    <label htmlFor="tax_sp_def">{t("tax.sp_def")}</label>
                                                     <input
                                                         disabled={pinnedSections[sectionName] || false}
                                                         id="tax_sp_def"
@@ -594,10 +657,10 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                                             }
                                                         }}
                                                     />
-                                                    <label htmlFor="tax_sp_def">{t("tax.sp_def")}</label>
                                                 </div>
 
                                                 <div className="form-row">
+                                                    <label htmlFor="tax_nsp">{t("tax.in_list")}</label>
                                                     <input
                                                         disabled={pinnedSections[sectionName] || false}
                                                         id="tax_nsp"
@@ -619,10 +682,10 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                                             }
                                                         }}
                                                     />
-                                                    <label htmlFor="tax_nsp">{t("tax.in_list")}</label>
                                                 </div>
 
                                                 <div className="form-row">
+                                                    <label htmlFor="is_new_species">{t("tax.type")}</label>
                                                     <input
                                                         disabled={pinnedSections[sectionName] || false}
                                                         id="is_new_species"
@@ -634,7 +697,6 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                                             is_new_species: !prev.is_new_species
                                                         }))}
                                                     />
-                                                    <label htmlFor="is_new_species">{t("tax.type")}</label>
                                                 </div>
 
                                                 {formState.is_new_species && (

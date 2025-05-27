@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useState } from "react";
 import { apiService } from "../api";
 
-export const CoordinatesInput = ({isDisabled}) => {
+export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) => {
     const {t} = useTranslation('coordinateInput');
     const {formState, setFormState} = useFormContext();
     const [isLoading, setIsLoading] = useState(false);
@@ -99,25 +99,6 @@ export const CoordinatesInput = ({isDisabled}) => {
     };
 
     const getLocationFromCoordinates = async () => {
-        if (coordFormat === "grads") {
-            if (!formState.grads_north || !formState.grads_east) {
-                setError(t("error.fill"));
-                return;
-            }
-        } else if (coordFormat === "mins") {
-            if (!formState.grads_north || !formState.mins_north ||
-                !formState.grads_east || !formState.mins_east) {
-                setError(t("error.fill"));
-                return;
-            }
-        } else if (coordFormat === "secs") {
-            if (!formState.grads_north || !formState.mins_north || !formState.secs_north ||
-                !formState.grads_east || !formState.mins_east || !formState.secs_east) {
-                setError(t("error.fill"));
-                return;
-            }
-        }
-
         setIsLoading(true);
         setError(null);
 
@@ -171,10 +152,16 @@ export const CoordinatesInput = ({isDisabled}) => {
 
     const renderInputField = (id, name, value, placeholder, inputMode, unit) => (
         <div className={`input-wrapper ${unit === '"' ? 'sec' : ''}`}>
+            <label htmlFor={id}>
+                {unit}
+                {showRequired && ["grads_north", "grads_east"].includes(name) && (
+                    <span className="required-star">*</span>
+                )}
+            </label>
             <input
                 id={id}
                 type="text"
-                className="coord"
+                className={'coord ${validationErrors?.[name] ? "error" : ""}'}
                 name={name}
                 value={value}
                 disabled={disabled || isDisabled}
@@ -182,7 +169,9 @@ export const CoordinatesInput = ({isDisabled}) => {
                 placeholder={placeholder}
                 inputMode={inputMode}
             />
-            <label htmlFor={id}>{unit}</label>
+            {validationErrors?.[name] && (
+                <span className="error-message">{validationErrors[name]}</span>
+            )}
         </div>
     );
 
