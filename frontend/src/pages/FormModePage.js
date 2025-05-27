@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useFormContext } from "./FormContext";
+import { useFormContext} from "./FormContext";
 import SpecimenForm from "../components/specimen-form/SpecimenForm";
 import "../styles/formMode.css";
 import PinToggle from "../components/pin-toggle/PinToggle";
@@ -105,7 +105,7 @@ const REQUIRED_FIELDS = {
 
 const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
     const {t} = useTranslation('formPage');
-    const [validationErrors, setValidationErrors] = useState({});
+
 
     const {
         formState,
@@ -115,6 +115,8 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
         resetForm,
         collapsedSections,
         toggleCollapseSection,
+        validationErrors,
+        setValidationErrors
     } = useFormContext();
 
     const [showResetModal, setShowResetModal] = useState(false);
@@ -158,14 +160,15 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
 
         Object.entries(REQUIRED_FIELDS).forEach(([section, fields]) => {
             fields.forEach(field => {
-                if (!formState[field] || Array.isArray(formState[field]) && formState[field].length === 0) {
+                console.log(formState[field])
+                if ((!(typeof formState[field] === "object") || formState[field] === null) && !formState[field] || ((typeof formState[field] === "object" ) && Object.keys(formState[field]).length === 0)) {
                     errors[field] = t("validation.required");
                     isValid = false;
                 }
             });
-        });
-
+        })
         setValidationErrors(errors);
+        console.log(validationErrors);
         return isValid;
     };
 
@@ -319,6 +322,7 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                 resetForm();
                 toast.success(t("toast.data_sent"), {autoClose: 3000, position: 'bottom-right'});
             }
+
         } catch (error) {
             console.error("Error while sending data:", error);
             toast.error(t("toast.data_fail"), {autoClose: 3000, position: 'bottom-right'});
@@ -424,16 +428,23 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                                 showRequired={true}
                                             />
                                             <div className="form-group">
-                                                <label htmlFor="geo-origin">
-                                                    {t("geo.origin")} <span className="required-star">*</span>
+                                                <label htmlFor="geo-origin" className={`${validationErrors.geo_origin ? 'error' : ''}`}>
+                                                    {t("geo.origin")}<span>{validationErrors["geo_origin"] ? "*":""}</span>
                                                 </label>
                                                 <select
                                                     disabled={pinnedSections[sectionName] || false}
                                                     id="geo-origin"
                                                     name="geo_origin"
-                                                    className={"form-control ${validationErrors.geo_origin ? 'error' : ''}"}
+                                                    className={`form-control ${validationErrors.geo_origin ? 'error' : ''}`}
                                                     value={formState.geo_origin}
-                                                    onChange={handleInputChange}
+                                                    onChange={(e) => {
+                                                        handleInputChange(e);
+                                                        const value = e.target.value;
+                                                        if (value.trim().length > 0) {
+                                                            setValidationErrors(prev => ({ ...prev, ["geo_origin"]: ''
+                                                            }));
+                                                        }
+                                                    }}
                                                 >
                                                     <option value="original">{t("geo.origins.publ")}</option>
                                                     <option value="volunteer">{t("geo.origins.own")}</option>
@@ -497,10 +508,13 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                                         name="adm_verbatim"
                                                         type="checkbox"
                                                         checked={formState.adm_verbatim ?? false}
-                                                        onChange={() => setFormState(prev => ({
-                                                            ...prev,
-                                                            adm_verbatim: !formState.adm_verbatim
-                                                        }))}
+                                                        onChange={() => {
+                                                            setFormState(prev => ({
+                                                                ...prev,
+                                                                adm_verbatim: !formState.adm_verbatim
+                                                            }));
+
+                                                        }}
                                                     />
                                                 </div>
                                             </div>
@@ -560,37 +574,49 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
                                             </div>
                                             <div className="form-group">
                                                 <label htmlFor="collector">
-                                                    {t("eve.collector")} <span className="required-star">*</span>
+                                                    {t("eve.collector")} <span>{validationErrors["collector"] ? "*":""}</span>
                                                 </label>
                                                 <input
                                                     disabled={pinnedSections[sectionName] || false}
                                                     id="collector"
-                                                    className={"text-input ${validationErrors.collector ? 'error' : ''}"}
+                                                    className={`text-input ${validationErrors.collector ? 'error' : ''}`}
                                                     type="text"
                                                     name="collector"
                                                     value={formState.collector}
-                                                    onChange={handleInputChange}
+                                                    onChange={(e) => {
+                                                        handleInputChange(e);
+                                                        if (e.target.value.trim().length > 0) {
+                                                            setValidationErrors(prev => ({ ...prev, ["collector"]: ''
+                                                            }));
+                                                        }
+                                                    }}
                                                 />
                                                 {validationErrors.collector && (
-                                                    <span className="error-message">{validationErrors.collector}</span>
+                                                    <span className="no-data">{validationErrors.collector}</span>
                                                 )}
                                             </div>
 
                                             <div className="form-group">
                                                 <label htmlFor="measurement_units">
-                                                    {t("eve.units")} <span className="required-star">*</span>
+                                                    {t("eve.units")} <span>{validationErrors["measurement_units"] ? "*":""}</span>
                                                 </label>
                                                 <input
                                                     disabled={pinnedSections[sectionName] || false}
                                                     id="measurement_units"
-                                                    className={"text-input ${validationErrors.collector ? 'error' : ''}"}
+                                                    className={`text-input ${validationErrors.measurement_units ? 'error' : ''}`}
                                                     type="text"
                                                     name="measurement_units"
-                                                    value={formState.measurement_units || t("eve.def_units")}
-                                                    onChange={handleInputChange}
+                                                    value={formState.measurement_units}
+                                                    onChange={(e) => {
+                                                        handleInputChange(e);
+                                                        if (e.target.value.trim().length > 0) {
+                                                            setValidationErrors(prev => ({ ...prev, ["measurement_units"]: ''
+                                                            }));
+                                                        }
+                                                    }}
                                                 />
                                                 {validationErrors.measurement_units && (
-                                                    <span className="error-message">{validationErrors.measurement_units}</span>
+                                                    <span className="no-data">{validationErrors.measurement_units}</span>
                                                 )}
                                             </div>
 

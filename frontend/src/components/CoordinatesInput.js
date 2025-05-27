@@ -1,11 +1,11 @@
 import { useFormContext } from "../pages/FormContext";
 import { useTranslation } from 'react-i18next';
-import { useState } from "react";
+import React, { useState } from "react";
 import { apiService } from "../api";
 
-export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) => {
+export const CoordinatesInput = ({isDisabled, showRequired}) => {
     const {t} = useTranslation('coordinateInput');
-    const {formState, setFormState} = useFormContext();
+    const {formState, setFormState, validationErrors, setValidationErrors} = useFormContext();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
@@ -92,6 +92,13 @@ export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) =
             processedValue = parts.join('.');
         }
 
+        if (processedValue.trim().length > 0) {
+            if (name === "grads_north" || name === "grads_east") {
+                setValidationErrors(prev => ({ ...prev, [name]: ''
+                }));
+            }
+        }
+
         setFormState(prev => ({
             ...prev,
             [name]: processedValue
@@ -142,6 +149,12 @@ export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) =
                 district: location.district || ''
             }));
 
+            setValidationErrors(prev => ({ ...prev,
+                country: location.country ? '': t("validation.required"),
+                region: location.region ? '': t("validation.required"),
+                district: location.district ? '': t("validation.required"),
+            }));
+
         } catch (err) {
             console.error("Error getting location:", err);
             setError(t("error.detect_loc"));
@@ -152,16 +165,10 @@ export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) =
 
     const renderInputField = (id, name, value, placeholder, inputMode, unit) => (
         <div className={`input-wrapper ${unit === '"' ? 'sec' : ''}`}>
-            <label htmlFor={id}>
-                {unit}
-                {showRequired && ["grads_north", "grads_east"].includes(name) && (
-                    <span className="required-star">*</span>
-                )}
-            </label>
             <input
                 id={id}
                 type="text"
-                className={'coord ${validationErrors?.[name] ? "error" : ""}'}
+                className={`coord ${validationErrors?.[name] ? "error" : ""}`}
                 name={name}
                 value={value}
                 disabled={disabled || isDisabled}
@@ -170,7 +177,7 @@ export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) =
                 inputMode={inputMode}
             />
             {validationErrors?.[name] && (
-                <span className="error-message">{validationErrors[name]}</span>
+                <span className="no-data">{validationErrors[name]}</span>
             )}
         </div>
     );
@@ -198,7 +205,7 @@ export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) =
 
             {coordFormat === "grads" ? (
                 <div className="form-group">
-                    <label htmlFor="grads-north">{t("formats.lat")} N°</label>
+                    <label htmlFor="grads-north">{t("formats.lat")} N°<span>{validationErrors["grads_north"] ? "*":""}</span></label>
                     {renderInputField(
                         "grads-north",
                         "grads_north",
@@ -207,7 +214,7 @@ export const CoordinatesInput = ({isDisabled, validationErrors, showRequired}) =
                         "decimal",
                         ""
                     )}
-                    <label htmlFor="grads-east">{t("formats.long")} E°</label>
+                    <label htmlFor="grads-east">{t("formats.long")} E°<span>{validationErrors["grads_east"] ? "*":""}</span></label>
                     {renderInputField(
                         "grads-east",
                         "grads_east",

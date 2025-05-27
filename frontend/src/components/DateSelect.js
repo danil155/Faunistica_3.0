@@ -85,7 +85,6 @@ const DateSelect = ({disabled}) => {
                             value={formState.begin_date}
                             onChange={handleChange}
                             className="text-input"
-                            required
                         />
                     </>
                 )}
@@ -99,7 +98,6 @@ const DateSelect = ({disabled}) => {
                             name="begin_month"
                             value={formState.begin_month || ''}
                             onChange={handleChange}
-                            required
                         >
                             <option value="" disabled hidden>{t("select_month")}</option>
                             {Array.from({length: 12}, (_, i) => (
@@ -120,7 +118,6 @@ const DateSelect = ({disabled}) => {
                             max="2100"
                             value={formState.begin_year || ''}
                             onChange={handleChange}
-                            required
                         />
                     </>
                 )}
@@ -137,7 +134,6 @@ const DateSelect = ({disabled}) => {
                             max="2100"
                             value={formState.begin_year || ''}
                             onChange={handleChange}
-                            required
                         />
                     </>
                 )}
@@ -154,7 +150,6 @@ const DateSelect = ({disabled}) => {
                                     name="end_date"
                                     value={formState.end_date}
                                     onChange={handleChange}
-                                    required
                                 />
                             </>
                         )}
@@ -167,7 +162,6 @@ const DateSelect = ({disabled}) => {
                                     name="end_month"
                                     value={formState.end_month || ''}
                                     onChange={handleChange}
-                                    required
                                 >
                                     <option value="" disabled hidden>{t("select_month")}</option>
                                     {Array.from({length: 12}, (_, i) => (
@@ -187,7 +181,6 @@ const DateSelect = ({disabled}) => {
                                     max="2100"
                                     value={formState.end_year || ''}
                                     onChange={handleChange}
-                                    required
                                 />
                             </>
                         )}
@@ -204,7 +197,6 @@ const DateSelect = ({disabled}) => {
                                     max="2100"
                                     value={formState.end_year || ''}
                                     onChange={handleChange}
-                                    required
                                 />
                             </>
                         )}
