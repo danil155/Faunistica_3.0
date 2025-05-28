@@ -3,10 +3,11 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
+import "./dropdown.css"
 
 const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, isDisabled}) => {
     const {t} = useTranslation('taxonDropdown');
-    const {formState, setFormState, pinnedSections} = useFormContext();
+    const {formState, setFormState, validationErrors, setValidationErrors} = useFormContext();
     const [loading, setLoading] = useState(false);
 
     const levels = [
@@ -96,10 +97,14 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
 
             if (autofillResult.family) {
                 updateField('family', autofillResult.family);
+                setValidationErrors(prev => ({ ...prev, ["family"]: ''
+                }));
             }
 
             if (autofillResult.genus) {
                 updateField('genus', autofillResult.genus);
+                setValidationErrors(prev => ({ ...prev, ["genus"]: ''
+                }));
             }
 
             if (fieldName === 'family') {
@@ -122,9 +127,9 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
     return (
         <div className="form-group dropdown-container">
             {levels.map((level) => (
-                <div key={level.name} className="input-group">
+                <div key={level.name} className={`input-group ${validationErrors[level.name] ? "error" : ""}`}>
                     <label htmlFor={level.name}>
-                        {level.heading}:
+                        {level.heading}:<span>{validationErrors[level.name] ? "*":""}</span>
                     </label>
                     {!isInList ? (
                         <Autocomplete
@@ -132,6 +137,10 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
                             onChange={(event, newValue) => {
                                 if (newValue) {
                                     autoUpdate(level.name, newValue);
+                                }
+                                if (newValue?.length > 0) {
+                                    setValidationErrors(prev => ({ ...prev, [level.name]: ''
+                                    }));
                                 }
                                 updateField(level.name, newValue);
                             }}
@@ -156,7 +165,6 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
                                     {...params}
                                     placeholder={level.name === "species" && isDefined ? t("undefined") : level.placeholder}
                                     size="small"
-                                    required={level.name !== "species" || !isDefined}
                                 />
                             )}
                         />
@@ -171,8 +179,10 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
                             }}
                             placeholder={`${t("input")} ${level.heading.toLowerCase()}`}
                             fullWidth
-                            required={true}
                         />
+                    )}
+                    {validationErrors?.[level.name] && (
+                        <span className="no-data">{validationErrors[level.name]}</span>
                     )}
                 </div>
             ))}

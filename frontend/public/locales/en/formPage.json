@@ -20,7 +20,7 @@
     "country": "Country",
     "region": "Region",
     "district": "District",
-    "gathering_place": "Gathering place"
+    "gathering_place": "Gathering place:"
   },
 
   "geo": {

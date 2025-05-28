@@ -1,20 +1,22 @@
 import { useFormContext } from "../pages/FormContext";
 import { useTranslation } from 'react-i18next';
-import { useState } from "react";
+import React, { useState } from "react";
 import { apiService } from "../api";
 
-export const CoordinatesInput = ({isDisabled}) => {
+export const CoordinatesInput = ({isDisabled, showRequired}) => {
     const {t} = useTranslation('coordinateInput');
-    const {formState, setFormState} = useFormContext();
-    const [coordFormat, setCoordFormat] = useState(formState.coordinate_format || "grads");
+    const {formState, setFormState, validationErrors, setValidationErrors} = useFormContext();
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
 
+    const coordFormat = formState.coordinate_format ?? "grads";
+
     let disabled = formState.geo_origin === "nothing";
 
-    const clearCoordFields = () => {
-        setFormState({
-            ...formState,
+    const clearCoordFields = (newFormat) => {
+        setFormState(prev => ({
+            ...prev,
+            coordinate_format: newFormat ?? prev.coordinate_format,
             coordinate_north: '',
             coordinate_east: '',
             grads_north: '',
@@ -23,7 +25,7 @@ export const CoordinatesInput = ({isDisabled}) => {
             mins_east: '',
             secs_north: '',
             secs_east: ''
-        });
+        }));
     };
 
     const handleInputChange = (e) => {
@@ -90,6 +92,13 @@ export const CoordinatesInput = ({isDisabled}) => {
             processedValue = parts.join('.');
         }
 
+        if (processedValue.trim().length > 0) {
+            if (name === "grads_north" || name === "grads_east") {
+                setValidationErrors(prev => ({ ...prev, [name]: ''
+                }));
+            }
+        }
+
         setFormState(prev => ({
             ...prev,
             [name]: processedValue
@@ -97,25 +106,6 @@ export const CoordinatesInput = ({isDisabled}) => {
     };
 
     const getLocationFromCoordinates = async () => {
-        if (coordFormat === "grads") {
-            if (!formState.grads_north || !formState.grads_east) {
-                setError(t("error.fill"));
-                return;
-            }
-        } else if (coordFormat === "mins") {
-            if (!formState.grads_north || !formState.mins_north ||
-                !formState.grads_east || !formState.mins_east) {
-                setError(t("error.fill"));
-                return;
-            }
-        } else if (coordFormat === "secs") {
-            if (!formState.grads_north || !formState.mins_north || !formState.secs_north ||
-                !formState.grads_east || !formState.mins_east || !formState.secs_east) {
-                setError(t("error.fill"));
-                return;
-            }
-        }
-
         setIsLoading(true);
         setError(null);
 
@@ -159,6 +149,12 @@ export const CoordinatesInput = ({isDisabled}) => {
                 district: location.district || ''
             }));
 
+            setValidationErrors(prev => ({ ...prev,
+                country: location.country ? '': t("validation.required"),
+                region: location.region ? '': t("validation.required"),
+                district: location.district ? '': t("validation.required"),
+            }));
+
         } catch (err) {
             console.error("Error getting location:", err);
             setError(t("error.detect_loc"));
@@ -172,7 +168,7 @@ export const CoordinatesInput = ({isDisabled}) => {
             <input
                 id={id}
                 type="text"
-                className="coord"
+                className={`coord ${validationErrors?.[name] ? "error" : ""}`}
                 name={name}
                 value={value}
                 disabled={disabled || isDisabled}
@@ -180,7 +176,9 @@ export const CoordinatesInput = ({isDisabled}) => {
                 placeholder={placeholder}
                 inputMode={inputMode}
             />
-            <label htmlFor={id}>{unit}</label>
+            {validationErrors?.[name] && (
+                <span className="no-data">{validationErrors[name]}</span>
+            )}
         </div>
     );
 
@@ -191,10 +189,7 @@ export const CoordinatesInput = ({isDisabled}) => {
                 <select
                     id="coord-format"
                     name="coordinate_format"
-                    onChange={(e) => {
-                        setCoordFormat(e.target.value);
-                        clearCoordFields();
-                    }}
+                    onChange={(e) => clearCoordFields(e.target.value)}
                     value={coordFormat}
                     disabled={disabled || isDisabled}
                 >
@@ -210,7 +205,7 @@ export const CoordinatesInput = ({isDisabled}) => {
 
             {coordFormat === "grads" ? (
                 <div className="form-group">
-                    <label htmlFor="grads-north">{t("formats.lat")} N°</label>
+                    <label htmlFor="grads-north">{t("formats.lat")} N°<span>{validationErrors["grads_north"] ? "*":""}</span></label>
                     {renderInputField(
                         "grads-north",
                         "grads_north",
@@ -219,7 +214,7 @@ export const CoordinatesInput = ({isDisabled}) => {
                         "decimal",
                         ""
                     )}
-                    <label htmlFor="grads-east">{t("formats.long")} E°</label>
+                    <label htmlFor="grads-east">{t("formats.long")} E°<span>{validationErrors["grads_east"] ? "*":""}</span></label>
                     {renderInputField(
                         "grads-east",
                         "grads_east",
@@ -329,7 +324,7 @@ export const CoordinatesInput = ({isDisabled}) => {
                 </div>
             )}
                 <div className="location-wrapper">
-                    <p id={"find-location"}>Определить локацию</p>
+                    <p id={"find-location"}>{t("detect_location")}</p>
                     <button
                         type="button"
                         onClick={getLocationFromCoordinates}

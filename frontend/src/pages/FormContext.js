@@ -19,7 +19,7 @@ export const defaultState = {
     secs_north: '',
     secs_east: '',
     coordinate_format: 'grads',
-    geo_origin: '',
+    geo_origin: 'original',
     geo_uncert: '',
     adm_verbatim: null,
     geo_REM: '',
@@ -34,7 +34,7 @@ export const defaultState = {
     eve_REM: '',
     biotope: '',
     collector: '',
-    measurement_units: '',
+    measurement_units: 'Особи шт.',
     selective_gain: '',
     matherial_notes: '',
     taxonomic_notes: '',
@@ -53,6 +53,8 @@ const SECTION_KEYS = {
     MATERIAL: 'material_collection',
     TAXONOMY: 'taxonomy'
 };
+
+
 
 export const fieldsMap = {
     [SECTION_KEYS.ADMIN]: ["country", "region", "district", "gathering_place", "place_notes", "adm_verbatim"],
@@ -87,6 +89,8 @@ export const FormProvider = ({children, initialState, isEditMode = false}) => {
         }
         return defaultState;
     });
+
+    const [validationErrors, setValidationErrors] = useState({});
 
     const keyMap = {
         "Административное положение": "administrative",
@@ -134,6 +138,8 @@ export const FormProvider = ({children, initialState, isEditMode = false}) => {
         const finalData = localStorage.getItem('collapsedSections');
         return finalData ? JSON.parse(finalData) : {};
     });
+
+
 
     const resetForm = (keepPinned = true) => {
         if (keepPinned) {
@@ -184,7 +190,9 @@ export const FormProvider = ({children, initialState, isEditMode = false}) => {
                 setPinnedSections,
                 resetForm,
                 collapsedSections,
-                toggleCollapseSection
+                toggleCollapseSection,
+                validationErrors,
+                setValidationErrors
             }}
         >
             {children}

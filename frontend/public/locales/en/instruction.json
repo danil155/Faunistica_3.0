@@ -169,8 +169,8 @@
             "dropdown_help": "To facilitate the task of entering taxonomic names, all fields are designed as drop-down lists with options, you only need to start entering. Also, if you enter species first, the family and genus fields will be filled in automatically.",
             "example1_appearance": "This is what the taxonomy looks like in the article from Example 1:",
             "missing_species": "If the desired species is not found in the drop-down list, tick the checkbox Absent from list and enter the name manually. This can happen if the species has been renamed since the publication and is now listed in the World Spider Catalogue under a different name.",
-            "abbreviated_names": "В некоторых работах род может быть сокращен до одной буквы. Это делается в том случае, если подряд идут несколько представителей одного рода. Бывает, что сокращают название вида, а совсем редко - и то, и другое. В форму род и вид вносим полностью, без сокращений.",
-            "new_species": "If a species is described as new to science, it is labelled sp.n. (species nova). (species nova). Tick the box Described as a new species. Sometimes it is possible to determine only the genus, but not the species, of a found spider. In such cases we say about the spider ‘determined to genus’ and write sp. instead of species name, for example Araneus sp. In this case, we uncheck the Species Identified checkbox and do not write any species name, because it is not in the publication.",
+            "abbreviated_names": "Genus in some articles is shortened to one letter. It is done in case multiple specimens of one genus appear in a row. Sometimes species name is shortened as well, but very rarely both genus and species are shortened. You should fill in genus and species in form without shortening them.",
+            "new_species": "If a species is described as new to science, it is labelled sp.n. (species nova). Tick the box Described as a new species. Sometimes it is possible to determine only the genus, but not the species, of a found spider. In such cases we say about the spider ‘determined to genus’ and write sp. instead of species name, for example Araneus sp. In this case, we uncheck the Species Identified checkbox and do not write any species name, because it is not in the publication.",
             "alts": {
                 "tax1": "Taxonomy fields",
                 "tax2": "Tax article example",
@@ -190,10 +190,10 @@
                 "subadult": "sub. - a juvenile that will become an adult at the next moult and its sex can already be determined (subf, subm, sub♀, sub♂)."
             },
             "quantity_rules1": "The number is entered in the form as it is. If the number of spiders is given without sexes, all individuals are recorded as adults. If males and females are given, write them separately, do not sum them up!",
-            "quantity_rules2": "The number of specimens may not be specified, for example, only + in the table, then by default enter 1 in the Quantity and write in the Comments: ‘presence of specimens, not their number’.",
-            "quantity_rules3": "If the number of individuals is not the number of individuals, but another indicator of abundance (spc./100 swp, mg/m2, etc.), enter this number in the Quantity and write the unit of measurement in the Comments - spc/100 swp, mg/m2, etc.",
+            "quantity_rules2": "The number of specimens may not be specified, for example, only plus symbol (+) in the table, then by default enter 1 in the Quantity and write in the Comments: ‘presence of specimens, not their number’.",
+            "quantity_rules3": "If the number of individuals is given not as a number, but another indicator of abundance (spc./100 swp, mg/m2, etc.), enter this number in the Quantity and write the unit of measurement in the Comments - spc/100 swp, mg/m2, etc.",
             "quantity_rules4": "It happens that a publication contains several indicators. Then we have to choose one. Capture rate with 100 catch per day is prioritised over %, and the direct number of individuals is prioritised over catch per day. Let's work on this point in Example 2, since Example 1 lacks it. This is what a fragment of the table from this publication looks like:",
-            "two_indicators": "Two measures of abundance are given in the table: hit rate, which is expressed in eq./100 c-d and relative abundance, which is expressed as %.",
+            "two_indicators": "Two measures of abundance are given in the table: capture rate, which is expressed in eq./100 c-d and relative abundance, which is expressed as %.",
             "more_significant": "We enter the more significant indicator into the form, and in the Comments we write what the indicator is and enter the data of the less significant indicator.",
             "alts": {
                 "tax4": "Tax article example"
@@ -203,7 +203,7 @@
         "extra": {
             "title": "Additional features",
             "locks_heading": "Locks",
-            "locks_description": "If we have read an article and realise that information from some block will be repeated for different entries, we can lock the information in the whole block by clicking on the lock:",
+            "locks_description": "If you have read an article and realised that information from some block will be repeated for different entries, we can lock the information in the whole block by clicking on the lock:",
             "locks_saving": "The information under the closed lock will be saved after filling in all the fields and clicking the Record button.",
             "locks_warning": "If the lock is not clicked, all uncommitted fields will be cleared automatically after the observations are sent. Each time a new record is made, the fields must be fixed again.",
             "locks_availability": "All blocks have locks except Quantity. Be sure to try this option, it makes entering data faster and easier!",

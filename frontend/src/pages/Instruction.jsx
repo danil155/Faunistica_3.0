@@ -325,11 +325,8 @@ export const Introduction = () => {
                     </div>
                     {collapsed.publ_structure && (
                         <>
-                            <p><Trans i18nKey="sections.publ_structure.definition">
-                                <b>Scientific publication</b> is a published work created in accordance with academic
-                                standards of text structure and formatting, which has been published in print or on
-                                electronic media.
-                            </Trans>
+                            <p>
+                                <b>{t("sections.publ_structure.definition_title")}</b> {t("sections.publ_structure.definition")}
                                 <br/>
                                 <br/>
                                 {t("sections.publ_structure.types_intro")}</p>
@@ -759,8 +756,7 @@ export const Introduction = () => {
                                 {t("sections.count.quantity_rules1")}<br/>
                                 {t("sections.count.quantity_rules2")}<br/>
                                 {t("sections.count.quantity_rules3")}<br/>
-                                {t("sections.count.quantity_rules4")}<br/>
-                                {t("sections.count.example2_table")}
+                                {t("sections.count.quantity_rules4")}
                             </p>
                             <img className={"full-width middle"} src={tax4} alt={t("sections.count.alts.tax4")}/>
                             <p>{t("sections.count.two_indicators")}</p>

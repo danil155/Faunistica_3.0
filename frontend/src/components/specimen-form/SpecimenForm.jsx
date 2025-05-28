@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import {useFormContext} from "../../pages/FormContext";
 
 const SpecimenForm = ({value = [], onChange}) => {
+    const { validationErrors, setValidationErrors } = useFormContext();
     const {t} = useTranslation('specimenForm');
     const [count, setCount] = useState(1);
 
@@ -61,9 +63,11 @@ const SpecimenForm = ({value = [], onChange}) => {
     };
 
     return (
-        <div style={{border: '1px solid #ddd', padding: '15px', borderRadius: '5px', width: '70%'}}>
-
-            <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px'}}>
+        <div style={{border: `1px solid ${validationErrors?.specimens ? "#c62828" : "#ddd"}`, padding: '15px', borderRadius: '5px', width: 'max(70%, 500px)'}}>
+            {validationErrors.specimens && (
+                <span className="no-data">{validationErrors.specimens}</span>
+            )}
+            <div style={{display: 'grid',  gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '10px'}}>
                 <div>
                     <label htmlFor={"gender"} style={{display: 'block', marginBottom: '5px'}}>{t("sex")}</label>
                     <select
@@ -111,7 +115,11 @@ const SpecimenForm = ({value = [], onChange}) => {
 
             <button
                 type="button"
-                onClick={addSpecimen}
+                onClick={() => {
+                    addSpecimen();
+                    setValidationErrors(prev => ({ ...prev, ["specimens"]: ''
+                    }));
+                }}
                 style={{
                     padding: '8px 15px',
                     background: '#4CAF50',

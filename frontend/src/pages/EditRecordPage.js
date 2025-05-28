@@ -54,13 +54,22 @@ const EditRecordPage = () => {
     const parseCoordinate = (raw) => {
         if (!raw) return {grads: '', mins: '', secs: ''};
 
+        let format = 'grads'
+
+        if (raw.includes('"') || raw.includes('″')) {
+            format = 'secs';
+        } else if (raw.includes("'")) {
+            format = 'mins';
+        }
+
         if (raw.includes('.') && raw.includes('°')) {
             const grads = parseFloat(raw.replace('°', ''));
             
             return {
                 grads: grads.toString(),
                 mins: '',
-                secs: ''
+                secs: '',
+                format
             };
         }
 
@@ -71,7 +80,8 @@ const EditRecordPage = () => {
         return {
             grads: gradsMatch ? gradsMatch[1] : '',
             mins: minsMatch ? minsMatch[1] : '',
-            secs: secsMatch ? secsMatch[1] : ''
+            secs: secsMatch ? secsMatch[1] : '',
+            format
         };
     };
 
@@ -91,8 +101,11 @@ const EditRecordPage = () => {
         const north = parseCoordinate(record.geo_nn_raw);
         const east = parseCoordinate(record.geo_ee_raw);
 
+        const coordinate_format = north.format || 'grads';
+
         return {
             ...defaultState,
+            coordinate_format,
             abu_ind_rem: record.abu_ind_rem || '',
             country: record.adm_country || '',
             region: record.adm_region || '',
@@ -196,6 +209,7 @@ const EditRecordPage = () => {
     const numOfSpecimen = (specimens) => {
         if (!specimens) return 0;
         let count = 0;
+        let hasFloat = false;
 
         const counts = [
             cleanValue(specimens.male_adult),
@@ -207,12 +221,15 @@ const EditRecordPage = () => {
         ];
 
         counts.forEach(c => {
-            if (c !== null) {
-                count += c;
+            if (c !== null && c !== undefined) {
+                if (Number(c) % 1 !== 0) {
+                    hasFloat = true;
+                }
+                count += Number(c);
             }
         });
 
-        return count;
+        return hasFloat ? count : Math.round(count);
     };
 
     const reevalCoordinate = (coord) => {

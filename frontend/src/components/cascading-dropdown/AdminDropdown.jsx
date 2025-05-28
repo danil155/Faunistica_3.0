@@ -3,10 +3,11 @@ import React, { useMemo, useState } from "react";
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from "../../pages/FormContext";
 import { apiService } from "../../api";
+import "./dropdown.css";
 
 const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, isDisabled}) => {
     const {t} = useTranslation('adminDropdown');
-    const {formState, setFormState} = useFormContext();
+    const {formState, setFormState, validationErrors, setValidationErrors} = useFormContext();
     const [loading, setLoading] = useState(false);
 
     const levels = [
@@ -79,9 +80,9 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
     return (
         <div className="form-group dropdown-container">
             {levels.map((level) => (
-                <div key={level.name} className="input-group">
+                <div key={level.name} className={`input-group ${validationErrors[level.name] ? "error" : ""}`}>
                     <label htmlFor={level.name}>
-                        {level.heading}:
+                        {level.heading}:<span>{validationErrors[level.name] ? "*":""}</span>
                     </label>
                     <Autocomplete
                         freeSolo
@@ -89,6 +90,10 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
                         getOptionLabel={(option) => (option ? option.toString() : "")}
                         onChange={(event, newValue) => {
                             updateField(level.name, newValue);
+                            if (newValue?.length > 0) {
+                                setValidationErrors(prev => ({ ...prev, [level.name]: ''
+                                }));
+                            }
                         }}
                         onInputChange={(_, input, reason) => {
                             if (reason === "clear" || reason === "removeOption" || reason === "reset") {
@@ -110,11 +115,13 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
                                 {...params}
                                 placeholder={level.placeholder}
                                 size="small"
-                                required={level.name !== "district"}
                             />
                         )}
-                    />
 
+                    />
+                    {validationErrors?.[level.name] && (
+                        <span className="no-data">{validationErrors[level.name]}</span>
+                    )}
                 </div>
             ))}
         </div>
