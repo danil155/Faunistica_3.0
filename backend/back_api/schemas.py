@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, constr, field_validator, model_validator, ConfigDict
 from typing import Optional, List, Dict
 
 
@@ -12,7 +12,10 @@ class UserResponse(BaseModel):
 
 
 class InfoRequest(BaseModel):
-    text: str
+    text: constr(strip_whitespace=True, min_length=1, max_length=1000) = Field(
+        ...,
+        description="Text must be between 1 and 1,000 characters"
+    )
     
 
 class InfoResponse(BaseModel):
@@ -57,6 +60,7 @@ class InsertRecordsRequest(BaseModel):
     is_defined_species: Optional[bool] = None
     is_in_wsc: Optional[bool] = None
     is_new_species: Optional[bool] = None
+    matherial_notes: Optional[str] = None
     measurement_units: Optional[str] = None
     north: Optional[str] = None
     place: Optional[str] = None
@@ -67,6 +71,61 @@ class InsertRecordsRequest(BaseModel):
     specimens: Dict[str, Optional[float]]
     taxonomic_notes: Optional[str] = None
     type_status: Optional[str] = None
+
+    model_config = ConfigDict(extra='forbid')
+
+    @model_validator(mode='after')
+    def validate_all_fields(self) -> 'InsertRecordsRequest':
+        errors = {}
+
+        required_fields = {
+            "geo_origin": "Geographical origin is required",
+            "country": "Country is required",
+            "region": "Region is required",
+            "district": "District is required",
+            "collector": "Collector is required",
+            "measurement_units": "Measurement units are required",
+            "family": "Family is required",
+            "genus": "Genus is required",
+            "specimens": "At least one specimen is required"
+        }
+
+        if self.is_defined_species and (not self.species):
+            errors["species"] = "Species is required"
+
+        # if self.begin_year and self.begin_year < 1900:
+        #     errors["begin_year"] = "Year must be 1900 or later"
+        # if self.end_year and self.end_year < 1900 and self.begin_year and self.begin_year > self.end_year:
+        #     errors["end_year"] = "Year must be between 1900 year and current year; End year shouldn't exceed the beginning year"
+        # elif self.end_year and self.end_year < 1900:
+        #     errors["end_year"] = "Year must be between 1900 year and current year"
+        # elif self.end_year and self.begin_year and self.begin_year > self.end_year:
+        #     errors["end_year"] = "End year shouldn't exceed the beginning year"
+
+        for field, message in required_fields.items():
+            value = getattr(self, field)
+            if value is None or (isinstance(value, (str, dict)) and not value):
+                errors[field] = message
+
+        if self.specimens and not any(count for count in self.specimens.values() if count):
+            errors["specimens"] = "At least one specimen must be recorded"
+
+        if errors:
+            raise ValueError(errors)
+
+        return self
+
+    @field_validator('north', 'east')
+    def validate_coordinates(cls, v: Optional[str]) -> Optional[str]:
+        if v and not any(char in v for char in ['°', "'", '"']):
+            raise ValueError("Invalid coordinate format")
+        return v
+
+    @field_validator('geo_origin')
+    def validate_geo_origin(cls, v: Optional[str]) -> Optional[str]:
+        if v and v not in ["original", "volunteer", "nothing"]:
+            raise ValueError("Invalid geo_origin value")
+        return v
 
 
 class SpeciesStats(BaseModel):

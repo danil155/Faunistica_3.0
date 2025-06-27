@@ -237,7 +237,7 @@ class Handlers:
 
                     await message.answer(
                         Messages.new_password(password, user.name),
-                        parse_mode='Markdown',
+                        parse_mode='HTML',
                         disable_web_page_preview=True
                     )
 

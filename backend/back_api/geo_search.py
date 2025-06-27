@@ -31,27 +31,47 @@ async def get_suggestions(field: str, text: str, filters: Optional[Dict] = None)
         return []
     text = text.lower().strip()
     filters = filters or {}
-
-    if field == "region":
+    
+    if field == "country":
         return [
-                   r["region"] for r in location_data
-                   if text in r["region"].lower()
-               ][:100]
+            country for country in location_data.keys()
+            if text in country.lower()
+        ][:10]
+
+    elif field == "region":
+        country_filter = filters.get("country")
+        regions = []
+
+        for country, region_list in location_data.items():
+            if country_filter and country != country_filter:
+                continue
+
+            regions.extend([
+                region for region in region_list.keys()
+                if text in region.lower()
+            ])
+
+        return regions[:50]
 
     elif field == "district":
+        country_filter = filters.get("country")
         region_filter = filters.get("region")
         districts = []
 
-        for entry in location_data:
-            if region_filter and entry["region"] != region_filter:
+        for country, regions in location_data.items():
+            if country_filter and country != country_filter:
                 continue
 
-            districts.extend([
-                d for d in entry["districts"]
-                if text in d.lower()
-            ])
+            for region, district_list in regions.items():
+                if region_filter and region != region_filter:
+                    continue
 
-        return districts[:200]
+                districts.extend([
+                    district for district in district_list
+                    if text in district.lower()
+                ])
+
+        return districts[:50]
 
     return []
 

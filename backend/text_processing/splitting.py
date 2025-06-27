@@ -1,19 +1,23 @@
+import asyncio
 import logging
 import re
 
 from text_processing.Data import Data
 from text_processing.geodecoder import get_location_info
 from text_processing.gbif_parser import find_species_in_text
+from text_processing.location_finder import extract_entities
 from config.config_vars import ROMAN_MONTHS
 
 logger = logging.getLogger(__name__)
 
 
+# Converts Degrees/Minutes/Seconds into a decimal representation
 def dms_to_decimal(degrees: float, minutes: float = 0, seconds: float = 0, direction: str = 'N') -> float:
     decimal = float(degrees) + float(minutes)/60 + float(seconds)/3600
     if direction.upper() in ['S', 'W']:
         decimal = -decimal
     return decimal
+
 
 def parse_single_coordinate(coord_str: str) -> dict[str, [float, None]]:
     coord_dict = {
@@ -114,7 +118,6 @@ def get_coordinates(text: str) -> list[dict]:
             coordinates.append(parsed_coord)
         except (ValueError, IndexError, re.error) as e:
             logger.error(f'Error when searching for coordinates: {e}', exc_info=True)
-            raise
             continue
 
     return coordinates
@@ -131,7 +134,6 @@ def get_region(text: str) -> str:
         return region_match.group(1) if region_match else str()
     except (AttributeError, IndexError, re.error) as e:
         logger.error(f'Error when searching for region: {e}', exc_info=True)
-        raise
         return str()
 
 
@@ -146,7 +148,6 @@ def get_district(text: str) -> str:
         return district_match.group(1) if district_match else str()
     except (AttributeError, IndexError, re.error) as e:
         logger.error(f'Error when searching for district: {e}', exc_info=True)
-        raise
         return str()
 
 
@@ -383,8 +384,11 @@ def get_separated_parameters(text: str) -> Data:
         if coords and len(coords) >= 2:
             data.coordinate_north, data.coordinate_east = coords
 
-        data.region = get_region(text)
-        data.district = get_district(text)
+        location = extract_entities(text)
+        data.country = str() if not location["country"] else location["country"]
+        data.region = get_region(text) if not location["region"] else location["region"]
+        data.district = get_district(text) if not location["place"] else location["place"]
+
         data.date = get_date(text)
         data.collector = get_collectors(text)
 
