@@ -50,10 +50,10 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
             };
 
             if (fieldName === 'region') {
-                // filters.country = formState.country;
+                filters.country = formState.country;
             }
             if (fieldName === 'district') {
-                // filters.country = formState.country;
+                filters.country = formState.country;
                 filters.region = formState.region;
             }
             const data = await apiService.suggestGeo({
@@ -98,7 +98,7 @@ const TaxonDropdown = ({isDefined = true, isInList = true, debounceTime = 300, i
                         onInputChange={(_, input, reason) => {
                             if (reason === "clear" || reason === "removeOption" || reason === "reset") {
                                 setInputValues({...inputValues, [level.name]: ""});
-                            } else if (!options[level.name].includes(input) && level.name !== "country") {
+                            } else if (!options[level.name].includes(input)) {
                                 setInputValues({...inputValues, [level.name]: input});
                                 fetchWithFilters(level.name, input);
                             }

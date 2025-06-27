@@ -234,6 +234,10 @@ main {
     box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
 }
 
+.character-count {
+    margin-bottom: 10px;
+}
+
 .form-element {
     resize: none;
     font-size: 14px;

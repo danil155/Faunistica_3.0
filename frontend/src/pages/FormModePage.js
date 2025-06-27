@@ -99,7 +99,7 @@ const REQUIRED_FIELDS = {
     geographical: ["geo_origin", "grads_north", "grads_east"],
     administrative: ["country", "region", "district"],
     material_collection: ["collector", "measurement_units"],
-    taxonomy: ["family", "genus", "species"],
+    taxonomy: ["family", "genus"],
     add_specimens: ["specimens"]
 };
 
@@ -158,9 +158,13 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
             if (!formState.secs_east) errors.secs_east = t("validation.required");
         }
 
+        if (!formState.tax_sp_def) {
+            errors.species = t("validation.required");
+            isValid = false;
+        }
+
         Object.entries(REQUIRED_FIELDS).forEach(([section, fields]) => {
-            fields.forEach(field => {
-                console.log(formState[field])
+            fields.forEach(field => {                
                 if ((!(typeof formState[field] === "object") || formState[field] === null) && !formState[field] || ((typeof formState[field] === "object" ) && Object.keys(formState[field]).length === 0)) {
                     errors[field] = t("validation.required");
                     isValid = false;
@@ -168,7 +172,6 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
             });
         })
         setValidationErrors(errors);
-        console.log(validationErrors);
         return isValid;
     };
 
@@ -558,8 +561,11 @@ const FormModePage = ({isEditMode = false, onSubmit, onCancel}) => {
 
                                         <div
                                             className={`form-grid section-content ${collapsedSections[sectionName] ? "collapsed" : ""}`}>
-                                            <DateSelect getSectionData={getSectionData}
-                                                        disabled={pinnedSections[sectionName] || false}/>
+                                            <DateSelect 
+                                                getSectionData={getSectionData}
+                                                disabled={pinnedSections[sectionName] || false}
+                                                validationErrors={validationErrors} 
+                                            />
                                             <div className="form-group">
                                                 <label htmlFor="biotope">{t("eve.biotope")}</label>
                                                 <input

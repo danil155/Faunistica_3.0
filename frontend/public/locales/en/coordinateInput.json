@@ -1,8 +1,9 @@
 {
     "error": {
-        "fill": "Пожалуйста, заполните координаты",
-        "detect_coord": "Не удалось определить местоположение по координатам",
-        "detect_loc": "Произошла ошибка при определении местоположения"
+        "fill": "Please, fill in the coordinates",
+        "detect_coord": "Unable to pinpoint location by coordinates",
+        "detect_loc": "An error occured while detecting location",
+        "validation": "This field is required!"
     },
 
     "formats": {

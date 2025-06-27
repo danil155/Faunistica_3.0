@@ -1,7 +1,9 @@
 {
     "errors": {
         "empty": "Enter text for processing!",
-        "request": "An error occurred during text processing"        
+        "request": "An error occurred during text processing",
+        "too_long": "The inserted text is too long. Split it in parts or remove a redundant information",
+        "invalid_input": "Invalid input. Try to refresh the page"
     },
 
     "text": {

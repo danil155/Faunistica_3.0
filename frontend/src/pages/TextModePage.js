@@ -5,6 +5,8 @@ import { useFormContext } from "./FormContext";
 import ArticleInfo from "../components/article-info/ArticleInfo";
 import { apiService } from "../api";
 
+const MAX_TEXT_LENGTH = 1000;
+
 const TextModePage = () => {
     const {t} = useTranslation('textMode');
     const [text, setText] = useState("");
@@ -14,13 +16,28 @@ const TextModePage = () => {
     const {formState, setFormState, pinnedSections} = useFormContext();
 
     const handleTextChange = (event) => {
-        setText(event.target.value);
-        setError(null);
+        const newText = event.target.value;
+        if (newText.length <= MAX_TEXT_LENGTH) {
+            setText(event.target.value);
+            setError(null);
+        } else {
+            setError(t("errors.too_long", { max: MAX_TEXT_LENGTH }));
+        }
     };
 
     async function handleSubmit() {
+        if (typeof text !== 'string') {
+            setError(t("errors.invalid_input"));
+            return;
+        }
+
         if (!text.trim()) {
             setError(t("errors.empty"));
+            return;
+        }
+
+        if (text.length > MAX_TEXT_LENGTH) {
+            setError(t("errors.too_long", { max: MAX_TEXT_LENGTH }));
             return;
         }
 
@@ -132,14 +149,18 @@ const TextModePage = () => {
             <ArticleInfo/>
 
             <div className="content">
-        <textarea
-            placeholder={t("text.placeholder")}
-            className="text-area"
-            value={text}
-            onChange={handleTextChange}
-            disabled={isLoading}
-            id="send_text"
-        ></textarea>
+                <textarea
+                    placeholder={t("text.placeholder")}
+                    className="text-area"
+                    value={text}
+                    onChange={handleTextChange}
+                    disabled={isLoading}
+                    id="send_text"
+                    maxLength={MAX_TEXT_LENGTH}
+                ></textarea>
+                <div className="character-count">
+                        {text.length}/{MAX_TEXT_LENGTH}
+                </div>
 
                 {error && (
                     <div className="error-message">

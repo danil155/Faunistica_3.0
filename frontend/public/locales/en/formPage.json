@@ -79,5 +79,10 @@
     "obliterate": "Are you sure you want to clear the form completely, including the pinned sections?"
   },
 
+  "validation": {
+    "required": "This field is required",
+    "fill_required": "Plase fill in all of the required fields"
+  },
+
   "comment": "Comment:"
 }

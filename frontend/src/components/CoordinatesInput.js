@@ -150,9 +150,9 @@ export const CoordinatesInput = ({isDisabled, showRequired}) => {
             }));
 
             setValidationErrors(prev => ({ ...prev,
-                country: location.country ? '': t("validation.required"),
-                region: location.region ? '': t("validation.required"),
-                district: location.district ? '': t("validation.required"),
+                country: location.country ? '': t("error.validation"),
+                region: location.region ? '': t("error.validation"),
+                district: location.district ? '': t("error.validation"),
             }));
 
         } catch (err) {
